@@ -25,18 +25,41 @@ const scenes = {
         level.drawBackground("menuBackground")
         level.drawMapLayout(level1Layout, level1Mappings)
 
-        const player = new Player(
+        const player1 = new Player(
+            Level1Config.playerStartPosX + 32, 
+            Level1Config.playerStartPosY,
+            Level1Config.playerSpeed,
+            Level1Config.jumpForce,
+            Level1Config.nbLives,
+            "a",
+            "d",
+            "w",
+            1,
+            false
+        )
+        
+        const player2 = new Player(
             Level1Config.playerStartPosX, 
             Level1Config.playerStartPosY,
             Level1Config.playerSpeed,
             Level1Config.jumpForce,
             Level1Config.nbLives,
+            "left",
+            "right",
+            "up",
             1,
             false
         )
 
-        player.update()
-        attachCamera(player.gameObj, 0, 368)
+        player1.update()
+        player2.update()
+        onUpdate(() => {
+            if (player1.gameObj.pos.y > 700) {
+                player1.respawnPlayers()
+                player2.respawnPlayers()
+            }
+        })
+        attachCamera(player1.gameObj, player2.gameObj, 0, 368)
 
         level.drawWaves("lava")
     },

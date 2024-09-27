@@ -1,4 +1,7 @@
 export class Player {
+  isMovingLeft = false
+  isMovingRight = false
+  isRespawning = false
 
 constructor(
     posX,
@@ -6,8 +9,11 @@ constructor(
     speed,
     jumpForce,
     nbLives,
+    left,
+    right,
+    up,
     currentLevelScene,
-    isInTerminalScene
+    isInTerminalScene,
   ) {
     this.isInTerminalScene = isInTerminalScene
     this.currentLevelScene = currentLevelScene
@@ -16,40 +22,17 @@ constructor(
     this.jumpForce = jumpForce
     this.lives = nbLives
     this.previousHeight = this.gameObj.pos.y
+    this.left = left
+    this.right = right
+    this.up = up
     this.setPlayerControls()
     this.update()
   }
 
   isTouchEnabled() {
-    if (( 'ontouchstart' in window ) || ( navigator.maxTouchPoints > 0 ) || ( navigator.msMaxTouchPoints > 0 )) {
-      const leftButton = add([
-        sprite("leftButton"),
-        pos(10, height() - 100),
-        scale(2),
-        opacity(0.5),
-        fixed(),
-        area(),
-        "leftButton"
-      ]);
-      const rightButton = add([
-        sprite("rightButton"),
-        pos(140, height() - 100),
-        scale(2),
-        opacity(0.5),
-        fixed(),
-        area(),
-        "rightButton"
-      ]);
-      const jumpButton = add([
-        sprite("jumpButton"),
-        pos(width() - 120, height() - 100),
-        scale(2),
-        opacity(0.5),
-        fixed(),
-        area(),
-        "jumpButton"
-      ]);
-    }
+    return (( 'ontouchstart' in window ) || 
+    ( navigator.maxTouchPoints > 0 ) || 
+    ( navigator.msMaxTouchPoints > 0 ))
   }
 
   makePlayer(x, y) {
@@ -111,55 +94,82 @@ constructor(
   }
 
   setPlayerControls() {
-    onKeyDown("left", () => {this.moveLeft(this.speed)})
-    onKeyDown("right", () => {this.moveRight(this.speed)})
-    onKeyDown("up", () => {this.jump()})
+    onKeyDown(this.left, () => {this.moveLeft(this.speed)})
+    onKeyDown(this.right, () => {this.moveRight(this.speed)})
+    onKeyDown(this.up, () => {this.jump()})
     onKeyRelease(() => {this.idle()})
 
-    this.isTouchEnabled()
-    
+    if (this.isTouchEnabled()) {
+      const leftButton = add([
+        sprite("leftButton"),
+        pos(10, height() - 100),
+        scale(2),
+        opacity(0.5),
+        fixed(),
+        area(),
+        "leftButton"
+      ]);
+      const rightButton = add([
+        sprite("rightButton"),
+        pos(140, height() - 100),
+        scale(2),
+        opacity(0.5),
+        fixed(),
+        area(),
+        "rightButton"
+      ]);
+      const jumpButton = add([
+        sprite("jumpButton"),
+        pos(width() - 120, height() - 100),
+        scale(2),
+        opacity(0.5),
+        fixed(),
+        area(),
+        "jumpButton"
+      ]);
+    }
 }
 
-  respawnPlayer() {
-    if (this.lives > 0) {
-        this.gameObj.pos = vec2(this.initialX, this.initialY)
+  touchControls() {
+    onTouchStart((position) => {
+      if (position.x < width() / 10) {
+        this.isMovingLeft = true
+      } else
+      if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+        this.isMovingRight = true
+      } else{
+        this.jump()
+      }
+    })
+
+    onTouchEnd((position) => {
+      if (position.x < width() / 10) {
+        this.isMovingLeft = false
+      }
+      if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+        this.isMovingRight = false
+      }
+    })
+
+    if (this.isMovingLeft) {
+      this.moveLeft(this.speed/2)
+    }
+
+    if (this.isMovingRight) {
+      this.moveRight(this.speed/2)
     }
   }
 
+  respawnPlayers() {
+    this.gameObj.pos = vec2(this.initialX, this.initialY)
+    this.isRespawning = true
+    setTimeout(() => this.isRespawning = false, 1000)
+  }
+
   update() {
-    onUpdate(() => {
-        if (this.gameObj.pos.y > 700) {
-          this.respawnPlayer()
-        }
-
-        //touch controls
-        onTouchStart((position) => {
-          if (position.x < width() / 10) {
-            this.isMovingLeft = true
-          } else
-          if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
-            this.isMovingRight = true
-          } else{
-            this.jump()
-          }
-        })
-    
-        onTouchEnd((position) => {
-          if (position.x < width() / 10) {
-            this.isMovingLeft = false
-          }
-          if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
-            this.isMovingRight = false
-          }
-        })
-
-        if (this.isMovingLeft) {
-          this.moveLeft(this.speed/2)
-        }
-
-        if (this.isMovingRight) {
-          this.moveRight(this.speed/2)
-        }
+    if (this.isTouchEnabled())  
+      onUpdate(() => {
+        this.touchControls() 
     })
   }
 }
