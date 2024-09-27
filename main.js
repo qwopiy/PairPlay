@@ -8,9 +8,7 @@ import { attachCamera } from "./util/camera.js";
 import { Player } from "./entity/player.js";
 import { Level1Config } from "./content/level1/config.js";
 
-kaboom({
-    frameRate:  20
-});
+kaboom();
 
 const scenes = {
     menu: () => {

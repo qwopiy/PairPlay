@@ -20,6 +20,38 @@ constructor(
     this.update()
   }
 
+  isTouchEnabled() {
+    if (( 'ontouchstart' in window ) || ( navigator.maxTouchPoints > 0 ) || ( navigator.msMaxTouchPoints > 0 )) {
+      const leftButton = add([
+        sprite("leftButton"),
+        pos(10, height() - 100),
+        scale(2),
+        opacity(0.5),
+        fixed(),
+        area(),
+        "leftButton"
+      ]);
+      const rightButton = add([
+        sprite("rightButton"),
+        pos(140, height() - 100),
+        scale(2),
+        opacity(0.5),
+        fixed(),
+        area(),
+        "rightButton"
+      ]);
+      const jumpButton = add([
+        sprite("jumpButton"),
+        pos(width() - 120, height() - 100),
+        scale(2),
+        opacity(0.5),
+        fixed(),
+        area(),
+        "jumpButton"
+      ]);
+    }
+  }
+
   makePlayer(x, y) {
     this.initialX = x
     this.initialY = y
@@ -34,25 +66,24 @@ constructor(
     ])
   }
 
-  setPlayerControls() {
-    onKeyDown("left", () => {
-      if (this.gameObj.paused) return
+  moveLeft(speed) {
+    if (this.gameObj.paused) return
     //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
       this.gameObj.flipX = true
-      if (!this.isRespawning) this.gameObj.move(-this.speed, 0)
+      if (!this.isRespawning) this.gameObj.move(-speed, 0)
       this.isMoving = true
-    })
+  }
 
-    onKeyDown("right", () => {
-      if (this.gameObj.paused) return
+  moveRight(speed) {
+    if (this.gameObj.paused) return
     //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
       this.gameObj.flipX = false
-      if (!this.isRespawning) this.gameObj.move(this.speed, 0)
+      if (!this.isRespawning) this.gameObj.move(speed, 0)
       this.isMoving = true
-    })
+  }
 
-    onKeyDown("up", () => {
-      if (this.gameObj.paused) return
+  jump() {
+    if (this.gameObj.paused) return
       if (this.gameObj.isGrounded() && !this.isRespawning) {
         this.hasJumpedOnce = true
         this.gameObj.jump(this.jumpForce)
@@ -69,16 +100,25 @@ constructor(
         this.gameObj.jump(this.jumpForce)
         // play("jump")
       }
-    })
-
-    onKeyRelease(() => {
-      if (this.gameObj.paused) return
-      if (isKeyReleased("right") || isKeyReleased("left")) {
-        // this.gameObj.play("idle")
-        this.isMoving = false
-      }
-    })
   }
+
+  idle() {
+    if (this.gameObj.paused) return
+    if (isKeyReleased("right") || isKeyReleased("left")) {
+      // this.gameObj.play("idle")
+      this.isMoving = false
+    }
+  }
+
+  setPlayerControls() {
+    onKeyDown("left", () => {this.moveLeft(this.speed)})
+    onKeyDown("right", () => {this.moveRight(this.speed)})
+    onKeyDown("up", () => {this.jump()})
+    onKeyRelease(() => {this.idle()})
+
+    this.isTouchEnabled()
+    
+}
 
   respawnPlayer() {
     if (this.lives > 0) {
@@ -90,6 +130,35 @@ constructor(
     onUpdate(() => {
         if (this.gameObj.pos.y > 700) {
           this.respawnPlayer()
+        }
+
+        //touch controls
+        onTouchStart((position) => {
+          if (position.x < width() / 10) {
+            this.isMovingLeft = true
+          } else
+          if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+            this.isMovingRight = true
+          } else{
+            this.jump()
+          }
+        })
+    
+        onTouchEnd((position) => {
+          if (position.x < width() / 10) {
+            this.isMovingLeft = false
+          }
+          if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+            this.isMovingRight = false
+          }
+        })
+
+        if (this.isMovingLeft) {
+          this.moveLeft(this.speed/2)
+        }
+
+        if (this.isMovingRight) {
+          this.moveRight(this.speed/2)
         }
     })
   }

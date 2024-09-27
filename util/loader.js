@@ -28,5 +28,9 @@ export const load = {
                 spike: 2
             }
         });
+
+        loadSprite("leftButton", "assets/leftButton.png")
+        loadSprite("rightButton", "assets/rightButton.png")
+        loadSprite("jumpButton", "assets/jumpButton.png")
     }
 }
