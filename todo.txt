@@ -1,0 +1,8 @@
+ice         tundaSementara
+bouncy
+level2
+level3
+level4
+moving obstakle
+portal
+movable boks

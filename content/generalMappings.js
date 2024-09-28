@@ -91,6 +91,20 @@ export function generateMappings(tileType) {
             body({ isStatic: true }),
             offscreen(),
             scale(2)
-        ]
+        ],
+
+        b: () => [
+            area({ shape: new Rect(vec2(0), 16, 16) }), 
+            body({ isStatic: true }),
+            offscreen(),
+            "bouncy"
+        ],
+
+        i: () => [
+            area({ shape: new Rect(vec2(0), 16, 16) }), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
     }
 }

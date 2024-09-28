@@ -15,9 +15,6 @@ const scenes = {
         UIManager.displayMainMenu()
     },
 
-    controls: () => {
-
-    },
     1: () => {
         setGravity(Level1Config.gravity)
 
@@ -26,7 +23,7 @@ const scenes = {
         level.drawMapLayout(level1Layout, level1Mappings)
 
         const player1 = new Player(
-            Level1Config.playerStartPosX + 32, 
+            Level1Config.playerStartPosX + 64, 
             Level1Config.playerStartPosY,
             Level1Config.playerSpeed,
             Level1Config.jumpForce,
@@ -34,6 +31,7 @@ const scenes = {
             "a",
             "d",
             "w",
+            1,
             1,
             false
         )
@@ -47,14 +45,16 @@ const scenes = {
             "left",
             "right",
             "up",
+            2,
             1,
             false
         )
 
         player1.update()
         player2.update()
+        
         onUpdate(() => {
-            if (player1.gameObj.pos.y > 700) {
+            if (player1.gameObj.pos.y > 700 || player2.gameObj.pos.y > 700) {
                 player1.respawnPlayers()
                 player2.respawnPlayers()
             }
@@ -65,8 +65,7 @@ const scenes = {
     },
     2: () => {},
     3: () => {},
-    4: () => {},
-    5: () => {}
+    4: () => {}
 };
 
 for (const key in scenes) {

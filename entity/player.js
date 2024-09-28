@@ -1,4 +1,5 @@
 export class Player {
+  isTouchingIce = false
   isMovingLeft = false
   isMovingRight = false
   isRespawning = false
@@ -12,6 +13,7 @@ constructor(
     left,
     right,
     up,
+    id,
     currentLevelScene,
     isInTerminalScene,
   ) {
@@ -25,6 +27,7 @@ constructor(
     this.left = left
     this.right = right
     this.up = up
+    this.id = id
     this.setPlayerControls()
     this.update()
   }
@@ -45,25 +48,33 @@ constructor(
       pos(x, y),
       scale(4),
       body(),
-      "player",
+      "player" + this.id,
     ])
   }
 
   moveLeft(speed) {
     if (this.gameObj.paused) return
     //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
-      this.gameObj.flipX = true
-      if (!this.isRespawning) this.gameObj.move(-speed, 0)
-      this.isMoving = true
+    this.gameObj.flipX = true
+    if (!this.isRespawning) this.gameObj.move(-speed, 0)
+    this.isMoving = true
   }
 
   moveRight(speed) {
     if (this.gameObj.paused) return
     //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
-      this.gameObj.flipX = false
-      if (!this.isRespawning) this.gameObj.move(speed, 0)
-      this.isMoving = true
+    this.gameObj.flipX = false
+    if (!this.isRespawning) this.gameObj.move(speed, 0)
+    this.isMoving = true
   }
+  
+  // iceLeft() {
+    
+  // }
+  
+  // iceRight(acceleration) {
+  //   this.gameObj.move(acceleration-=100, 0)
+  // }
 
   jump() {
     if (this.gameObj.paused) return
@@ -167,9 +178,8 @@ constructor(
   }
 
   update() {
-    if (this.isTouchEnabled())  
       onUpdate(() => {
-        this.touchControls() 
+        if (this.isTouchEnabled())  this.touchControls() 
     })
   }
 }
