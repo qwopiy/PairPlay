@@ -23,8 +23,6 @@ const scenes = {
         level.drawMapLayout(level1Layout, level1Mappings)
 
         const player1 = new Player(
-            Level1Config.playerStartPosX + 64, 
-            Level1Config.playerStartPosY,
             Level1Config.playerSpeed,
             Level1Config.jumpForce,
             Level1Config.nbLives,
@@ -32,32 +30,40 @@ const scenes = {
             "d",
             "w",
             1,
-            1,
             false
         )
         
         const player2 = new Player(
-            Level1Config.playerStartPosX, 
-            Level1Config.playerStartPosY,
             Level1Config.playerSpeed,
             Level1Config.jumpForce,
             Level1Config.nbLives,
             "left",
             "right",
             "up",
-            2,
             1,
             false
         )
 
+        player1.makePlayer(Level1Config.playerStartPosX + 64, Level1Config.playerStartPosY, "player1")
+        player2.makePlayer(Level1Config.playerStartPosX, Level1Config.playerStartPosY, "player2")
+
         player1.update()
         player2.update()
+
+        onCollide("player1", "bouncy", () => {player1.bounce()})
+        onCollide("player2", "bouncy", () => {player2.bounce()})
         
         onUpdate(() => {
             if (player1.gameObj.pos.y > 700 || player2.gameObj.pos.y > 700) {
                 player1.respawnPlayers()
                 player2.respawnPlayers()
             }
+
+            if (!player1.gameObj.isGrounded() && player1.currentY == 0) player1.currentY = player1.gameObj.pos.y
+            else if (player1.gameObj.isGrounded() && player1.currentY != 0) player1.currentY = 0
+
+            if (!player2.gameObj.isGrounded() && player2.currentY == 0) player2.currentY = player2.gameObj.pos.y
+            else if (player2.gameObj.isGrounded() && player2.currentY != 0) player2.currentY = 0
         })
         attachCamera(player1.gameObj, player2.gameObj, 0, 368)
 

@@ -5,29 +5,23 @@ export class Player {
   isRespawning = false
 
 constructor(
-    posX,
-    posY,
     speed,
     jumpForce,
     nbLives,
     left,
     right,
     up,
-    id,
     currentLevelScene,
     isInTerminalScene,
   ) {
     this.isInTerminalScene = isInTerminalScene
     this.currentLevelScene = currentLevelScene
-    this.makePlayer(posX, posY)
     this.speed = speed
     this.jumpForce = jumpForce
     this.lives = nbLives
-    this.previousHeight = this.gameObj.pos.y
     this.left = left
     this.right = right
     this.up = up
-    this.id = id
     this.setPlayerControls()
     this.update()
   }
@@ -38,7 +32,7 @@ constructor(
     ( navigator.msMaxTouchPoints > 0 ))
   }
 
-  makePlayer(x, y) {
+  makePlayer(x, y, id) {
     this.initialX = x
     this.initialY = y
     this.gameObj = add([
@@ -48,7 +42,7 @@ constructor(
       pos(x, y),
       scale(4),
       body(),
-      "player" + this.id,
+      String(id),
     ])
   }
 
@@ -96,6 +90,10 @@ constructor(
       }
   }
 
+  bounce() {
+    this.gameObj.jump(this.jumpForce * 2.5)
+  }
+
   idle() {
     if (this.gameObj.paused) return
     if (isKeyReleased("right") || isKeyReleased("left")) {
@@ -108,6 +106,7 @@ constructor(
     onKeyDown(this.left, () => {this.moveLeft(this.speed)})
     onKeyDown(this.right, () => {this.moveRight(this.speed)})
     onKeyDown(this.up, () => {this.jump()})
+    onKeyDown("space", () => {this.bounce()})
     onKeyRelease(() => {this.idle()})
 
     if (this.isTouchEnabled()) {
@@ -178,8 +177,13 @@ constructor(
   }
 
   update() {
+    this.currentY = 0
       onUpdate(() => {
-        if (this.isTouchEnabled())  this.touchControls() 
+        if (this.isTouchEnabled())  this.touchControls()
+        // if (!this.gameObj.isGrounded && this.currentY == 0) this.currentY = this.gameObj.pos.y
+        // else if (this.gameObj.isGrounded && this.currentY != 0) {
+        //   this.currentY = 0
+        // }
     })
   }
 }
