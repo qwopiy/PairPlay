@@ -52,8 +52,16 @@ const scenes = {
 
         onCollide("player1", "bouncy", () => {player1.bounce()})
         onCollide("player2", "bouncy", () => {player2.bounce()})
+
+        onCollide("player1", "ice", () => {player1.isTouchingIce = true})
+        onCollideEnd("player1", "ice", () => {player1.isTouchingIce = false})
+        onCollide("player2", "ice", () => {player2.isTouchingIce = true})
+        onCollideEnd("player2", "ice", () => {player2.isTouchingIce = false})
         
         onUpdate(() => {
+            player1.move(player1.speed)
+            player2.move(player2.speed)
+
             if (player1.gameObj.pos.y > 700 || player2.gameObj.pos.y > 700) {
                 player1.respawnPlayers()
                 player2.respawnPlayers()

@@ -3,6 +3,8 @@ export class Player {
   isMovingLeft = false
   isMovingRight = false
   isRespawning = false
+  speed = 0
+  coyoteLapse = 0.05
 
 constructor(
     speed,
@@ -16,7 +18,7 @@ constructor(
   ) {
     this.isInTerminalScene = isInTerminalScene
     this.currentLevelScene = currentLevelScene
-    this.speed = speed
+    this.regSpeed = speed
     this.jumpForce = jumpForce
     this.lives = nbLives
     this.left = left
@@ -46,29 +48,14 @@ constructor(
     ])
   }
 
-  moveLeft(speed) {
+  move(speed) {
     if (this.gameObj.paused) return
     //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
-    this.gameObj.flipX = true
-    if (!this.isRespawning) this.gameObj.move(-speed, 0)
-    this.isMoving = true
-  }
-
-  moveRight(speed) {
-    if (this.gameObj.paused) return
-    //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
-    this.gameObj.flipX = false
+    // this.gameObj.flipX = true
+    speed > 0 ? this.gameObj.flipX = false : this.gameObj.flipX = true
     if (!this.isRespawning) this.gameObj.move(speed, 0)
-    this.isMoving = true
+    // this.isMoving = true
   }
-  
-  // iceLeft() {
-    
-  // }
-  
-  // iceRight(acceleration) {
-  //   this.gameObj.move(acceleration-=100, 0)
-  // }
 
   jump() {
     if (this.gameObj.paused) return
@@ -96,18 +83,29 @@ constructor(
 
   idle() {
     if (this.gameObj.paused) return
-    if (isKeyReleased("right") || isKeyReleased("left")) {
-      // this.gameObj.play("idle")
-      this.isMoving = false
-    }
+    // this.gameObj.play("idle")
+    // this.isMoving = false
+    if (!this.isTouchingIce) this.speed = 0
   }
 
   setPlayerControls() {
-    onKeyDown(this.left, () => {this.moveLeft(this.speed)})
-    onKeyDown(this.right, () => {this.moveRight(this.speed)})
+    onKeyDown(this.left, () => {
+      if (!this.isTouchingIce)
+      this.speed = -this.regSpeed
+      else this.speed -= 5
+    })
+    onKeyRelease(this.left, () => {this.idle()})
+
+    // problem gak berenti abes keluar dari ais
+    
+    onKeyDown(this.right, () => {
+      if (!this.isTouchingIce)
+        this.speed = this.regSpeed
+      else this.speed += 5
+    })
+    onKeyRelease(this.right, () => {this.idle()})
     onKeyDown(this.up, () => {this.jump()})
-    onKeyDown("space", () => {this.bounce()})
-    onKeyRelease(() => {this.idle()})
+
 
     if (this.isTouchEnabled()) {
       const leftButton = add([
@@ -162,11 +160,11 @@ constructor(
     })
 
     if (this.isMovingLeft) {
-      this.moveLeft(this.speed/2)
+      this.move(-this.speed/2)
     }
 
     if (this.isMovingRight) {
-      this.moveRight(this.speed/2)
+      this.move(this.speed/2)
     }
   }
 
@@ -177,13 +175,17 @@ constructor(
   }
 
   update() {
-    this.currentY = 0
       onUpdate(() => {
         if (this.isTouchEnabled())  this.touchControls()
-        // if (!this.gameObj.isGrounded && this.currentY == 0) this.currentY = this.gameObj.pos.y
-        // else if (this.gameObj.isGrounded && this.currentY != 0) {
-        //   this.currentY = 0
-        // }
+        
+
+        if (this.gameObj.isGrounded()) {
+          this.hasJumpedOnce = false
+          this.timeSinceLastGrounded = time()
+        }
+  
+        this.heightDelta = this.previousHeight - this.gameObj.pos.y
+        this.previousHeight = this.gameObj.pos.y
     })
   }
 }

@@ -101,7 +101,7 @@ export function generateMappings(tileType) {
         ],
 
         i: () => [
-            area({ shape: new Rect(vec2(0), 16, 16) }), 
+            area({ shape: new Rect(vec2(0), 48, 16) }), 
             body({ isStatic: true }),
             offscreen(),
             "ice"
