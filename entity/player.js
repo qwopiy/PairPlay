@@ -5,6 +5,7 @@ export class Player {
   isRespawning = false
   speed = 0
   coyoteLapse = 0.05
+  hasKey = false
 
 constructor(
     speed,
@@ -95,8 +96,6 @@ constructor(
       else this.speed -= 5
     })
     onKeyRelease(this.left, () => {this.idle()})
-
-    // problem gak berenti abes keluar dari ais
     
     onKeyDown(this.right, () => {
       if (!this.isTouchingIce)

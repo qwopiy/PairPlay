@@ -53,10 +53,18 @@ const scenes = {
         onCollide("player1", "bouncy", () => {player1.bounce()})
         onCollide("player2", "bouncy", () => {player2.bounce()})
 
-        onCollide("player1", "ice", () => {player1.isTouchingIce = true})
-        onCollideEnd("player1", "ice", () => {player1.isTouchingIce = false})
-        onCollide("player2", "ice", () => {player2.isTouchingIce = true})
-        onCollideEnd("player2", "ice", () => {player2.isTouchingIce = false})
+        onCollide("player1", "ice", () => {!player1.isTouchingIce ? (player1.isTouchingIce = true, player1.speed = 0) : null})
+        onCollide("player1", "grass", () => {player1.isTouchingIce ? (player1.isTouchingIce = false, player1.speed = 0) : null})
+        onCollide("player2", "ice", () => {!player2.isTouchingIce ? (player2.isTouchingIce = true, player2.speed = 0) : null})
+        onCollide("player2", "grass", () => {player2.isTouchingIce ? (player2.isTouchingIce = false, player2.speed = 0) : null})
+
+        onKeyDown("space", () => {player1.hasKey = true})
+        player1.gameObj.onCollide("door", (door) => {
+            if (player1.hasKey) {
+                destroy(door)
+                player1.hasKey = false
+            }
+        })
         
         onUpdate(() => {
             player1.move(player1.speed)

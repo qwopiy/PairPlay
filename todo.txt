@@ -1,5 +1,6 @@
-ice         tundaSementara
-bouncy
+ice             siap
+bouncy          siap
+gerbang
 level2
 level3
 level4

@@ -27,4 +27,5 @@ export class Level {
     drawBackground(bgSpriteName) {
         add([sprite(bgSpriteName), fixed(), scale(1)]);
     }   //ini buat bikin background
+
 }
