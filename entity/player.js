@@ -35,7 +35,7 @@ constructor(
     ( navigator.msMaxTouchPoints > 0 ))
   }
 
-  makePlayer(x, y, id) {
+  makePlayer(x, y, id, Scale) {
     this.initialX = x
     this.initialY = y
     this.gameObj = add([
@@ -43,7 +43,7 @@ constructor(
       area({ shape: new Rect(vec2(0, 0), 16, 16) }),
       anchor("center"),
       pos(x, y),
-      scale(4),
+      scale(Scale),
       body(),
       String(id),
     ])

@@ -44,8 +44,8 @@ const scenes = {
             false
         )
 
-        player1.makePlayer(Level1Config.playerStartPosX + 64, Level1Config.playerStartPosY, "player1")
-        player2.makePlayer(Level1Config.playerStartPosX, Level1Config.playerStartPosY, "player2")
+        player1.makePlayer(Level1Config.playerStartPosX + 64, Level1Config.playerStartPosY, "player1", Level1Config.Scale)
+        player2.makePlayer(Level1Config.playerStartPosX, Level1Config.playerStartPosY, "player2", Level1Config.Scale)
 
         player1.update()
         player2.update()

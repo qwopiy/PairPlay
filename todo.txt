@@ -1,6 +1,6 @@
 ice             siap
 bouncy          siap
-gerbang
+gerbang         siap
 level2
 level3
 level4

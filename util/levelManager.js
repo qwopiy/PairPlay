@@ -1,8 +1,10 @@
+import { Level1Config } from "../content/level1/config.js"
+
 export class Level {
     drawWaves(type) {
         let offset = -100
         for (let i = 0; i < 26; i++) {
-          add([sprite(type), pos(offset, 700), scale(4), fixed()])
+          add([sprite(type), pos(offset, 700), scale(Level1Config.Scale), fixed()])
           offset += 64
         }
       } //ini buat bikin lava ikut kamera
@@ -20,7 +22,7 @@ export class Level {
         }
         
         for (const layer of this.map) {
-            layer.use(scale(4));
+            layer.use(scale(Level1Config.Scale));
         }
     }    //ini buat bikin map
 

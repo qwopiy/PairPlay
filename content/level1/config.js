@@ -5,4 +5,5 @@ export const Level1Config = {
     nbLives: 3,
     playerStartPosX: 300,
     playerStartPosY: 500,
+    Scale: 4, 
 }
