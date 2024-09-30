@@ -2,11 +2,12 @@ import kaboom from "./libs/kaboom.mjs"
 import { load } from "./util/loader.js"
 import { UIManager } from "./util/UIManager.js";
 import { Level } from "./util/levelManager.js";
-import { level1Layout } from "./content/level1/Level1Layout.js";
-import { level1Mappings } from "./content/level1/Level1Layout.js";
+import { level1Layout, level1Mappings } from "./content/level1/Level1Layout.js";
+import { level4Layout, level4Mappings } from "./content/level4/level4Layout.js";
 import { attachCamera } from "./util/camera.js";
 import { Player } from "./entity/player.js";
 import { Level1Config } from "./content/level1/config.js";
+import { Level4Config } from "./content/level4/config.js";
 
 kaboom();
 
@@ -20,7 +21,7 @@ const scenes = {
 
         const level = new Level()
         level.drawBackground("menuBackground")
-        level.drawMapLayout(level1Layout, level1Mappings)
+        level.drawMapLayout(level1Layout, level1Mappings, Level1Config.Scale)
 
         const player1 = new Player(
             Level1Config.playerSpeed,
@@ -74,12 +75,6 @@ const scenes = {
                 player1.respawnPlayers()
                 player2.respawnPlayers()
             }
-
-            if (!player1.gameObj.isGrounded() && player1.currentY == 0) player1.currentY = player1.gameObj.pos.y
-            else if (player1.gameObj.isGrounded() && player1.currentY != 0) player1.currentY = 0
-
-            if (!player2.gameObj.isGrounded() && player2.currentY == 0) player2.currentY = player2.gameObj.pos.y
-            else if (player2.gameObj.isGrounded() && player2.currentY != 0) player2.currentY = 0
         })
         attachCamera(player1.gameObj, player2.gameObj, 0, 368)
 
@@ -87,7 +82,52 @@ const scenes = {
     },
     2: () => {},
     3: () => {},
-    4: () => {}
+    4: () => {
+        setGravity(Level4Config.gravity)
+
+        const level = new Level()
+        level.drawBackground("menuBackground")
+        level.drawMapLayout(level4Layout, level4Mappings, Level4Config.Scale)
+
+        const player1 = new Player(
+            Level4Config.playerSpeed,
+            Level4Config.jumpForce,
+            Level4Config.nbLives,
+            "a",
+            "d",
+            "w",
+            1,
+            false
+        )
+        
+        const player2 = new Player(
+            Level4Config.playerSpeed,
+            Level4Config.jumpForce,
+            Level4Config.nbLives,
+            "left",
+            "right",
+            "up",
+            1,
+            false
+        )
+
+        player1.makePlayer(Level4Config.playerStartPosX + 64, Level4Config.playerStartPosY, "player1", Level4Config.Scale)
+        player2.makePlayer(Level4Config.playerStartPosX, Level4Config.playerStartPosY, "player2", Level4Config.Scale)
+
+        player1.update()
+        player2.update()
+
+        onUpdate(() => {
+            player1.move(player1.speed)
+            player2.move(player2.speed)
+
+            // if (player1.gameObj.pos.y > 700 || player2.gameObj.pos.y > 700) {
+            //     player1.respawnPlayers()
+            //     player2.respawnPlayers()
+            // }
+        })
+        attachCamera(player1.gameObj, player2.gameObj, 0, 368)
+    }
 };
 
 for (const key in scenes) {
@@ -95,4 +135,4 @@ for (const key in scenes) {
 };
 
 load.assets();
-go(1);
+go(4);
