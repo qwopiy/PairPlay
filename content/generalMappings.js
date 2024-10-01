@@ -66,16 +66,17 @@ export function generateMappings(tileType) {
 
         x: () => [
             sprite("items", {anim: "spike"}),
-            area(),
+            pos(2, 4),
+            area({ shape: new Rect(vec2(2, 12), 12, 4) }),
             "spike", 
             body({ isStatic: true }),
             offscreen(),
-            scale(1)
+            scale(0.75)
         ],
 
         B: () => [
             sprite("items", {anim: "box"}),
-            area({ shape: new Rect(vec2(0), 8, 8) }),
+            area(),
             "box", 
             body({ isStatic: true }),
             offscreen(),

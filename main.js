@@ -125,11 +125,23 @@ const scenes = {
         player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
             go(2)
         })
-        
+
         player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
             go(2)
         })
         
+        player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+            player1.death++
+        })
+        
+        player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+            player2.death++
+        })
+
         onUpdate(() => {
             if (Level1Config.button1 && Level1Config.button2) {
                 Level1Config.hasKey = true
