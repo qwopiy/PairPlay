@@ -1,5 +1,6 @@
-export function attachCamera(attachedObject, offsetX, fixedY) {
+export function attachCamera(attachedObject1, attachedObject2, offsetX, fixedY) {
     onUpdate(() => {
-        camPos(attachedObject.pos.x + offsetX, fixedY)
+        camPos((attachedObject1.pos.x + attachedObject2.pos.x) / 2 + offsetX, fixedY)
+        camScale(4, 4)
     })
 }

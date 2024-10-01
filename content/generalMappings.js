@@ -11,7 +11,8 @@ export function generateMappings(tileType) {
             sprite(`${tileType}-tileset`, { anim: 'tm' }),
             area(), 
             body({ isStatic: true}), 
-            offscreen()
+            offscreen(),
+            "grass"
         ],
 
         2: () => [
@@ -54,43 +55,86 @@ export function generateMappings(tileType) {
             sprite(`${tileType}-tileset`, { anim: 'br' }),
             offscreen()
         ],
-
-        9: () => [
-            sprite(`${tileType}-tileset`, { anim: "tl" }),
-            area({ shape: new Rect(vec2(0), 16, 3) }),
-            "passthrough",
-            body({ isStatic: true }),
+    
+        k: () => [
+            sprite("items", {anim: "key"}),
+            area(),
             offscreen(),
-        ],
-        a: () => [
-            sprite(`${tileType}-tileset`, { anim: "tm" }),
-            area({ shape: new Rect(vec2(0), 16, 3) }),
-            "passthrough",
-            body({ isStatic: true }),
-            offscreen(),
-        ],
-        b: () => [
-            sprite(`${tileType}-tileset`, { anim: "tr" }),
-            area({ shape: new Rect(vec2(0), 16, 3) }),
-            "passthrough",
-            body({ isStatic: true }),
-            offscreen(),
-        ],
-        _: () => [
-            sprite("plate"),
-            area({ shape: new Rect(vec2(0), 32, 8) }),
-            "button", 
-            offscreen(),
-            scale(0.5)
+            scale(1),
+            "key", 
         ],
 
         x: () => [
-            sprite("spike", {anim: "spike"}),
-            area({ shape: new Rect(vec2(0), 8, 8) }),
+            sprite("items", {anim: "spike"}),
+            area(),
             "spike", 
             body({ isStatic: true }),
             offscreen(),
+            scale(1)
+        ],
+
+        B: () => [
+            sprite("items", {anim: "box"}),
+            area({ shape: new Rect(vec2(0), 8, 8) }),
+            "box", 
+            body({ isStatic: true }),
+            offscreen(),
             scale(2)
-        ]
+        ],
+
+        b: () => [
+            area({ shape: new Rect(vec2(0), 16, 16) }), 
+            body({ isStatic: true }),
+            offscreen(),
+            "bouncy"
+        ],
+
+        i: () => [
+            area({ shape: new Rect(vec2(0), 16, 16) }), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        I: () => [
+            area({ shape: new Rect(vec2(0), 192, 16) }), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        D: () => [
+            area({ shape: new Rect(vec2(0), 16, 48)}),
+            body({ isStatic: true }),
+            offscreen(),
+            "door"
+        ],
+
+        o: () => [
+            sprite("items", {anim: "portal_in"}),
+            area(),
+            offscreen(),
+            "portal_in"
+        ],
+
+        O: () => [
+            sprite("items", {anim: "portal_out"}),
+            area(),
+            offscreen(),
+            "portal_out"
+        ],
+
+        s: () => [
+            sprite("items", {anim: "button_off"}),
+            area({ shape: new Rect(vec2(4, 8), 8, 8)}),
+            offscreen(),
+            "button_off"
+        ],
+
+        F: () => [
+            area({ shape: new Rect(vec2(0), 16, 48)}),
+            offscreen(),
+            "finish"
+        ],
     }
 }

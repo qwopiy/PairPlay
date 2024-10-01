@@ -21,12 +21,23 @@ export const load = {
         
         loadSprite("lava", "assets/red.png")
         loadSprite("plate", "assets/plate.png")
-        loadSprite("spike", "assets/spike.png", {
-            sliceX: 2,
-            sliceY: 2,
+        loadSprite("items", "assets/items.png", {
+            sliceX: 3,
+            sliceY: 3,
             anims: {
-                spike: 2
+                box: 0,
+                portal_in: 3,
+                portal_out: 4,
+                key: 5,
+                spike: 6,
+                
+                button_off: 7,
+                button_on: 8,
             }
         });
+
+        loadSprite("leftButton", "assets/leftButton.png")
+        loadSprite("rightButton", "assets/rightButton.png")
+        loadSprite("jumpButton", "assets/jumpButton.png")
     }
 }

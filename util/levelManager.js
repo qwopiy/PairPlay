@@ -1,13 +1,13 @@
 export class Level {
-    drawWaves(type) {
+    drawWaves(type, Scale) {
         let offset = -100
         for (let i = 0; i < 26; i++) {
-          add([sprite(type), pos(offset, 674), scale(4), fixed()])
+          add([sprite(type), pos(offset, 700), scale(Scale), fixed()])
           offset += 64
         }
       } //ini buat bikin lava ikut kamera
 
-    drawMapLayout(levelLayout, mappings) {
+    drawMapLayout(levelLayout, mappings, Scale) {
         const layerSettings = {
             tileWidth : 16,
             tileHeight : 16, 
@@ -20,11 +20,12 @@ export class Level {
         }
         
         for (const layer of this.map) {
-            layer.use(scale(4));
+            layer.use(scale(Scale));
         }
     }    //ini buat bikin map
 
     drawBackground(bgSpriteName) {
         add([sprite(bgSpriteName), fixed(), scale(1)]);
     }   //ini buat bikin background
+
 }
