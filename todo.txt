@@ -1,9 +1,13 @@
+level1              siap
 ice             siap
 bouncy          siap
 gerbang         siap
-level2
-level3
-level4
+
+level2          otw
 moving obstakle
-portal
 movable boks
+
+level3
+portal
+
+level4          paran

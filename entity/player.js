@@ -5,7 +5,7 @@ export class Player {
   isRespawning = false
   speed = 0
   coyoteLapse = 0.05
-  hasKey = false
+  death = 0
 
 constructor(
     speed,
@@ -40,7 +40,7 @@ constructor(
     this.initialY = y
     this.gameObj = add([
       sprite("player"),
-      area({ shape: new Rect(vec2(0, 0), 16, 16) }),
+      area({ shape: new Rect(vec2(0, 0), 15, 15) }),
       anchor("center"),
       pos(x, y),
       scale(Scale),
@@ -93,14 +93,14 @@ constructor(
     onKeyDown(this.left, () => {
       if (!this.isTouchingIce)
       this.speed = -this.regSpeed
-      else this.speed -= 5
+      else this.speed -= 1
     })
     onKeyRelease(this.left, () => {this.idle()})
     
     onKeyDown(this.right, () => {
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
-      else this.speed += 5
+      else this.speed += 1
     })
     onKeyRelease(this.right, () => {this.idle()})
     onKeyDown(this.up, () => {this.jump()})
@@ -171,6 +171,7 @@ constructor(
     this.gameObj.pos = vec2(this.initialX, this.initialY)
     this.isRespawning = true
     setTimeout(() => this.isRespawning = false, 1000)
+    this.speed = 0
   }
 
   update() {
