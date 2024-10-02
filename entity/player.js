@@ -53,7 +53,6 @@ constructor(
     if (this.gameObj.paused) return
     //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
     // this.gameObj.flipX = true
-    speed > 0 ? this.gameObj.flipX = false : this.gameObj.flipX = true
     if (!this.isRespawning) this.gameObj.move(speed, 0)
     // if (this.CurPlatform().gameObj == "player1" || this.CurPlatform().gameObj == "player2") {
     //   this.speed = speed
@@ -82,7 +81,7 @@ constructor(
   }
 
   bounce() {
-    this.gameObj.jump(this.jumpForce * 2.5)
+    this.gameObj.jump(this.jumpForce * 2)
   }
 
   idle() {
@@ -97,6 +96,7 @@ constructor(
       if (!this.isTouchingIce)
       this.speed = -this.regSpeed
       else this.speed -= 2
+      this.gameObj.flipX = true
     })
     onKeyRelease(this.left, () => {this.idle()})
     
@@ -104,6 +104,7 @@ constructor(
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
       else this.speed += 2
+      this.gameObj.flipX = false
     })
     onKeyRelease(this.right, () => {this.idle()})
     onKeyDown(this.up, () => {this.jump()})

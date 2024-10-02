@@ -92,6 +92,7 @@ export function generateMappings(tileType) {
         ],
 
         i: () => [
+            sprite("lava"),
             area({ shape: new Rect(vec2(0), 16, 16) }), 
             body({ isStatic: true }),
             offscreen(),
@@ -114,7 +115,7 @@ export function generateMappings(tileType) {
 
         o: () => [
             sprite("items", {anim: "portal_in"}),
-            area(),
+            area({ shape: new Rect(vec2(0), 16, 14) }),
             offscreen(),
             "portal_in"
         ],

@@ -1,9 +1,12 @@
 export const Level4Config = {
-    gravity: 1800,
-    playerSpeed: 200,
-    jumpForce: 500,
-    nbLives: 3,
-    playerStartPosX: 800,
-    playerStartPosY: 200,
-    Scale: 2, 
+    button1: false,
+    button2: false,
+
+    Scale: 1,
+    gravity: 700,
+    playerSpeed: 100,
+    jumpForce: 160,
+    playerStartPosX: 24,
+    playerStartPosY: 132,
+    levelZoom: 3, 
 }
