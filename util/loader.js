@@ -2,6 +2,7 @@ export const load = {
     assets: () => {
         loadSprite("player", "assets/player.png");
         loadSprite("menuBackground", "assets/forestBackground.png");
+        loadSprite("background", "assets/background.png");
         loadSprite("logo", "assets/logo.png");
 
         loadSprite("grass-tileset", "assets/grass-tileset.png", {
@@ -20,7 +21,7 @@ export const load = {
         });
         
         loadSprite("lava", "assets/red.png")
-        loadSprite("plate", "assets/plate.png")
+        loadSprite("spikeNaikTurun", "assets/spikeNaikTurun.png")
         loadSprite("items", "assets/items.png", {
             sliceX: 3,
             sliceY: 3,

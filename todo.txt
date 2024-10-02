@@ -4,10 +4,14 @@ bouncy          siap
 gerbang         siap
 
 level2          otw
-moving obstakle
-movable boks
+moving obstakle otw
+movable boks    problem 1 atau 2 sama sama bisa didorong pleyer sendiri
 
 level3
 portal
 
 level4          paran
+
+
+
+move ikut player bawahnya

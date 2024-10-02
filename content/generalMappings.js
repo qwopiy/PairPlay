@@ -77,10 +77,11 @@ export function generateMappings(tileType) {
         B: () => [
             sprite("items", {anim: "box"}),
             area(),
-            "box", 
-            body({ isStatic: true }),
+            body(),
+            anchor("center"),
             offscreen(),
-            scale(2)
+            scale(1),
+            "box", 
         ],
 
         b: () => [
