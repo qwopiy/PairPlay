@@ -44,7 +44,7 @@ constructor(
       anchor("center"),
       pos(x, y),
       scale(Scale),
-      body(),
+      body({ stickToPlatform: true }),
       String(id),
     ])
   }
@@ -55,6 +55,9 @@ constructor(
     // this.gameObj.flipX = true
     speed > 0 ? this.gameObj.flipX = false : this.gameObj.flipX = true
     if (!this.isRespawning) this.gameObj.move(speed, 0)
+    // if (this.CurPlatform().gameObj == "player1" || this.CurPlatform().gameObj == "player2") {
+    //   this.speed = speed
+    // }
     // this.isMoving = true
   }
 
@@ -93,14 +96,14 @@ constructor(
     onKeyDown(this.left, () => {
       if (!this.isTouchingIce)
       this.speed = -this.regSpeed
-      else this.speed -= 1
+      else this.speed -= 2
     })
     onKeyRelease(this.left, () => {this.idle()})
     
     onKeyDown(this.right, () => {
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
-      else this.speed += 1
+      else this.speed += 2
     })
     onKeyRelease(this.right, () => {this.idle()})
     onKeyDown(this.up, () => {this.jump()})
