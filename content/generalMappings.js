@@ -56,7 +56,7 @@ export function generateMappings(tileType) {
             offscreen()
         ],
     
-        k: () => [
+        K: () => [
             sprite("items", {anim: "key"}),
             area(),
             offscreen(),
@@ -91,9 +91,74 @@ export function generateMappings(tileType) {
             "bouncy"
         ],
 
+        //ice
         i: () => [
-            sprite("lava"),
-            area({ shape: new Rect(vec2(0), 16, 16) }), 
+            sprite("ice", {anim: "fl"}),
+            area(), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        o: () => [
+            sprite("ice", {anim: "fm"}),
+            area(), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        p: () => [
+            sprite("ice", {anim: "fr"}),
+            area(), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        j: () => [
+            sprite("ice", {anim: "gl"}),
+            area(), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        k: () => [
+            sprite("ice", {anim: "gm"}),
+            area(), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        l: () => [
+            sprite("ice", {anim: "gr"}),
+            area(), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        g: () => [
+            sprite("ice", {anim: "gs"}),
+            area(), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        f: () => [
+            sprite("ice", {anim: "fs"}),
+            area(), 
+            body({ isStatic: true }),
+            offscreen(),
+            "ice"
+        ],
+
+        p: () => [
+            sprite("ice", {anim: "iceGround"}),
+            area(), 
             body({ isStatic: true }),
             offscreen(),
             "ice"
@@ -105,6 +170,8 @@ export function generateMappings(tileType) {
             offscreen(),
             "ice"
         ],
+        // ice end
+
 
         D: () => [
             area({ shape: new Rect(vec2(0), 16, 48)}),
@@ -113,19 +180,19 @@ export function generateMappings(tileType) {
             "door"
         ],
 
-        o: () => [
-            sprite("items", {anim: "portal_in"}),
-            area({ shape: new Rect(vec2(0), 16, 14) }),
-            offscreen(),
-            "portal_in"
-        ],
+        // o: () => [
+        //     sprite("items", {anim: "portal_in"}),
+        //     area({ shape: new Rect(vec2(0), 16, 14) }),
+        //     offscreen(),
+        //     "portal_in"
+        // ],
 
-        O: () => [
-            sprite("items", {anim: "portal_out"}),
-            area(),
-            offscreen(),
-            "portal_out"
-        ],
+        // O: () => [
+        //     sprite("items", {anim: "portal_out"}),
+        //     area(),
+        //     offscreen(),
+        //     "portal_out"
+        // ],
 
         s: () => [
             sprite("items", {anim: "button_off"}),

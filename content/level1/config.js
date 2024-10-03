@@ -3,6 +3,8 @@ export const Level1Config = {
     button1: false,
     button2: false,
     
+    win1: false,
+    win2: false,
     Scale: 1, 
     gravity: 700,
     playerSpeed: 100,

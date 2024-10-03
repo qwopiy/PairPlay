@@ -107,7 +107,11 @@ const scenes = {
         buttonPressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
         buttonUnpressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
 
-        onKeyDown("space", () => {Level1Config.hasKey = true})
+        onKeyDown("space", () => {
+            player1.gameObj.move(0, -1000)
+            player2.gameObj.move(0, -1000)
+        })
+
 
         player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
             destroy(key)
@@ -134,11 +138,11 @@ const scenes = {
         })
 
         player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
-            go(2)
+            Level1Config.win1 = true
         })
 
         player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
-            go(2)
+            Level1Config.win2 = true
         })
         
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
@@ -170,6 +174,10 @@ const scenes = {
                 player1.respawnPlayers()
                 player2.respawnPlayers()
                 player2.death++
+            }
+
+            if (Level1Config.win1 && Level1Config.win2) {
+                go(2)
             }
             console.log(player1.death, player2.death)
         })
@@ -250,11 +258,11 @@ const scenes = {
         })
 
         player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
-            go(3)
+            Level2Config.win1 = true
         })
 
         player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
-            go(3)
+            Level2Config.win2 = true
         })
 
         onCollide("player1", "bouncy", () => {player1.bounce()})
@@ -274,6 +282,10 @@ const scenes = {
                 player1.respawnPlayers()
                 player2.respawnPlayers()
                 player2.death++
+            }
+
+            if (Level2Config.win1 && Level2Config.win2) {
+                go(3)
             }
         })
 
@@ -376,11 +388,11 @@ const scenes = {
         })
 
         player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
-            go(4)
+            Level3Config.win1 = true
         })
 
         player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
-            go(4)
+            Level3Config.win2 = true
         })
 
         onUpdate(() => {
@@ -389,6 +401,10 @@ const scenes = {
 
             if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4) {
                 Level3Config.hasKey = true
+            }
+
+            if (Level3Config.win1 && Level3Config.win2) {
+                go(4)
             }
             // console.log(box2.vel)
         })
@@ -552,11 +568,11 @@ const scenes = {
         })
 
         player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
-            go(menu)
+            Level4Config.win1 = true
         })
 
         player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
-            go(menu)
+            Level4Config.win2 = true
         })
         
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
@@ -581,6 +597,10 @@ const scenes = {
             if (Level4Config.button1 || Level4Config.button2) {
                 Level4Config.hasKey = true
             }
+
+            if (Level4Config.win1 && Level4Config.win2) {
+                go(5)
+            }
         })
         attachCamera(player1.gameObj, player2.gameObj, 0, 116, Level4Config.levelZoom)
     }
@@ -591,4 +611,4 @@ for (const key in scenes) {
 };
 
 load.assets();
-go(4);
+go(3);

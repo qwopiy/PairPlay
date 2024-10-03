@@ -40,5 +40,23 @@ export const load = {
         loadSprite("leftButton", "assets/leftButton.png")
         loadSprite("rightButton", "assets/rightButton.png")
         loadSprite("jumpButton", "assets/jumpButton.png")
+        loadSprite("ice", "assets/ice.png",{
+            sliceX: 3,
+            sliceY: 3,
+            anims: {
+                fl: 0,      //float left
+                fm: 1,
+                fr: 2,
+
+                gl: 3,      //ground left
+                gm: 4,
+                gr: 5,
+
+                iceGround: 6,
+
+                gs: 7,      //ground single
+                fs: 8,      //float single
+            }
+        });
     }
 }

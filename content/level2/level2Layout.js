@@ -5,9 +5,9 @@ export const level2Mappings = generateMappings("grass")
 export const level2Layout = [
     [ 
         "                                                                  ",
-        "                  k         D                                     ",
+        "                  K         D                                     ",
         "                                                                F ",
-        "  kx                                                              ",
+        "  Kx                                                              ",
         " 111                111111111                                     ",
         "           D        444444444                                1111 ",
         "                 b  444444444                                4444 ",

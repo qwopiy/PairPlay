@@ -2,16 +2,13 @@ level1              siap
 ice             siap
 bouncy          siap
 gerbang         siap
-
-level2          otw
-moving obstakle otw
-movable boks    problem 1 atau 2 sama sama bisa didorong pleyer sendiri
-
-level3
-portal
-
-level4          paran
+level2          siap
 
 
+level3          siap
+movable boks    siap
 
-move ikut player bawahnya
+level4          siap
+portal          siap
+
+finish harus dua dua nyampe
