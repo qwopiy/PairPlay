@@ -1,0 +1,72 @@
+#profile {
+  background-image: url("assets/FrontPage/dungeon2.png");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  /* height: 10000px; */
+}
+
+#edit {
+  background-color: #503a65;
+}
+
+.all {
+  background-color: #503a65;
+  color: #e0f0ea;
+  opacity: 90%;
+}
+
+.hiro {
+  background-color: rgb(132, 234, 171);
+}
+
+.sektion {
+  background-color: rgb(119, 133, 241);
+}
+
+section {
+  padding-top: 3rem;
+}
+
+#death-achievment {
+  background-color: #574f7d;
+  border-radius: 2rem;
+  margin-top: 0%;
+}
+
+.achievment {
+  background-color: #574f7d;
+  border-radius: 2rem;
+}
+
+.heading {
+  color: #e0f0ea;
+  /* border-radius: 1rem;
+    width: 30%; */
+}
+
+.edit_profile {
+  background-color: #574f7d;
+  height: auto;
+  margin-bottom: 0%;
+  padding-bottom: 0%;
+}
+
+.edit_achievment {
+  background-color: #95adbe;
+  color: #3c2a4d;
+}
+
+input[type="text"],
+textarea {
+  background-color: #95adbe;
+  color: #3c2a4d;
+}
+
+/* .Progress_test{
+  left: 5%;
+} */
+
+.achievment-dropdown{
+  cursor: pointer;
+}
