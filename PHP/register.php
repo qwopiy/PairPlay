@@ -75,7 +75,7 @@ if (isset($_POST["submit"])) {
             <div class="mb-3">
                 <label for="InputEmail" class="form-label">Email address</label>
                 <input type="email" class="form-control" id="InputEmail" name="email" aria-describedby="emailHelp" placeholder="xxx.@gmail.com" required>
-                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                <div id="emailHelp" class="form-text"></div>
             </div>
             <div class="password-container mb-3">
                 <label for="password" class="form-label">Password</label>
