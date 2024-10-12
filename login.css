@@ -1,5 +1,5 @@
 body{
-    background-image: url("gate.png");
+    background-image: url(/assets/FrontPage/dungeon2.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -30,13 +30,13 @@ body{
 }
 .account-container {
     display: flex;
-    justify-content: flex-end; /* Untuk menyelaraskan konten ke kanan */
+    justify-content: flex-end; 
 }
 .account-container img {
     border-radius: 50%;
     background-color: white;
-    width: 40px; /* Atur ukuran gambar avatar */
-    height: 40px; /* Atur ukuran gambar avatar */
+    width: 40px; 
+    height: 40px;
 }
 .gambar{
     margin-right: 5px;
@@ -55,6 +55,10 @@ body{
     background-color: #728a9d; 
     color: white; 
 }
+a {  
+    text-decoration: none;   
+    color: inherit;   
+}  
 
 
 
