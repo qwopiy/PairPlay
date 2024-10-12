@@ -1,9 +1,9 @@
 let nameEdit = document.getElementById("name-edit");
 let bioEdit = document.getElementById("bio-edit");
-let btnSave = document.getElementById("btn-save");
+const btnSave = document.getElementById("btn-save");
 let imageEdit = document.getElementById("image-edit");
 let profileEdit = document.getElementById("profile-edit");
-let achievmentDropdown = [
+const achievmentDropdown = [
   document.getElementById("achievment-dropdown1"),
   document.getElementById("achievment-dropdown2"),
   document.getElementById("achievment-dropdown3"),

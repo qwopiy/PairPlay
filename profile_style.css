@@ -6,6 +6,15 @@
   /* height: 10000px; */
 }
 
+/* @font-face {
+  font-family: Pixel-Font;
+  src: url(assets/FrontPage/4x4kanafont.ttf);
+}
+
+.Pixel-Font{
+  font-family: Pixel-Font;
+} */
+
 #edit {
   background-color: #503a65;
 }
