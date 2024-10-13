@@ -13,7 +13,9 @@ import { Level2Config } from "./content/level2/config.js";
 import { Level3Config } from "./content/level3/config.js";
 import { Level4Config } from "./content/level4/config.js";
 
-kaboom();
+kaboom({
+    canvas: document.getElementById("game"),
+});
 
 function buttonPressed(object, config, Button, Scale) {
     object.onCollide("button_off", (button) => {
@@ -611,4 +613,4 @@ for (const key in scenes) {
 };
 
 load.assets();
-go(3);
+go(1);

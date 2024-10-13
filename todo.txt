@@ -11,4 +11,11 @@ movable boks    siap
 level4          siap
 portal          siap
 
-finish harus dua dua nyampe
+finish harus dua dua nyampe     siap
+
+achievement
+easter egg
+export js ke php
+node.js multiplayer
+socket.io
+websocket
