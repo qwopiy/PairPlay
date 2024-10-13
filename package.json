@@ -1,8 +1,9 @@
 {
   "name": "pairplay",
   "version": "1.0.0",
+  "type": "module",
   "description": "multiplayer web game",
-  "main": "main.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

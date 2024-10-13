@@ -1,4 +1,4 @@
-import kaboom from "./libs/kaboom.mjs"
+import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs";
 import { load } from "./util/loader.js"
 import { UIManager } from "./util/UIManager.js";
 import { Level } from "./util/levelManager.js";
@@ -7,11 +7,13 @@ import { level2Layout, level2Mappings } from "./content/level2/level2Layout.js";
 import { level3Layout, level3Mappings } from "./content/level3/level3Layout.js";
 import { level4Layout, level4Mappings } from "./content/level4/level4Layout.js";
 import { attachCamera } from "./util/camera.js";
-import { Player } from "./entity/player.js";
+import { Player } from "../../entity/player.js";
 import { Level1Config } from "./content/level1/config.js";
 import { Level2Config } from "./content/level2/config.js";
 import { Level3Config } from "./content/level3/config.js";
 import { Level4Config } from "./content/level4/config.js";
+
+// const socket = io();
 
 kaboom({
     canvas: document.getElementById("game"),
