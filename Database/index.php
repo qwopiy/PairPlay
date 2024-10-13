@@ -1,10 +1,10 @@
-<<<<<<< Updated upstream
-<html>
-    <body>
-        <script type="module" src="main.js"></script>
-    </body>
-</html>
-=======
+<?php
+session_start();
+if (!isset($_SESSION["user"])) {
+   header("Location: Login.php");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +18,7 @@
     <div class="account-container">
         <div class="d-flex justify-content-end">
             <div class="guest-container">
-                <a href="email.html">
+                <a href="Login.php">
                     <img src="/assets/FrontPage/guest image.svg" alt="User Avatar" class="gambar">
                     <button class="btn btn-light ">Guest</button>
                 </a>
@@ -38,8 +38,8 @@
                             <a href="selection.html" class="btn btn-login">
                               Play
                             </a>
-                            <a href="Login.html" class="btn btn-login">
-                              login
+                            <a href="Logout.php" class="btn btn-login">
+                              logout
                             </a>
                         </div>
                 </form>
@@ -50,4 +50,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"   integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
->>>>>>> Stashed changes
