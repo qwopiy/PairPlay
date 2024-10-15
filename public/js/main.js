@@ -1,4 +1,4 @@
-import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs";
+import kaboom from "https://unpkg.com/kaboom@3000.1.17/dist/kaboom.mjs";
 import { load } from "./util/loader.js"
 import { UIManager } from "./util/UIManager.js";
 import { Level } from "./util/levelManager.js";
@@ -7,13 +7,13 @@ import { level2Layout, level2Mappings } from "./content/level2/level2Layout.js";
 import { level3Layout, level3Mappings } from "./content/level3/level3Layout.js";
 import { level4Layout, level4Mappings } from "./content/level4/level4Layout.js";
 import { attachCamera } from "./util/camera.js";
-import { Player } from "../../entity/player.js";
+import { Player } from "./entity/player.js";
 import { Level1Config } from "./content/level1/config.js";
 import { Level2Config } from "./content/level2/config.js";
 import { Level3Config } from "./content/level3/config.js";
 import { Level4Config } from "./content/level4/config.js";
 
-// const socket = io();
+const socket = io();
 
 kaboom({
     canvas: document.getElementById("game"),
@@ -69,123 +69,204 @@ const scenes = {
         level.drawBackground("menuBackground")
         level.drawMapLayout(level1Layout, level1Mappings, Level1Config.Scale)
 
-        const player1 = new Player(
-            Level1Config.playerSpeed,
-            Level1Config.jumpForce,
-            Level1Config.nbLives,
-            "a",
-            "d",
-            "w",
-            1,
-            false
-        )
+        const frontEndPlayers = {}
         
-        const player2 = new Player(
-            Level1Config.playerSpeed,
-            Level1Config.jumpForce,
-            Level1Config.nbLives,
-            "left",
-            "right",
-            "up",
-            1,
-            false
-        )
+        socket.emit('moveSpeed', Level1Config.playerSpeed)
+        
+        socket.on('updatePlayers', (backEndPlayers) => {
+            for (const id in backEndPlayers) {
+                const backEndPlayer = backEndPlayers[id]
+                
+                if (!frontEndPlayers[id]) {
+                    frontEndPlayers[id] = new Player(
+                        Level1Config.playerSpeed,
+                        Level1Config.jumpForce,
+                        Level1Config.nbLives,
+                        "a",
+                        "d",
+                        "w",
+                        1,
+                        false
+                    )
+                    frontEndPlayers[id].makePlayer(Level1Config.playerStartPosX + 16, Level1Config.playerStartPosY, id, Level1Config.Scale)
+                    frontEndPlayers[id].update();
+                    console.log(frontEndPlayers);
+                } else {
+                    frontEndPlayers[id].isMovingLeft = backEndPlayer.isMovingLeft;
+                    frontEndPlayers[id].isMovingRight = backEndPlayer.isMovingRight;
+                    frontEndPlayers[id].isJumping = backEndPlayer.isJumping;
 
-        player1.makePlayer(Level1Config.playerStartPosX + 16, Level1Config.playerStartPosY, "player1", Level1Config.Scale)
-        player2.makePlayer(Level1Config.playerStartPosX, Level1Config.playerStartPosY, "player2", Level1Config.Scale)
-
-        player1.update()
-        player2.update()
-
-        onCollide("player1", "bouncy", () => {player1.bounce()})
-        onCollide("player2", "bouncy", () => {player2.bounce()})
-
-        onCollide("player1", "ice", () => {!player1.isTouchingIce ? (player1.isTouchingIce = true, player1.speed = 0) : null})
-        onCollide("player1", "grass", () => {player1.isTouchingIce ? (player1.isTouchingIce = false, player1.speed = 0) : null})
-        onCollide("player2", "ice", () => {!player2.isTouchingIce ? (player2.isTouchingIce = true, player2.speed = 0) : null})
-        onCollide("player2", "grass", () => {player2.isTouchingIce ? (player2.isTouchingIce = false, player2.speed = 0) : null})
-
-        buttonPressed(player1.gameObj, "Level1Config","button1", Level1Config.Scale)
-        buttonUnpressed(player1.gameObj, "Level1Config", "button1", Level1Config.Scale)
-
-        buttonPressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
-        buttonUnpressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
-
-        onKeyDown("space", () => {
-            player1.gameObj.move(0, -1000)
-            player2.gameObj.move(0, -1000)
-        })
-
-
-        player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
-            destroy(key)
-            Level1Config.hasKey = true
-        })
-
-        player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
-            destroy(key)
-            Level1Config.hasKey = true
-        })
-
-        player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
-            if (Level1Config.hasKey) {
-                destroy(door)
-                Level1Config.hasKey = false
+                    // frontEndPlayers[id].gameObj.pos.x = backEndPlayer.pos.x;
+                    // frontEndPlayers[id].gameObj.pos.y = backEndPlayer.pos.y;
+                }
             }
         })
-
-        player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
-            if (Level1Config.hasKey) {
-                destroy(door)
-                Level1Config.hasKey = false
-            }
+        
+        socket.on('disconnected', (id) => {
+            destroy(frontEndPlayers[id].gameObj)
+            delete frontEndPlayers[id]
         })
 
-        player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
-            Level1Config.win1 = true
-        })
-
-        player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
-            Level1Config.win2 = true
+        onKeyDown("w", () => {
+            frontEndPlayers[socket.id].jump()
+            socket.emit('keyPress', 'w')
         })
         
-        player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
-            player1.respawnPlayers()
-            player2.respawnPlayers()
-            player1.death++
+        onKeyRelease("w", () => {
+            frontEndPlayers[socket.id].isJumping = false
+            socket.emit('keyRelease', 'w')
+        })
+
+        onKeyDown("a", () => {
+            frontEndPlayers[socket.id].isMovingLeft = true
+            socket.emit('keyPress', 'a')
+        })
+        onKeyRelease("a", () => {
+            frontEndPlayers[socket.id].isMovingLeft = false
+            socket.emit('keyRelease', 'a')
         })
         
-        player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
-            player1.respawnPlayers()
-            player2.respawnPlayers()
-            player2.death++
+        onKeyPress("d", () => {
+            frontEndPlayers[socket.id].isMovingRight = true
+            socket.emit('keyPress', 'd')
+        })
+        onKeyRelease("d", () => {
+            frontEndPlayers[socket.id].isMovingRight = false
+            socket.emit('keyRelease', 'd')
         })
 
         onUpdate(() => {
-            if (Level1Config.button1 && Level1Config.button2) {
-                Level1Config.hasKey = true
-            }
-            player1.move(player1.speed)
-            player2.move(player2.speed)
             
-            if (player1.gameObj.pos.y > 400) {
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                player1.death++
-            }
-            
-            if (player2.gameObj.pos.y > 400) {
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                player2.death++
-            }
-
-            if (Level1Config.win1 && Level1Config.win2) {
-                go(2)
-            }
-            console.log(player1.death, player2.death)
         })
-        attachCamera(player1.gameObj, player2.gameObj, 0, 84, Level1Config.levelZoom)
+
+        setInterval(() => {
+            for (const id in frontEndPlayers) {
+                const player = frontEndPlayers[id]
+                player.Move(player.speed)
+                console.log(player.gameObj.pos)
+                if (player.isJumping) 
+                    player.jump()
+                // socket.emit('update', player.gameObj.pos)
+            }
+        }, 15)
+
+        // const player1 = new Player(
+        //     Level1Config.playerSpeed,
+        //     Level1Config.jumpForce,
+        //     Level1Config.nbLives,
+        //     "a",
+        //     "d",
+        //     "w",
+        //     1,
+        //     false
+        // )
+        
+        // const player2 = new Player(
+        //     Level1Config.playerSpeed,
+        //     Level1Config.jumpForce,
+        //     Level1Config.nbLives,
+        //     "left",
+        //     "right",
+        //     "up",
+        //     1,
+        //     false
+        // )
+
+        // player1.makePlayer(Level1Config.playerStartPosX + 16, Level1Config.playerStartPosY, "player1", Level1Config.Scale)
+        // player2.makePlayer(Level1Config.playerStartPosX, Level1Config.playerStartPosY, "player2", Level1Config.Scale)
+
+        // player1.update()
+        // player2.update()
+
+        // onCollide("player1", "bouncy", () => {player1.bounce()})
+        // onCollide("player2", "bouncy", () => {player2.bounce()})
+
+        // onCollide("player1", "ice", () => {!player1.isTouchingIce ? (player1.isTouchingIce = true, player1.speed = 0) : null})
+        // onCollide("player1", "grass", () => {player1.isTouchingIce ? (player1.isTouchingIce = false, player1.speed = 0) : null})
+        // onCollide("player2", "ice", () => {!player2.isTouchingIce ? (player2.isTouchingIce = true, player2.speed = 0) : null})
+        // onCollide("player2", "grass", () => {player2.isTouchingIce ? (player2.isTouchingIce = false, player2.speed = 0) : null})
+
+        // buttonPressed(player1.gameObj, "Level1Config","button1", Level1Config.Scale)
+        // buttonUnpressed(player1.gameObj, "Level1Config", "button1", Level1Config.Scale)
+
+        // buttonPressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
+        // buttonUnpressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
+
+        // onKeyDown("space", () => {
+        //     player1.gameObj.Move(0, -1000)
+        //     player2.gameObj.Move(0, -1000)
+        // })
+
+
+        // player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
+        //     destroy(key)
+        //     Level1Config.hasKey = true
+        // })
+
+        // player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+        //     destroy(key)
+        //     Level1Config.hasKey = true
+        // })
+
+        // player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
+        //     if (Level1Config.hasKey) {
+        //         destroy(door)
+        //         Level1Config.hasKey = false
+        //     }
+        // })
+
+        // player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
+        //     if (Level1Config.hasKey) {
+        //         destroy(door)
+        //         Level1Config.hasKey = false
+        //     }
+        // })
+
+        // player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
+        //     Level1Config.win1 = true
+        // })
+
+        // player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
+        //     Level1Config.win2 = true
+        // })
+        
+        // player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+        //     player1.respawnPlayers()
+        //     player2.respawnPlayers()
+        //     player1.death++
+        // })
+        
+        // player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+        //     player1.respawnPlayers()
+        //     player2.respawnPlayers()
+        //     player2.death++
+        // })
+
+        // onUpdate(() => {
+        //     if (Level1Config.button1 && Level1Config.button2) {
+        //         Level1Config.hasKey = true
+        //     }
+        //     player1.Move(player1.speed)
+        //     player2.Move(player2.speed)
+            
+        //     if (player1.gameObj.pos.y > 400) {
+        //         player1.respawnPlayers()
+        //         player2.respawnPlayers()
+        //         player1.death++
+        //     }
+            
+        //     if (player2.gameObj.pos.y > 400) {
+        //         player1.respawnPlayers()
+        //         player2.respawnPlayers()
+        //         player2.death++
+        //     }
+
+        //     if (Level1Config.win1 && Level1Config.win2) {
+        //         go(2)
+        //     }
+        //     console.log(player1.death, player2.death)
+        // })
+        // attachCamera(player1.gameObj, player2.gameObj, 0, 84, Level1Config.levelZoom)
         
         // level.drawWaves("lava")
     },
@@ -273,8 +354,8 @@ const scenes = {
         onCollide("player2", "bouncy", () => {player2.bounce()})
 
         onUpdate(() => {
-            player1.move(player1.speed)
-            player2.move(player2.speed)
+            player1.Move(player1.speed)
+            player2.Move(player2.speed)
 
             if (player1.gameObj.pos.y > 300) {
                 player1.respawnPlayers()
@@ -400,8 +481,8 @@ const scenes = {
         })
 
         onUpdate(() => {
-            player1.move(player1.speed)
-            player2.move(player2.speed)
+            player1.Move(player1.speed)
+            player2.Move(player2.speed)
 
             if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4) {
                 Level3Config.hasKey = true
@@ -595,8 +676,8 @@ const scenes = {
         buttonPressed(player2.gameObj, "Level4Config", "button2", Level4Config.Scale)
 
         onUpdate(() => {
-            player1.move(player1.speed)
-            player2.move(player2.speed)
+            player1.Move(player1.speed)
+            player2.Move(player2.speed)
 
             if (Level4Config.button1 || Level4Config.button2) {
                 Level4Config.hasKey = true

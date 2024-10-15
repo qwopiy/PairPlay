@@ -16,6 +16,6 @@ finish harus dua dua nyampe     siap
 achievement
 easter egg
 export js ke php
-node.js multiplayer
+node.js multiplayer             problem: seperate movement.
 socket.io
 websocket
