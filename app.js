@@ -30,7 +30,8 @@ io.on('connection', (socket) => {
       y: config.y, 
       isMovingLeft: false, 
       isMovingRight: false,
-      isJumping: false
+      isJumping: false,
+      death: 0,
     };
     currentPlayers++;
   }
@@ -80,6 +81,20 @@ io.on('connection', (socket) => {
     backEndPlayers[socket.id].x = pos.x;
     backEndPlayers[socket.id].y = pos.y;
     io.emit('updateLocation', {x: backEndPlayers[socket.id].x, y: backEndPlayers[socket.id].y}, socket.id)
+  })
+
+  socket.on('respawning', () => {
+    for (const id in backEndPlayers) {
+      backEndPlayers[id].x = config.x;
+      backEndPlayers[id].y = config.y;
+    };
+
+    backEndPlayers[socket.id].death++;
+    io.emit('respawn');
+
+    for (const id in backEndPlayers) {
+      console.log(id + ': ' + backEndPlayers[id].death);
+    }
   })
 });
 

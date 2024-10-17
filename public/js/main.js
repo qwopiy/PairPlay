@@ -90,6 +90,11 @@ const scenes = {
                     )
                     frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, id, Level1Config.Scale)
                     frontEndPlayers[id].update();
+
+                    frontEndPlayers[socket.id].gameObj.onCollide("spike", () => {
+                        socket.emit('respawning')
+                    })
+
                     console.log(frontEndPlayers);
                 } else {
                     frontEndPlayers[id].isMovingLeft = backEndPlayer.isMovingLeft;
@@ -137,6 +142,12 @@ const scenes = {
             socket.emit('keyRelease', 'd')
         })
 
+        socket.on('respawn', () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].respawnPlayers()
+            }
+        })
+
         const camX = {}
         onUpdate(() => {
             for (const id in frontEndPlayers){
@@ -165,8 +176,6 @@ const scenes = {
         setInterval(() => {
             socket.emit('update', frontEndPlayers[socket.id].gameObj.pos)
         }, 1000)
-
-        
 
         // const player1 = new Player(
         //     Level1Config.playerSpeed,
