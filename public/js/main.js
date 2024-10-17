@@ -88,18 +88,20 @@ const scenes = {
                         1,
                         false
                     )
-                    frontEndPlayers[id].makePlayer(Level1Config.playerStartPosX + 16, Level1Config.playerStartPosY, id, Level1Config.Scale)
+                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, id, Level1Config.Scale)
                     frontEndPlayers[id].update();
                     console.log(frontEndPlayers);
                 } else {
                     frontEndPlayers[id].isMovingLeft = backEndPlayer.isMovingLeft;
                     frontEndPlayers[id].isMovingRight = backEndPlayer.isMovingRight;
                     frontEndPlayers[id].isJumping = backEndPlayer.isJumping;
-
-                    // frontEndPlayers[id].gameObj.pos.x = backEndPlayer.pos.x;
-                    // frontEndPlayers[id].gameObj.pos.y = backEndPlayer.pos.y;
                 }
             }
+        })
+
+        socket.on('updateLocation', (pos, id) => {
+            frontEndPlayers[id].gameObj.pos.x = pos.x;
+            frontEndPlayers[id].gameObj.pos.y = pos.y;
         })
         
         socket.on('disconnected', (id) => {
@@ -149,6 +151,10 @@ const scenes = {
                 // socket.emit('update', player.gameObj.pos)
             }
         }, 15)
+
+        setInterval(() => {
+            socket.emit('update', frontEndPlayers[socket.id].gameObj.pos)
+        }, 1000)
 
         // const player1 = new Player(
         //     Level1Config.playerSpeed,

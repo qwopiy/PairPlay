@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
   console.log('a user connected');
   if (currentPlayers < maxPlayers) {
     backEndPlayers[socket.id] = {
-      x: config.x,
+      x: config.x + (currentPlayers * 16),
       y: config.y, 
       isMovingLeft: false, 
       isMovingRight: false,
@@ -48,32 +48,39 @@ io.on('connection', (socket) => {
   })
 
   socket.on('keyPress', (key) => {
-    console.log(key);
-    if (key === 'w') {
-      backEndPlayers[socket.id].isJumping = true;
-    } else if (key === 'a') {
-      backEndPlayers[socket.id].isMovingLeft = true;
-    } else if (key === 'd') {
-      backEndPlayers[socket.id].isMovingRight = true;
+    switch (key) {
+      case 'w':
+        backEndPlayers[socket.id].isJumping = true;
+        break;
+      case 'a':
+        backEndPlayers[socket.id].isMovingLeft = true;
+        break;
+      case 'd':
+        backEndPlayers[socket.id].isMovingRight = true;
+        break;
     }
   })
 
   socket.on('keyRelease', (key) => {
-    console.log(key);
-    if (key === 'w') {
-      backEndPlayers[socket.id].isJumping = false;
-    } else if (key === 'a') {
-      backEndPlayers[socket.id].isMovingLeft = false;
-    } else if (key === 'd') {
-      backEndPlayers[socket.id].isMovingRight = false;
+    switch (key) {
+      case 'w':
+        backEndPlayers[socket.id].isJumping = false;
+        break;
+      case 'a':
+        backEndPlayers[socket.id].isMovingLeft = false;
+        break;
+      case 'd':
+        backEndPlayers[socket.id].isMovingRight = false;
+        break;
     }
   })
 
-  // socket.on('update', (pos) => {
-  //   // console.log(pos.x, backEndPlayers[socket.id].x);
-  //   backEndPlayers[socket.id].x = pos.x;
-  //   backEndPlayers[socket.id].y = pos.y;
-  // })
+  socket.on('update', (pos) => {
+    // console.log(pos.x, backEndPlayers[socket.id].x);
+    backEndPlayers[socket.id].x = pos.x;
+    backEndPlayers[socket.id].y = pos.y;
+    io.emit('updateLocation', {x: backEndPlayers[socket.id].x, y: backEndPlayers[socket.id].y}, socket.id)
+  })
 });
 
 setInterval(() => {
