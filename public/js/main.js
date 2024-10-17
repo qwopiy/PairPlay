@@ -137,15 +137,25 @@ const scenes = {
             socket.emit('keyRelease', 'd')
         })
 
+        const camX = {}
         onUpdate(() => {
-            
+            for (const id in frontEndPlayers){
+                camX[id] = frontEndPlayers[id].gameObj.pos.x
+            }
+
+            let sum = 0;
+            for (const id in camX) {
+                sum += camX[id]
+            }
+            camPos(sum / 2, 84)
+            camScale(2, 2)
         })
 
         setInterval(() => {
             for (const id in frontEndPlayers) {
                 const player = frontEndPlayers[id]
                 player.Move(player.speed)
-                console.log(player.gameObj.pos)
+                // console.log(player.gameObj.pos)
                 if (player.isJumping) 
                     player.jump()
                 // socket.emit('update', player.gameObj.pos)
@@ -155,6 +165,8 @@ const scenes = {
         setInterval(() => {
             socket.emit('update', frontEndPlayers[socket.id].gameObj.pos)
         }, 1000)
+
+        
 
         // const player1 = new Player(
         //     Level1Config.playerSpeed,
