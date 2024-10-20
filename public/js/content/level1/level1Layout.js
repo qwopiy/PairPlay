@@ -9,7 +9,7 @@ export const level1Layout = [
         "                                      x   x   x                                               ",
         "                       s s          011111111111112                                           ",
         "                       111111111                                               D              ",
-        " K         D        1  444444444                             D    K                           ",
+        " K        FD        1  444444444                             D    K                           ",
         "02               1  4  444444444                                                             F",
         "68x           1  4  4  444444444                                     jkkkkkkkkkkl             ",
         "011111111112  4  4  4  444444444    jkl   jkl   jkl    111111111111  pppppppppppp             ",

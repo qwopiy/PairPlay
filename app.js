@@ -3,7 +3,6 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
-import { Level1Config } from './public/js/content/level1/config.js';
 
 const app = express();
 const server = createServer(app);
@@ -20,10 +19,10 @@ app.get('/', (req, res) => {
 const maxPlayers = 2;
 var currentPlayers = 0;
 const backEndPlayers = {};
-const config = {x: Level1Config.playerStartPosX, y: Level1Config.playerStartPosY};
-var key = Level1Config.hasKey;
-var win1 = Level1Config.win1;
-var win2 = Level1Config.win2;
+const config = {x: 80, y: 100};
+var key = false;
+var win1 = false;
+var win2 = false;
 
 io.on('connection', (socket) => {
   console.log('a user connected');
