@@ -85,17 +85,54 @@ const scenes = {
                         "a",
                         "d",
                         "w",
+                        backEndPlayer.playerNumber,
                         1,
                         false
                     )
                     frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, id, Level1Config.Scale)
                     frontEndPlayers[id].update();
 
-                    frontEndPlayers[socket.id].gameObj.onCollide("spike", () => {
+                    frontEndPlayers[id].gameObj.onCollide("spike", () => {
                         socket.emit('respawning')
                     })
 
-                    console.log(frontEndPlayers);
+                    frontEndPlayers[id].gameObj.onCollide("key", (key) => {
+                        destroy(key)
+                        Level1Config.hasKey = true
+                        socket.emit('key')
+                    })
+
+                    frontEndPlayers[id].gameObj.onCollide("door", (door) => {
+                        if (Level1Config.hasKey) {
+                            destroy(door)
+                            Level1Config.hasKey = false
+                            socket.emit('door')
+                        }
+                    })
+
+                    frontEndPlayers[id].gameObj.onCollide("ice", () => {
+                        if (!frontEndPlayers[id].isTouchingIce) {
+                            frontEndPlayers[id].isTouchingIce = true
+                            frontEndPlayers[id].speed = 0
+                        }
+                    })
+
+                    frontEndPlayers[id].gameObj.onCollide("grass", () => {
+                        if (frontEndPlayers[id].isTouchingIce) {
+                            frontEndPlayers[id].isTouchingIce = false
+                            frontEndPlayers[id].speed = 0
+                        }
+                    })
+
+                    frontEndPlayers[id].gameObj.onCollide("finish", () => {
+                        frontEndPlayers[id].win = true
+                        socket.emit('win', (frontEndPlayers[id].playerNumber))
+                    })
+
+                    buttonPressed(frontEndPlayers[id].gameObj, "Level1Config",`button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
+                    buttonUnpressed(frontEndPlayers[id].gameObj, "Level1Config", `button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
+
+                    console.log(frontEndPlayers[socket.id]);
                 } else {
                     frontEndPlayers[id].isMovingLeft = backEndPlayer.isMovingLeft;
                     frontEndPlayers[id].isMovingRight = backEndPlayer.isMovingRight;
@@ -148,18 +185,37 @@ const scenes = {
             }
         })
 
+        socket.on('keyGet', () => {
+            console.log('keyGet')
+            Level1Config.hasKey = true
+            console.log(Level1Config.hasKey)
+        })
+
+        socket.on('nextLevel', () => {
+            go(2)
+        })
+
         const camX = {}
         onUpdate(() => {
             for (const id in frontEndPlayers){
                 camX[id] = frontEndPlayers[id].gameObj.pos.x
+                if (frontEndPlayers[id].gameObj.pos.y > 400) {
+                    socket.emit('respawning')
+                }
             }
 
             let sum = 0;
             for (const id in camX) {
                 sum += camX[id]
             }
-            camPos(sum / 2, 84)
+            camPos(sum / 2, 84)     // camera position x = rata rata posisi player, kalau 2 player (x + x) / 2
             camScale(2, 2)
+        
+            if (Level1Config.button1 && Level1Config.button2) {
+                Level1Config.hasKey = true
+            }
+
+            console.log(Level1Config.button1, Level1Config.button2, Level1Config.hasKey)
         })
 
         setInterval(() => {
@@ -175,7 +231,7 @@ const scenes = {
 
         setInterval(() => {
             socket.emit('update', frontEndPlayers[socket.id].gameObj.pos)
-        }, 1000)
+        }, 100)
 
         // const player1 = new Player(
         //     Level1Config.playerSpeed,
@@ -204,9 +260,6 @@ const scenes = {
 
         // player1.update()
         // player2.update()
-
-        // onCollide("player1", "bouncy", () => {player1.bounce()})
-        // onCollide("player2", "bouncy", () => {player2.bounce()})
 
         // onCollide("player1", "ice", () => {!player1.isTouchingIce ? (player1.isTouchingIce = true, player1.speed = 0) : null})
         // onCollide("player1", "grass", () => {player1.isTouchingIce ? (player1.isTouchingIce = false, player1.speed = 0) : null})

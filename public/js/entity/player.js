@@ -15,6 +15,7 @@ constructor(
     left,
     right,
     up,
+    playerNumber,
     currentLevelScene,
     isInTerminalScene,
   ) {
@@ -26,6 +27,7 @@ constructor(
     this.left = left
     this.right = right
     this.up = up
+    this.playerNumber = playerNumber
     // this.setPlayerControls()
     this.update()
   }
@@ -56,12 +58,12 @@ constructor(
       // this.Move(this.speed/2)
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
-      else this.speed += 2
+      else this.speed += 5
         this.gameObj.flipX = false
     } else if (this.isMovingLeft) {
       if (!this.isTouchingIce)
         this.speed = -this.regSpeed
-      else this.speed -= 2
+      else this.speed -= 5
         this.gameObj.flipX = true
     } else {
       this.idle()

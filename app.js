@@ -21,6 +21,9 @@ const maxPlayers = 2;
 var currentPlayers = 0;
 const backEndPlayers = {};
 const config = {x: Level1Config.playerStartPosX, y: Level1Config.playerStartPosY};
+var key = Level1Config.hasKey;
+var win1 = Level1Config.win1;
+var win2 = Level1Config.win2;
 
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -32,6 +35,7 @@ io.on('connection', (socket) => {
       isMovingRight: false,
       isJumping: false,
       death: 0,
+      playerNumber: currentPlayers + 1
     };
     currentPlayers++;
   }
@@ -93,14 +97,40 @@ io.on('connection', (socket) => {
     io.emit('respawn');
 
     for (const id in backEndPlayers) {
-      console.log(id + ': ' + backEndPlayers[id].death);
+      console.log(id + '.death : ' + backEndPlayers[id].death);
     }
+  })
+
+  socket.on('key', () => {
+    if (key == false) {
+      console.log('key');
+      io.emit('keyGet');
+      key = true;
+    }
+  })
+
+  socket.on('door', () => {
+    if (key == true) {
+      console.log('door');
+      key = false;
+    }
+  })
+
+  socket.on('win', (num) => {
+    eval('win' + num + ' = true');
+    // issue: currentplayer gak konsisten kalau server open sebelum client close window sebelumnya
   })
 });
 
 setInterval(() => {
-  io.emit('updatePlayers', backEndPlayers)
+  io.emit('updatePlayers', backEndPlayers);
   // console.log(backEndPlayers.x, backEndPlayers.y);
+  if (win1 && win2) {
+    console.log('win');
+    io.emit('nextLevel');
+    win1 = false;
+    win2 = false;
+  }
 }, 15);
 
 server.listen(3000, () => {
