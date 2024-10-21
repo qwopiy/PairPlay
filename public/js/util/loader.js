@@ -58,5 +58,10 @@ export const load = {
                 fs: 8,      //float single
             }
         });
+
+        loadSprite("1", "assets/FrontPage/Progress1.png")
+        loadSprite("2", "assets/FrontPage/Progress2.png")
+        loadSprite("3", "assets/FrontPage/Progress3.png")
+        loadSprite("4", "assets/FrontPage/Progress4.png")
     }
 }

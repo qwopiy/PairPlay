@@ -23,8 +23,15 @@ const config = {x: 80, y: 100};
 var key = false;
 var win1 = false;
 var win2 = false;
+var inLevel = false;
+var progress = 1;
 
 io.on('connection', (socket) => {
+  io.emit('progress', progress);
+  socket.on('inLevel', (bool) => {
+    inLevel = bool;
+  })
+  
   console.log('a user connected');
   if (currentPlayers < maxPlayers) {
     backEndPlayers[socket.id] = {
@@ -39,7 +46,8 @@ io.on('connection', (socket) => {
     currentPlayers++;
   }
 
-  io.emit('updatePlayers', backEndPlayers)
+  if (!inLevel) 
+    io.emit('updatePlayers', backEndPlayers)
 
   console.log(backEndPlayers);
 
@@ -122,6 +130,7 @@ io.on('connection', (socket) => {
 });
 
 setInterval(() => {
+  if (!inLevel) return;
   io.emit('updatePlayers', backEndPlayers);
   // console.log(backEndPlayers.x, backEndPlayers.y);
   if (win1 && win2) {

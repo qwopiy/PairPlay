@@ -1,4 +1,4 @@
-import kaboom from "https://unpkg.com/kaboom@3000.1.17/dist/kaboom.mjs";
+import kaboom from "/public/js/libs/kaboom.mjs";
 import { load } from "./util/loader.js"
 import { UIManager } from "./util/UIManager.js";
 import { Level } from "./util/levelManager.js";
@@ -57,12 +57,33 @@ function teleport(object, portalIn, portalOut) {
 }
 
 const scenes = {
-    menu: () => {
-        UIManager.displayMainMenu()
-        onKeyDown("space", () => go(1))
+    levelSelect: () => {
+        socket.on('progress', (level) => {
+            socket.emit('inLevel', false)
+            UIManager.displayLevel(level)
+            console.log(level)
+            
+            if (level >= 0)
+            onClick("1", () => {
+                go(1)
+            })
+            if (level >= 1)
+            onClick("2", () => {
+                go(2)
+            })
+            if (level >= 2)
+            onClick("3", () => {
+                go(3)
+            })
+            if (level >= 3)
+            onClick("4", () => {
+                go(4)
+            })
+        })
     },
 
     1: () => {
+        socket.emit('inLevel', true)
         setGravity(Level1Config.gravity)
 
         const level = new Level()
@@ -198,7 +219,7 @@ const scenes = {
             }
             setTimeout(() => {
             }, 1000);
-            go(2)
+            go("levelSelect")
         })
 
         const camX = {}
@@ -358,6 +379,7 @@ const scenes = {
     },
     
     2: () => {
+        socket.emit('inLevel', true)
         setGravity(Level2Config.gravity)
 
         const level = new Level()
@@ -488,7 +510,7 @@ const scenes = {
         })
 
         socket.on('nextLevel', () => {
-            go(3)
+            go("levelSelect")
         })
 
         const camX = {}
@@ -628,6 +650,7 @@ const scenes = {
         },
 
     3: () => {
+        socket.emit('inLevel', true)
         setGravity(Level3Config.gravity)
 
         const level = new Level()
@@ -771,7 +794,7 @@ const scenes = {
         })
 
         socket.on('nextLevel', () => {
-            go(4)
+            go("levelSelect")
         })
 
         const camX = {}
@@ -1123,4 +1146,4 @@ for (const key in scenes) {
 };
 
 load.assets();
-go(3);
+go("levelSelect");
