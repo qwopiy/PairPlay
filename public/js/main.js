@@ -50,11 +50,12 @@ function buttonUnpressed(object, config, Button, Scale) {
     }) 
 }
 
-function teleport(object, portalIn, portalOut) {
-    object.onCollide( `${portalIn}` , () => {
-        object.pos = portalOut.pos
-    })
-}
+// function teleport(object, portalIn, portalOut) {
+//     object.onCollide( `${portalIn}` , () => {
+//         object.pos = portalOut.pos
+//         socket.emit('update', object.pos)
+//     })
+// }
 
 const scenes = {
     levelSelect: () => {
@@ -948,44 +949,31 @@ const scenes = {
     },
 
     4: () => {
+        socket.emit('inLevel', true)
         setGravity(Level4Config.gravity)
 
         const level = new Level()
         level.drawBackground("menuBackground")
         level.drawMapLayout(level4Layout, level4Mappings, Level4Config.Scale)
 
-        const player1 = new Player(
-            Level4Config.playerSpeed,
-            Level4Config.jumpForce,
-            Level4Config.nbLives,
-            "a",
-            "d",
-            "w",
-            1,
-            false
-        )
-        
-        const player2 = new Player(
-            Level4Config.playerSpeed,
-            Level4Config.jumpForce,
-            Level4Config.nbLives,
-            "left",
-            "right",
-            "up",
-            1,
-            false
-        )
+        const frontEndPlayers = {}
 
+        const portalDestroyed = {
+            1: false,
+            2: false,
+            3: false,
+            4: false,
+            5: false
+        }
         const portalIn1 = add([
             sprite("items", { anim: "portal_in" }),
-            pos(16 * 6, 16 * 6),
+            pos(16 * 6, 16 * 7),
             scale(Level4Config.Scale),
             area( { shape: new Rect(vec2(0), 16, 14) }),
             offscreen(),
             "portalIn1"
-
         ])
-
+        
         const portalOut1 = add([
             sprite("items", { anim: "portal_out" }),
             pos(16 * 11, 16 * 1),
@@ -1003,7 +991,7 @@ const scenes = {
             offscreen(),
             "portalIn2"
         ])
-
+        
         const portalOut2 = add([
             sprite("items", { anim: "portal_out" }),
             pos(16 * 31, 16 * 1),
@@ -1012,7 +1000,7 @@ const scenes = {
             offscreen(),
             "portalOut2"
         ])
-
+        
         const portalIn3 = add([
             sprite("items", { anim: "portal_in" }),
             pos(16 * 26, 16 * 10),
@@ -1021,7 +1009,7 @@ const scenes = {
             offscreen(),
             "portalIn3"
         ])
-
+        
         const portalOut3 = add([
             sprite("items", { anim: "portal_out" }),
             pos(16 * 35, 16 * 1),
@@ -1030,7 +1018,7 @@ const scenes = {
             offscreen(),
             "portalOut3"
         ])
-
+        
         const portalIn4 = add([
             sprite("items", { anim: "portal_in" }),
             pos(16 * 47, 16 * 10),
@@ -1039,7 +1027,7 @@ const scenes = {
             offscreen(),
             "portalIn4"
         ])
-
+        
         const portalOut4 = add([
             sprite("items", { anim: "portal_out" }),
             pos(16 * 43, 16 * 6),
@@ -1048,7 +1036,7 @@ const scenes = {
             offscreen(),
             "portalOut4"
         ])
-
+        
         const portalIn5 = add([
             sprite("items", { anim: "portal_in" }),
             pos(16 * 47, 16 * 3),
@@ -1057,7 +1045,7 @@ const scenes = {
             offscreen(),
             "portalIn5"
         ])
-
+        
         const portalOut5 = add([
             sprite("items", { anim: "portal_out" }),
             pos(16 * 41, 16 * 6),
@@ -1066,78 +1054,418 @@ const scenes = {
             offscreen(),
             "portalOut5"
         ])
+        
+        socket.emit('moveSpeed', Level4Config.playerSpeed)
+        
+        socket.on('updatePlayers', (backEndPlayers) => {
+            for (const id in backEndPlayers) {
+                const backEndPlayer = backEndPlayers[id]
+                
+                if (!frontEndPlayers[id]) {
+                    frontEndPlayers[id] = new Player(
+                        Level4Config.playerSpeed,
+                        Level4Config.jumpForce,
+                        Level4Config.nbLives,
+                        "a",
+                        "d",
+                        "w",
+                        backEndPlayer.playerNumber,
+                        1,
+                        false
+                    )
+                    frontEndPlayers[id].makePlayer(backEndPlayer.x - 16, backEndPlayer.y + 32, id, Level4Config.Scale)
+                    frontEndPlayers[id].update();
 
-        player1.makePlayer(Level4Config.playerStartPosX + 32, Level4Config.playerStartPosY, "player1", Level4Config.Scale)
-        player2.makePlayer(Level4Config.playerStartPosX, Level4Config.playerStartPosY, "player2", Level4Config.Scale)
+                    frontEndPlayers[id].gameObj.onCollide("spike", () => {
+                        socket.emit('respawning')
+                    })
 
-        player1.update()
-        player2.update()
+                    frontEndPlayers[id].gameObj.onCollide("key", (key) => {
+                        destroy(key)
+                        Level4Config.hasKey = true
+                        socket.emit('key')
+                    })
 
-        teleport(player1.gameObj, "portalIn1", portalOut1)
-        teleport(player2.gameObj, "portalIn1", portalOut1)
+                    frontEndPlayers[id].gameObj.onCollide("door", (door) => {
+                        if (Level4Config.hasKey) {
+                            destroy(door)
+                            Level4Config.hasKey = false
+                            socket.emit('door')
+                        }
+                    })
 
-        teleport(player1.gameObj, "portalIn2", portalOut2)
-        teleport(player2.gameObj, "portalIn2", portalOut2)
+                    frontEndPlayers[id].gameObj.onCollide("finish", () => {
+                        frontEndPlayers[id].win = true
+                        socket.emit('win', (frontEndPlayers[id].playerNumber))
+                    })
 
-        teleport(player1.gameObj, "portalIn3", portalOut3)
-        teleport(player2.gameObj, "portalIn3", portalOut3)
+                        buttonPressed(frontEndPlayers[id].gameObj, "Level4Config", `button${frontEndPlayers[id].playerNumber}`, Level4Config.Scale)
 
-        teleport(player1.gameObj, "portalIn4", portalOut4)
-        teleport(player2.gameObj, "portalIn4", portalOut4)
+                        // teleport(frontEndPlayers[id].gameObj, "portalIn1", portalOut1)
+                        // teleport(frontEndPlayers[id].gameObj, "portalIn2", portalOut2)
+                        // teleport(frontEndPlayers[id].gameObj, "portalIn3", portalOut3)
+                        // teleport(frontEndPlayers[id].gameObj, "portalIn4", portalOut4)
+                        // teleport(frontEndPlayers[id].gameObj, "portalIn5", portalOut5)
 
-        teleport(player1.gameObj, "portalIn5", portalOut5)
-        teleport(player2.gameObj, "portalIn5", portalOut5)
+                        frontEndPlayers[id].gameObj.onCollide( "portalIn1" , () => {
+                            frontEndPlayers[id].pos = portalOut1.pos
+                            socket.emit('update', frontEndPlayers[id].pos)
+                            portalIn1.pos = vec2(-100, -100)
+                            portalOut1.pos = vec2(-100, -100)
+                            portalDestroyed[1] = true
+                        })
 
-        player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
-            if (Level4Config.hasKey) {
-                destroy(door)
-                Level4Config.hasKey = false
+                        frontEndPlayers[id].gameObj.onCollide( "portalIn2" , () => {
+                            frontEndPlayers[id].pos = portalOut2.pos
+                            socket.emit('update', frontEndPlayers[id].pos)
+                            portalIn2.pos = vec2(-100, -100)
+                            portalOut2.pos = vec2(-100, -100)
+                            portalDestroyed[2] = true
+                        })
+
+                        frontEndPlayers[id].gameObj.onCollide( "portalIn3" , () => {
+                            frontEndPlayers[id].pos = portalOut3.pos
+                            socket.emit('update', frontEndPlayers[id].pos)
+                            portalIn3.pos = vec2(-100, -100)
+                            portalOut3.pos = vec2(-100, -100)
+                            portalDestroyed[3] = true
+                        })
+
+                        frontEndPlayers[id].gameObj.onCollide( "portalIn4" , () => {
+                            frontEndPlayers[id].pos = portalOut4.pos
+                            socket.emit('update', frontEndPlayers[id].pos)
+                            portalIn4.pos = vec2(-100, -100)
+                            portalOut4.pos = vec2(-100, -100)
+                            portalDestroyed[4] = true
+                        })
+
+                        frontEndPlayers[id].gameObj.onCollide( "portalIn5" , () => {
+                            frontEndPlayers[id].pos = portalOut5.pos
+                            socket.emit('update', frontEndPlayers[id].pos)
+                            portalIn5.pos = vec2(-100, -100)
+                            portalOut5.pos = vec2(-100, -100)
+                            portalDestroyed[5] = true
+                        })
+
+
+                    console.log(frontEndPlayers[socket.id]);
+                } else {
+                    frontEndPlayers[id].isMovingLeft = backEndPlayer.isMovingLeft;
+                    frontEndPlayers[id].isMovingRight = backEndPlayer.isMovingRight;
+                    frontEndPlayers[id].isJumping = backEndPlayer.isJumping;
+                }
             }
         })
 
-        player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
-            if (Level4Config.hasKey) {
-                destroy(door)
-                Level4Config.hasKey = false
+        socket.on('updateLocation', (pos, id) => {
+            frontEndPlayers[id].gameObj.pos.x = pos.x;
+            frontEndPlayers[id].gameObj.pos.y = pos.y;
+        })
+        
+        socket.on('disconnected', (id) => {
+            destroy(frontEndPlayers[id].gameObj)
+            delete frontEndPlayers[id]
+        })
+
+        onKeyDown("w", () => {
+            frontEndPlayers[socket.id].jump()
+            socket.emit('keyPress', 'w')
+        })
+        
+        onKeyRelease("w", () => {
+            frontEndPlayers[socket.id].isJumping = false
+            socket.emit('keyRelease', 'w')
+        })
+
+        onKeyDown("a", () => {
+            frontEndPlayers[socket.id].isMovingLeft = true
+            socket.emit('keyPress', 'a')
+        })
+        onKeyRelease("a", () => {
+            frontEndPlayers[socket.id].isMovingLeft = false
+            socket.emit('keyRelease', 'a')
+        })
+        
+        onKeyPress("d", () => {
+            frontEndPlayers[socket.id].isMovingRight = true
+            socket.emit('keyPress', 'd')
+        })
+        onKeyRelease("d", () => {
+            frontEndPlayers[socket.id].isMovingRight = false
+            socket.emit('keyRelease', 'd')
+        })
+
+        socket.on('respawn', () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].respawnPlayers()
+
+            }
+            if (portalDestroyed[1]) {
+                portalIn1.pos = vec2(16 * 6, 16 * 7)
+                portalOut1.pos = vec2(16 * 11, 16 * 1)
+                portalDestroyed[1] = false
+            }
+
+            if (portalDestroyed[2]) {
+                portalIn2.pos = vec2(16 * 26, 16 * 3)
+                portalOut2.pos = vec2(16 * 31, 16 * 1)
+                portalDestroyed[2] = false
+            }
+
+            if (portalDestroyed[3]) {
+                portalIn3.pos = vec2(16 * 26, 16 * 10)
+                portalOut3.pos = vec2(16 * 35, 16 * 1)
+                portalDestroyed[3] = false
+            }
+
+            if (portalDestroyed[4]) {
+                portalIn4.pos = vec2(16 * 47, 16 * 10)
+                portalOut4.pos = vec2(16 * 43, 16 * 6)
+                portalDestroyed[4] = false
+            }
+
+            if (portalDestroyed[5]) {
+                portalIn5.pos = vec2(16 * 47, 16 * 3)
+                portalOut5.pos = vec2(16 * 41, 16 * 6)
+                portalDestroyed[5] = false
             }
         })
 
-        player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
-            Level4Config.win1 = true
+        socket.on('keyGet', () => {
+            console.log('keyGet')
+            Level4Config.hasKey = true
+            console.log(Level4Config.hasKey)
         })
 
-        player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
-            Level4Config.win2 = true
-        })
-        
-        player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
-            player1.respawnPlayers()
-            player2.respawnPlayers()
-            player1.death++
-        })
-        
-        player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
-            player1.respawnPlayers()
-            player2.respawnPlayers()
-            player2.death++
+        socket.on('nextLevel', () => {
+            go("levelSelect")
         })
 
-        buttonPressed(player1.gameObj, "Level4Config", "button1", Level4Config.Scale)
-        buttonPressed(player2.gameObj, "Level4Config", "button2", Level4Config.Scale)
-
+        const camX = {}
         onUpdate(() => {
-            player1.Move(player1.speed)
-            player2.Move(player2.speed)
+            for (const id in frontEndPlayers){
+                camX[id] = frontEndPlayers[id].gameObj.pos.x
+                if (frontEndPlayers[id].gameObj.pos.y > 400) {
+                    socket.emit('respawning')
+                }
+            }
 
             if (Level4Config.button1 || Level4Config.button2) {
                 Level4Config.hasKey = true
             }
 
-            if (Level4Config.win1 && Level4Config.win2) {
-                go(5)
+            let sum = 0;
+            for (const id in camX) {
+                sum += camX[id]
             }
+            camPos(sum / 2, 116)     // camera position x = rata rata posisi player, kalau 2 player (x + x) / 2
+            camScale(2, 2)
         })
-        attachCamera(player1.gameObj, player2.gameObj, 0, 116, Level4Config.levelZoom)
+
+        setInterval(() => {
+            for (const id in frontEndPlayers) {
+                const player = frontEndPlayers[id]
+                player.Move(player.speed)
+                // console.log(player.gameObj.pos)
+                if (player.isJumping) 
+                    player.jump()
+                // socket.emit('update', player.gameObj.pos)
+            }
+        }, 15)
+
+        setInterval(() => {
+            socket.emit('update', frontEndPlayers[socket.id].gameObj.pos)
+        }, 100)
+    //     setGravity(Level4Config.gravity)
+
+    //     const level = new Level()
+    //     level.drawBackground("menuBackground")
+    //     level.drawMapLayout(level4Layout, level4Mappings, Level4Config.Scale)
+
+    //     const player1 = new Player(
+    //         Level4Config.playerSpeed,
+    //         Level4Config.jumpForce,
+    //         Level4Config.nbLives,
+    //         "a",
+    //         "d",
+    //         "w",
+    //         1,
+    //         false
+    //     )
+        
+    //     const player2 = new Player(
+    //         Level4Config.playerSpeed,
+    //         Level4Config.jumpForce,
+    //         Level4Config.nbLives,
+    //         "left",
+    //         "right",
+    //         "up",
+    //         1,
+    //         false
+    //     )
+
+    //     const portalIn1 = add([
+    //         sprite("items", { anim: "portal_in" }),
+    //         pos(16 * 6, 16 * 6),
+    //         scale(Level4Config.Scale),
+    //         area( { shape: new Rect(vec2(0), 16, 14) }),
+    //         offscreen(),
+    //         "portalIn1"
+
+    //     ])
+
+    //     const portalOut1 = add([
+    //         sprite("items", { anim: "portal_out" }),
+    //         pos(16 * 11, 16 * 1),
+    //         scale(Level4Config.Scale),
+    //         area(),
+    //         offscreen(),
+    //         "portalOut1"
+    //     ])
+
+    //     const portalIn2 = add([
+    //         sprite("items", { anim: "portal_in" }),
+    //         pos(16 * 26, 16 * 3),
+    //         scale(Level4Config.Scale),
+    //         area( { shape: new Rect(vec2(0), 16, 14) }),
+    //         offscreen(),
+    //         "portalIn2"
+    //     ])
+
+    //     const portalOut2 = add([
+    //         sprite("items", { anim: "portal_out" }),
+    //         pos(16 * 31, 16 * 1),
+    //         scale(Level4Config.Scale),
+    //         area(),
+    //         offscreen(),
+    //         "portalOut2"
+    //     ])
+
+    //     const portalIn3 = add([
+    //         sprite("items", { anim: "portal_in" }),
+    //         pos(16 * 26, 16 * 10),
+    //         scale(Level4Config.Scale),
+    //         area( { shape: new Rect(vec2(0), 16, 14) }),
+    //         offscreen(),
+    //         "portalIn3"
+    //     ])
+
+    //     const portalOut3 = add([
+    //         sprite("items", { anim: "portal_out" }),
+    //         pos(16 * 35, 16 * 1),
+    //         scale(Level4Config.Scale),
+    //         area(),
+    //         offscreen(),
+    //         "portalOut3"
+    //     ])
+
+    //     const portalIn4 = add([
+    //         sprite("items", { anim: "portal_in" }),
+    //         pos(16 * 47, 16 * 10),
+    //         scale(Level4Config.Scale),
+    //         area( { shape: new Rect(vec2(0), 16, 14) }),
+    //         offscreen(),
+    //         "portalIn4"
+    //     ])
+
+    //     const portalOut4 = add([
+    //         sprite("items", { anim: "portal_out" }),
+    //         pos(16 * 43, 16 * 6),
+    //         scale(Level4Config.Scale),
+    //         area(),
+    //         offscreen(),
+    //         "portalOut4"
+    //     ])
+
+    //     const portalIn5 = add([
+    //         sprite("items", { anim: "portal_in" }),
+    //         pos(16 * 47, 16 * 3),
+    //         scale(Level4Config.Scale),
+    //         area( { shape: new Rect(vec2(0), 16, 14) }),
+    //         offscreen(),
+    //         "portalIn5"
+    //     ])
+
+    //     const portalOut5 = add([
+    //         sprite("items", { anim: "portal_out" }),
+    //         pos(16 * 41, 16 * 6),
+    //         scale(Level4Config.Scale),
+    //         area(),
+    //         offscreen(),
+    //         "portalOut5"
+    //     ])
+
+    //     player1.makePlayer(Level4Config.playerStartPosX + 32, Level4Config.playerStartPosY, "player1", Level4Config.Scale)
+    //     player2.makePlayer(Level4Config.playerStartPosX, Level4Config.playerStartPosY, "player2", Level4Config.Scale)
+
+    //     player1.update()
+    //     player2.update()
+
+    //     teleport(player1.gameObj, "portalIn1", portalOut1)
+    //     teleport(player2.gameObj, "portalIn1", portalOut1)
+
+    //     teleport(player1.gameObj, "portalIn2", portalOut2)
+    //     teleport(player2.gameObj, "portalIn2", portalOut2)
+
+    //     teleport(player1.gameObj, "portalIn3", portalOut3)
+    //     teleport(player2.gameObj, "portalIn3", portalOut3)
+
+    //     teleport(player1.gameObj, "portalIn4", portalOut4)
+    //     teleport(player2.gameObj, "portalIn4", portalOut4)
+
+    //     teleport(player1.gameObj, "portalIn5", portalOut5)
+    //     teleport(player2.gameObj, "portalIn5", portalOut5)
+
+    //     player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
+    //         if (Level4Config.hasKey) {
+    //             destroy(door)
+    //             Level4Config.hasKey = false
+    //         }
+    //     })
+
+    //     player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
+    //         if (Level4Config.hasKey) {
+    //             destroy(door)
+    //             Level4Config.hasKey = false
+    //         }
+    //     })
+
+    //     player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
+    //         Level4Config.win1 = true
+    //     })
+
+    //     player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
+    //         Level4Config.win2 = true
+    //     })
+        
+    //     player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+    //         player1.respawnPlayers()
+    //         player2.respawnPlayers()
+    //         player1.death++
+    //     })
+        
+    //     player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+    //         player1.respawnPlayers()
+    //         player2.respawnPlayers()
+    //         player2.death++
+    //     })
+
+    //     buttonPressed(player1.gameObj, "Level4Config", "button1", Level4Config.Scale)
+    //     buttonPressed(player2.gameObj, "Level4Config", "button2", Level4Config.Scale)
+
+    //     onUpdate(() => {
+    //         player1.Move(player1.speed)
+    //         player2.Move(player2.speed)
+
+    //         if (Level4Config.button1 || Level4Config.button2) {
+    //             Level4Config.hasKey = true
+    //         }
+
+    //         if (Level4Config.win1 && Level4Config.win2) {
+    //             go(5)
+    //         }
+    //     })
+    //     attachCamera(player1.gameObj, player2.gameObj, 0, 116, Level4Config.levelZoom)
     }
 };
 
@@ -1146,4 +1474,4 @@ for (const key in scenes) {
 };
 
 load.assets();
-go("levelSelect");
+go(4);

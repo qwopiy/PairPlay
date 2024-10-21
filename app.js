@@ -24,7 +24,7 @@ var key = false;
 var win1 = false;
 var win2 = false;
 var inLevel = false;
-var progress = 1;
+var progress = 4;
 
 io.on('connection', (socket) => {
   io.emit('progress', progress);
@@ -93,6 +93,10 @@ io.on('connection', (socket) => {
     backEndPlayers[socket.id].y = pos.y;
     io.emit('updateLocation', {x: backEndPlayers[socket.id].x, y: backEndPlayers[socket.id].y}, socket.id)
   })
+
+  socket.on('portal', () => {
+    io.emit('updateLocation', {x: backEndPlayers[socket.id].x, y: backEndPlayers[socket.id].y}, socket.id)
+  })  
 
   socket.on('respawning', () => {
     for (const id in backEndPlayers) {
