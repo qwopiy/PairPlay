@@ -42,7 +42,7 @@ constructor(
     this.initialX = x
     this.initialY = y
     this.gameObj = add([
-      sprite("player"),
+      sprite("player", { anim : "idle" }),
       area({ shape: new Rect(vec2(0, 0), 15, 15) }),
       anchor("center"),
       pos(x, y),
@@ -55,17 +55,19 @@ constructor(
   Move(speed) {
   
     if (this.isMovingRight) {
-      // this.Move(this.speed/2)
+      if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
       else this.speed += 5
         this.gameObj.flipX = false
     } else if (this.isMovingLeft) {
+      if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
       if (!this.isTouchingIce)
         this.speed = -this.regSpeed
       else this.speed -= 5
         this.gameObj.flipX = true
     } else {
+      this.gameObj.play("idle")
       this.idle()
     }
 
@@ -73,9 +75,7 @@ constructor(
     //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
     // this.gameObj.flipX = true
     if (!this.isRespawning) this.gameObj.move(speed, 0)
-    // if (this.CurPlatform().gameObj == "player1" || this.CurPlatform().gameObj == "player2") {
-    //   this.speed = speed
-    // }
+
     // this.isMoving = true
   }
 

@@ -1,6 +1,17 @@
 export const load = {
     assets: () => {
-        loadSprite("player", "assets/player.png");
+        loadSprite("player", "assets/player.png", {
+            sliceX: 9,
+            anims: {
+                run: {
+                    from: 0,
+                    to: 7,
+                    loop: true,
+                },
+
+                idle: 8,
+            }
+        });
         loadSprite("menuBackground", "assets/forestBackground.png");
         loadSprite("background", "assets/background.png");
         loadSprite("logo", "assets/logo.png");

@@ -1474,4 +1474,4 @@ for (const key in scenes) {
 };
 
 load.assets();
-go(4);
+go(2);
