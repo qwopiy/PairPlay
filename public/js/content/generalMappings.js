@@ -206,5 +206,11 @@ export function generateMappings(tileType) {
             offscreen(),
             "finish"
         ],
+
+        _: () => [
+            area({ shape: new Rect(vec2(0), 16, 16)}),
+            offscreen(),
+            "dead"
+        ],
     }
 }

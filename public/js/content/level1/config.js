@@ -7,9 +7,9 @@ export const Level1Config = {
     win2: false,
     Scale: 1, 
     gravity: 700,
-    playerSpeed: 200,
+    playerSpeed: 100,
     jumpForce: 160,
-    playerStartPosX: 80,
+    playerStartPosX: 134,
     playerStartPosY: 0,
     levelZoom: 4,
 }

@@ -28,7 +28,7 @@ constructor(
     this.right = right
     this.up = up
     this.playerNumber = playerNumber
-    // this.setPlayerControls()
+    this.setPlayerControls()
     this.update()
   }
 
@@ -46,21 +46,22 @@ constructor(
       area({ shape: new Rect(vec2(0, 0), 15, 15) }),
       anchor("center"),
       pos(x, y),
+      rotate(0),
       scale(Scale),
-      body({ stickToPlatform: true }),
+      body({ maxVelocity: 500, }),
       String(id),
     ])
   }
 
   Move(speed) {
   
-    if (this.isMovingRight) {
+    if (this.isMovingRight && !this.isRespawning) {
       if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
       else this.speed += 5
         this.gameObj.flipX = false
-    } else if (this.isMovingLeft) {
+    } else if (this.isMovingLeft && !this.isRespawning) {
       if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
       if (!this.isTouchingIce)
         this.speed = -this.regSpeed
@@ -112,20 +113,28 @@ constructor(
 
   setPlayerControls() {
     onKeyDown(this.left, () => {
-      if (!this.isTouchingIce)
-      this.speed = -this.regSpeed
-      else this.speed -= 2
-      this.gameObj.flipX = true
+      // if (!this.isTouchingIce)
+      // this.speed = -this.regSpeed
+      // else this.speed -= 2
+      // this.gameObj.flipX = true
+      this.isMovingLeft = true
     })
-    onKeyRelease(this.left, () => {this.idle()})
+    onKeyRelease(this.left, () => {
+      // this.idle()  
+      this.isMovingLeft = false
+    })
     
     onKeyDown(this.right, () => {
-      if (!this.isTouchingIce)
-        this.speed = this.regSpeed
-      else this.speed += 2
-      this.gameObj.flipX = false
+      // if (!this.isTouchingIce)
+      //   this.speed = this.regSpeed
+      // else this.speed += 2
+      // this.gameObj.flipX = false
+      this.isMovingRight = true
     })
-    onKeyRelease(this.right, () => {this.idle()})
+    onKeyRelease(this.right, () => {
+      // this.idle()
+      this.isMovingRight = false
+    })
     onKeyDown(this.up, () => {this.jump()})
 
 
@@ -184,7 +193,10 @@ constructor(
   }
   
   respawnPlayers() {
+    this.gameObj.use(body({ gravityScale: 0 }))
     this.gameObj.pos = vec2(this.initialX, this.initialY)
+    this.gameObj.use(body({ gravityScale: 1 }))
+    this.gameObj.angle = 0
     this.isRespawning = true
     setTimeout(() => this.isRespawning = false, 1000)
     this.speed = 0
