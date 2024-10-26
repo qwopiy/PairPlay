@@ -74,5 +74,9 @@ export const load = {
         loadSprite("2", "assets/FrontPage/Progress2.png")
         loadSprite("3", "assets/FrontPage/Progress3.png")
         loadSprite("4", "assets/FrontPage/Progress4.png")
+    },
+
+    sounds: () => {
+        loadSound("music", "assets/Sounds/music.wav")
     }
 }

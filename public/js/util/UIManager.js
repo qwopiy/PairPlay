@@ -49,9 +49,19 @@ class UI {
           opacity(progress >= 3 ? 1 : 0.5),
           "4"
         ])
-    }
+    };
 
-    
+    UIButton() {
+        add([
+          rect(50, 50),
+          pos(width() - 50, 0),
+          area(),
+          color(0, 0, 0),
+          fixed(),
+          z(100),
+          "muteMusic"
+        ])
+    }
 }
 
 export const UIManager = new UI();

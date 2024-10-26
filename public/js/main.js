@@ -84,6 +84,19 @@ const scenes = {
         //     })
         // });
 
+        const music = play("music", {
+            volume: 1,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            music.stop()
+        })
+        
+        UIManager.UIButton()
+        onClick("muteMusic", () => {
+            music.paused = !music.paused
+        })
+
         UIManager.displayLevel(progress)
             console.log(progress)
             
@@ -113,7 +126,19 @@ const scenes = {
         const level = new Level()
         level.drawBackground("menuBackground")
         level.drawMapLayout(level1Layout, level1Mappings, Level1Config.Scale)
-
+        
+        const music = play("music", {
+            volume: 1,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            music.stop()
+        })
+        
+        UIManager.UIButton()
+        onClick("muteMusic", () => {
+            music.paused = !music.paused
+        })
         // const frontEndPlayers = {}
         
         // socket.emit('moveSpeed', Level1Config.playerSpeed)
@@ -322,12 +347,6 @@ const scenes = {
 
         buttonPressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
         buttonUnpressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
-
-        // onKeyDown("space", () => {
-        //     player1.gameObj.Move(0, -1000)
-        //     player2.gameObj.Move(0, -1000)
-        // })
-
 
         player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
             destroy(key)
@@ -601,6 +620,19 @@ const scenes = {
         const level = new Level()
         level.drawBackground("menuBackground")
         level.drawMapLayout(level2Layout, level2Mappings, Level2Config.Scale)
+
+        const music = play("music", {
+            volume: 1,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            music.stop()
+        })
+        
+        UIManager.UIButton()
+        onClick("muteMusic", () => {
+            music.paused = !music.paused
+        })
 
         const player1 = new Player(
             Level2Config.playerSpeed,
@@ -913,6 +945,19 @@ const scenes = {
         const level = new Level()
         level.drawBackground("background")
         level.drawMapLayout(level3Layout, level3Mappings, Level3Config.Scale)
+
+        const music = play("music", {
+            volume: 1,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            music.stop()
+        })
+        
+        UIManager.UIButton()
+        onClick("muteMusic", () => {
+            music.paused = !music.paused
+        })
 
         const player1 = new Player(
             Level3Config.playerSpeed,
@@ -1377,6 +1422,19 @@ const scenes = {
         level.drawBackground("menuBackground")
         level.drawMapLayout(level4Layout, level4Mappings, Level4Config.Scale)
 
+        const music = play("music", {
+            volume: 1,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            music.stop()
+        })
+        
+        UIManager.UIButton()
+        onClick("muteMusic", () => {
+            music.paused = !music.paused
+        })
+
         const player1 = new Player(
             Level4Config.playerSpeed,
             Level4Config.jumpForce,
@@ -1585,4 +1643,5 @@ for (const key in scenes) {
 };
 
 load.assets();
+load.sounds();
 go("levelSelect");
