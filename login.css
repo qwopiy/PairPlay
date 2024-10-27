@@ -1,0 +1,80 @@
+body{
+    background-image: url(/assets/FrontPage/dungeon2.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+}
+.login-container {   
+    width: 100%;
+    max-width: 50%; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+}
+.title {
+    font-size: 90px;
+    text-align: center;
+    color: #e0f0ea;
+}
+.form-control {
+    border-radius: 50px;
+    font-size: 15px;
+    box-shadow: 2px 3px 5px black;
+}
+.btn {
+    border-radius: 50px;
+    font-size: 20px;
+}
+.account-container {
+    display: flex;
+    justify-content: flex-end; 
+}
+.account-container img {
+    border-radius: 50%;
+    background-color: #95adbe;
+    transition: background-color 0.3s ease; 
+    box-shadow: 1px 1px 1px black;
+    width: 45px; 
+    height: 45px;
+}
+.gambar{
+    margin-right: 5px;
+}
+.guest-container{
+    margin-top: 10px;
+    margin-right: 15px;
+}
+.btn-login, .btn-play,.btn-guest {
+    border: 1px solid black;
+    background-color: #95adbe;
+    transition: background-color 0.3s ease; 
+    box-shadow: 3px 3px 5px black;
+}
+.btn-login:hover, .btn-play:hover, .btn-guest:hover,.account-container img:hover {
+    background-color: #728a9d; 
+    color: white; 
+}
+a {  
+    text-decoration: none;   
+    color: inherit;   
+}  
+/* .btn-login, .btn-play {
+    border: 1px solid black;
+    background-color: #95adbe;
+    transition: background-color 0.3s ease; 
+    box-shadow: 3px 3px 5px black;
+}
+.btn-login:hover, .btn-play:hover {
+    background-color: #728a9d; 
+    color: white; 
+}
+a {  
+    text-decoration: none;   
+    color: inherit;   
+}   */
+
+
+
