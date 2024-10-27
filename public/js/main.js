@@ -317,6 +317,7 @@ const scenes = {
             "d",
             "w",
             1,
+            1,
             false
         )
         
@@ -327,9 +328,19 @@ const scenes = {
             "left",
             "right",
             "up",
+            2,
             1,
             false
         )
+
+        const ghost = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level1Config.Scale),
+            "ghost"
+        ])
 
         player1.makePlayer(Level1Config.playerStartPosX + 16, Level1Config.playerStartPosY, "player1", Level1Config.Scale)
         player2.makePlayer(Level1Config.playerStartPosX, Level1Config.playerStartPosY, "player2", Level1Config.Scale)
@@ -383,6 +394,7 @@ const scenes = {
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
             player1.gameObj.angle = -90
             player1.isRespawning = true
+            ghost.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
             setTimeout(() => {
                 player1.isRespawning = false
@@ -396,6 +408,7 @@ const scenes = {
         player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
             player2.gameObj.angle = -90
             player2.isRespawning = true
+            ghost.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
             setTimeout(() => {
                 player2.isRespawning = false
@@ -408,6 +421,7 @@ const scenes = {
 
         player1.gameObj.onCollide("dead", () => {
             player1.isRespawning = true
+            ghost.pos = player1.gameObj.pos
                 if (!player2.isRespawning) {
                     setTimeout(() => {
                         player1.isRespawning = false
@@ -420,6 +434,7 @@ const scenes = {
 
         player2.gameObj.onCollide("dead", () => {
             player2.isRespawning = true
+            ghost.pos = player2.gameObj.pos
                 if (!player1.isRespawning) {
                     setTimeout(() => {
                         player2.isRespawning = false
@@ -430,10 +445,22 @@ const scenes = {
                 }
         })
 
+        onCollide("player1", "grass", () => {
+            if (isBottom()) console.log("bottom")
+            if (isTop()) console.log("top")
+            if (isLeft()) console.log("left")
+            if (isRight()) console.log("right")
+        })
+
         onUpdate(() => {
+            if (player1.isRespawning || player2.isRespawning) {
+                ghost.move(0, -80)
+            }
+
             if (Level1Config.button1 && Level1Config.button2) {
                 Level1Config.hasKey = true
             }
+
             player1.Move(player1.speed)
             player2.Move(player2.speed)
             
@@ -443,6 +470,7 @@ const scenes = {
                 go("levelSelect")
             }
             console.log(player1.death, player2.death)
+            // console.log(ghost.pos)
         })
         attachCamera(player1.gameObj, player2.gameObj, 0, 84, Level1Config.levelZoom)
         
@@ -656,6 +684,15 @@ const scenes = {
             false
         )
 
+        const ghost = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level1Config.Scale),
+            "ghost"
+        ])
+
         player1.makePlayer(Level2Config.playerStartPosX + 16, Level2Config.playerStartPosY, "player1", Level2Config.Scale)
         player2.makePlayer(Level2Config.playerStartPosX, Level2Config.playerStartPosY, "player2", Level2Config.Scale)
 
@@ -689,6 +726,7 @@ const scenes = {
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
             player1.gameObj.angle = -90
             player1.isRespawning = true
+            ghost.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
             setTimeout(() => {
                 player1.isRespawning = false
@@ -702,6 +740,7 @@ const scenes = {
         player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
             player2.gameObj.angle = -90
             player2.isRespawning = true
+            ghost.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
             setTimeout(() => {
                 player2.isRespawning = false
@@ -722,6 +761,7 @@ const scenes = {
 
         player1.gameObj.onCollide("dead", () => {
             player1.isRespawning = true
+            ghost.pos = player1.gameObj.pos
                 if (!player2.isRespawning) {
                     setTimeout(() => {
                         player1.isRespawning = false
@@ -734,6 +774,7 @@ const scenes = {
 
         player2.gameObj.onCollide("dead", () => {
             player2.isRespawning = true
+            ghost.pos = player2.gameObj.pos
                 if (!player1.isRespawning) {
                     setTimeout(() => {
                         player2.isRespawning = false
@@ -748,6 +789,10 @@ const scenes = {
         onCollide("player2", "bouncy", () => {player2.bounce()})
 
         onUpdate(() => {
+            if (player1.isRespawning || player2.isRespawning) {
+                ghost.move(0, -80)
+            }
+
             player1.Move(player1.speed)
             player2.Move(player2.speed)
 
@@ -1003,6 +1048,15 @@ const scenes = {
                 "box", 
         ])
 
+        const ghost = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level1Config.Scale),
+            "ghost"
+        ])
+
         player1.makePlayer(Level3Config.playerStartPosX + 16, Level3Config.playerStartPosY, "player1", Level3Config.Scale)
         player2.makePlayer(Level3Config.playerStartPosX, Level3Config.playerStartPosY, "player2", Level3Config.Scale)
 
@@ -1024,6 +1078,7 @@ const scenes = {
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
             player1.gameObj.angle = -90
             player1.isRespawning = true
+            ghost.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
             setTimeout(() => {
                 player1.isRespawning = false
@@ -1037,6 +1092,7 @@ const scenes = {
         player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
             player2.gameObj.angle = -90
             player2.isRespawning = true
+            ghost.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
             setTimeout(() => {
                 player2.isRespawning = false
@@ -1070,6 +1126,10 @@ const scenes = {
         })
 
         onUpdate(() => {
+            if (player1.isRespawning || player2.isRespawning) {
+                ghost.move(0, -100)
+            }
+
             player1.Move(player1.speed)
             player2.Move(player2.speed)
 
@@ -1457,6 +1517,15 @@ const scenes = {
             false
         )
 
+        const ghost = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level1Config.Scale),
+            "ghost"
+        ])
+
         const portalIn1 = add([
             sprite("items", { anim: "portal_in" }),
             pos(16 * 6, 16 * 6),
@@ -1594,6 +1663,7 @@ const scenes = {
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
             player1.gameObj.angle = -90
             player1.isRespawning = true
+            ghost.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
             setTimeout(() => {
                 player1.isRespawning = false
@@ -1607,6 +1677,7 @@ const scenes = {
         player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
             player2.gameObj.angle = -90
             player2.isRespawning = true
+            ghost.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
             setTimeout(() => {
                 player2.isRespawning = false
@@ -1621,6 +1692,10 @@ const scenes = {
         buttonPressed(player2.gameObj, "Level4Config", "button2", Level4Config.Scale)
 
         onUpdate(() => {
+            if (player1.isRespawning || player2.isRespawning) {
+                ghost.move(0, -80)
+            }
+
             player1.Move(player1.speed)
             player2.Move(player2.speed)
 

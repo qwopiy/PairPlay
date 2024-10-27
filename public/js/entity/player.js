@@ -42,7 +42,7 @@ constructor(
     this.initialX = x
     this.initialY = y
     this.gameObj = add([
-      sprite("player", { anim : "idle" }),
+      sprite(`player${this.playerNumber}`, { anim : "idle" }),
       area({ shape: new Rect(vec2(0, 0), 15, 15) }),
       anchor("center"),
       pos(x, y),
@@ -54,30 +54,31 @@ constructor(
   }
 
   Move(speed) {
-  
     if (this.isMovingRight && !this.isRespawning) {
-      if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
+      if (this.gameObj.curAnim() !== "run" && this.gameObj.isGrounded())
+        this.gameObj.play("run")
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
-      else this.speed += 5
-        this.gameObj.flipX = false
+      else 
+        this.speed += 5      
+      
+      this.gameObj.flipX = false
     } else if (this.isMovingLeft && !this.isRespawning) {
-      if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
+      if (this.gameObj.curAnim() !== "run" && this.gameObj.isGrounded())
+        this.gameObj.play("run")
       if (!this.isTouchingIce)
         this.speed = -this.regSpeed
-      else this.speed -= 5
-        this.gameObj.flipX = true
+      else 
+        this.speed -= 5
+      
+      this.gameObj.flipX = true
     } else {
-      this.gameObj.play("idle")
-      this.idle()
+      if (this.gameObj.isGrounded()) this.gameObj.play("idle")
+        this.idle()
     }
 
     if (this.gameObj.paused) return
-    //   if (this.gameObj.curAnim() !== "run") this.gameObj.play("run")
-    // this.gameObj.flipX = true
     if (!this.isRespawning) this.gameObj.move(speed, 0)
-
-    // this.isMoving = true
   }
 
   jump() {
@@ -85,7 +86,7 @@ constructor(
       if (this.gameObj.isGrounded() && !this.isRespawning) {
         this.hasJumpedOnce = true
         this.gameObj.jump(this.jumpForce)
-        // play("jump")
+        this.gameObj.play("jump")
       }
 
       //coyote time
@@ -96,7 +97,7 @@ constructor(
       ) {
         this.hasJumpedOnce = true
         this.gameObj.jump(this.jumpForce)
-        // play("jump")
+        this.gameObj.play("jump")
       }
   }
 
@@ -135,7 +136,9 @@ constructor(
       // this.idle()
       this.isMovingRight = false
     })
-    onKeyDown(this.up, () => {this.jump()})
+    onKeyDown(this.up, () => {
+      this.jump()
+    })
 
 
     if (this.isTouchEnabled()) {
@@ -213,6 +216,23 @@ constructor(
 
       this.heightDelta = this.previousHeight - this.gameObj.pos.y
       this.previousHeight = this.gameObj.pos.y
+
+      if (
+        !this.gameObj.isGrounded() &&
+        this.heightDelta > 0 &&
+        this.gameObj.curAnim() !== "jump-up"
+      ) {
+        this.gameObj.play("jump-up")
+      }
+
+      if (
+        !this.gameObj.isGrounded() &&
+        this.heightDelta < 0 &&
+        this.gameObj.curAnim() !== "jump-down"
+      ) {
+        this.gameObj.play("jump-down")
+      }
+
     })
   }
 }

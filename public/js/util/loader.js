@@ -1,7 +1,8 @@
 export const load = {
     assets: () => {
-        loadSprite("player", "assets/player.png", {
-            sliceX: 9,
+        loadSprite("player1", "assets/player1.png", {
+            sliceX: 8,
+            sliceY: 5,
             anims: {
                 run: {
                     from: 0,
@@ -9,9 +10,34 @@ export const load = {
                     loop: true,
                 },
 
-                idle: 8,
+                "jump": 16,
+                "jump-up": 17,
+                "jump-down": 18,
+                "land": 19,
+
+                idle: 24,
             }
         });
+        loadSprite("player2", "assets/player2.png", {
+            sliceX: 8,
+            sliceY: 5,
+            anims: {
+                run: {
+                    from: 0,
+                    to: 7,
+                    loop: true,
+                },
+
+                "jump": 16,
+                "jump-up": 17,
+                "jump-down": 18,
+                "land": 19,
+
+                idle: 24,
+            }
+        });
+        loadSprite("ghost", "assets/ghost.png")
+
         loadSprite("menuBackground", "assets/forestBackground.png");
         loadSprite("background", "assets/background.png");
         loadSprite("logo", "assets/logo.png");
@@ -32,7 +58,6 @@ export const load = {
         });
         
         loadSprite("lava", "assets/red.png")
-        loadSprite("spikeNaikTurun", "assets/spikeNaikTurun.png")
         loadSprite("items", "assets/items.png", {
             sliceX: 3,
             sliceY: 3,
