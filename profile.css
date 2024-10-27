@@ -1,9 +1,49 @@
+/* body {
+  transition: 0.5s;
+} */
+
+.edit-profile {
+  background-color: #e0f0ea;
+  position: fixed;
+  width: 40%;
+  inset: 0 -40% 0 auto;
+  transition: 0.5s;
+  z-index: 1;
+}
+
+#image-edit{
+  display: none; 
+  background-color: #574f7d;
+}
+
+body.show-edit .edit-profile {
+  inset: 0 0 0 auto;
+}
+
+img {
+  object-fit: cover;
+  width: 250;
+  height: 250;
+}
+
+/*  */
+
 #profile {
   background-image: url("assets/FrontPage/dungeon2.png");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
+  transition: 0.5s;
   /* height: 10000px; */
+}
+
+@font-face {
+  font-family: Pixel-Font;
+  src: url(assets/FrontPage/4x4kanafont.ttf);
+}
+
+.Pixel-Font {
+  font-family: Pixel-Font;
 }
 
 #edit {
@@ -42,7 +82,7 @@ section {
 .heading {
   color: #e0f0ea;
   /* border-radius: 1rem;
-    width: 30%; */
+      width: 30%; */
 }
 
 .edit_profile {
@@ -52,21 +92,27 @@ section {
   padding-bottom: 0%;
 }
 
+.scroll{
+  height: auto;
+  overflow: auto;
+}
+
+
 .edit_achievment {
   background-color: #95adbe;
-  color: #3c2a4d;
+  color: #ffffff;
 }
 
 input[type="text"],
 textarea {
   background-color: #95adbe;
-  color: #3c2a4d;
+  color: #000;
 }
 
 /* .Progress_test{
-  left: 5%;
-} */
+    left: 5%;
+  } */
 
-.achievment-dropdown{
+.achievment-dropdown img{
   cursor: pointer;
 }
