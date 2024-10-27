@@ -15,7 +15,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.8); 
+    background-color: #95adbe; 
     border-radius: 8px; 
 }
 .form-label, .form-text {
@@ -29,11 +29,21 @@ body {
 .password-container{
     position: relative;
 }
-#show-password, #show-password-check{
-    background-color: white;
+#show-password{
+    background-color:white;
     border: none;
     position: absolute;
     top: 55%;
+    right: 10px;
+    cursor: pointer;
+    width: 2rem;
+    align-items: center;
+}
+#show-password-check{
+    background-color:white;
+    border: none;
+    position: absolute;
+    top: 50%;
     right: 10px;
     cursor: pointer;
     width: 2rem;
@@ -43,6 +53,14 @@ body {
     width: 100%;
     height: auto;
 }
-/* .back{
+.btn{
+    background-color: #574f7d;
     color: white;
-} */
+    transition: background-color 0.3s ease;     
+}
+.btn:hover{
+    background-color: #503a65; 
+}
+.back{
+    color: white;
+}
