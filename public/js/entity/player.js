@@ -4,6 +4,7 @@ export class Player {
   isMovingLeft = false
   isMovingRight = false
   isRespawning = false
+  isPushing = false
   speed = 0
   coyoteLapse = 0.05
   death = 0
@@ -55,17 +56,31 @@ constructor(
 
   Move(speed) {
     if (this.isMovingRight && !this.isRespawning) {
-      if (this.gameObj.curAnim() !== "run" && this.gameObj.isGrounded())
+      if (this.gameObj.curAnim() !== "run" 
+          && this.gameObj.isGrounded() 
+          && !this.isPushing)
         this.gameObj.play("run")
+      else if (this.gameObj.curAnim() !== "push" 
+              && this.gameObj.isGrounded() 
+              && this.isPushing)
+        this.gameObj.play("push")
+        
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
       else 
-        this.speed += 5      
+        this.speed += 4
       
       this.gameObj.flipX = false
     } else if (this.isMovingLeft && !this.isRespawning) {
-      if (this.gameObj.curAnim() !== "run" && this.gameObj.isGrounded())
+      if (this.gameObj.curAnim() !== "run" 
+          && this.gameObj.isGrounded() 
+          && !this.isPushing)
         this.gameObj.play("run")
+      else if (this.gameObj.curAnim() !== "push" 
+              && this.gameObj.isGrounded() 
+              && this.isPushing)
+        this.gameObj.play("push")
+
       if (!this.isTouchingIce)
         this.speed = -this.regSpeed
       else 

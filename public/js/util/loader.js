@@ -10,6 +10,12 @@ export const load = {
                     loop: true,
                 },
 
+                push: {
+                    from: 8,
+                    to: 15,
+                    loop: true,
+                },
+
                 "jump": 16,
                 "jump-up": 17,
                 "jump-down": 18,
@@ -25,6 +31,12 @@ export const load = {
                 run: {
                     from: 0,
                     to: 7,
+                    loop: true,
+                },
+
+                push: {
+                    from: 8,
+                    to: 15,
                     loop: true,
                 },
 
