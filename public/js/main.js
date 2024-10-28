@@ -19,6 +19,7 @@ kaboom({
 
 function buttonPressed(object, config, Button, Scale) {
     object.onCollide("button_off", (button) => {
+        play("button")
         add([
             sprite("items", { anim: "button_on"}), 
             pos(button.pos.x, button.pos.y), 
@@ -50,6 +51,7 @@ function buttonUnpressed(object, config, Button, Scale) {
 
 function teleport(object, portalIn, portalOut) {
     object.onCollide( `${portalIn}` , () => {
+        play("portal")
         object.pos = portalOut.pos
     })
 }
@@ -59,7 +61,7 @@ var progress = 3;
 const scenes = {
     levelSelect: () => {
         const music = play("music", {
-            volume: 1,
+            volume: 0.2,
             loop: true,
         })
         onSceneLeave(() => {
@@ -101,7 +103,7 @@ const scenes = {
         level.drawMapLayout(level1Layout, level1Mappings, Level1Config.Scale)
         
         const music = play("music", {
-            volume: 1,
+            volume: 0.2,
             loop: true,
         })
         onSceneLeave(() => {
@@ -164,6 +166,7 @@ const scenes = {
         buttonUnpressed(player2.gameObj, "Level1Config", "button2", Level1Config.Scale)
 
         player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
+            play("key")
             destroy(key)
             Level1Config.hasKey = true
         })
@@ -175,6 +178,7 @@ const scenes = {
 
         player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
             if (Level1Config.hasKey) {
+                play("door")
                 destroy(door)
                 Level1Config.hasKey = false
             }
@@ -182,6 +186,7 @@ const scenes = {
 
         player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
             if (Level1Config.hasKey) {
+                play("door")
                 destroy(door)
                 Level1Config.hasKey = false
             }
@@ -196,6 +201,7 @@ const scenes = {
         })
         
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+            play("dead")
             player1.gameObj.angle = -90
             player1.isRespawning = true
             ghost.pos = player1.gameObj.pos
@@ -210,6 +216,7 @@ const scenes = {
         })
         
         player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+            play("dead")
             player2.gameObj.angle = -90
             player2.isRespawning = true
             ghost.pos = player2.gameObj.pos
@@ -224,6 +231,7 @@ const scenes = {
         })
 
         player1.gameObj.onCollide("dead", () => {
+            play("dead")
             player1.isRespawning = true
             ghost.pos = player1.gameObj.pos
                 if (!player2.isRespawning) {
@@ -237,6 +245,7 @@ const scenes = {
         })
 
         player2.gameObj.onCollide("dead", () => {
+            play("dead")
             player2.isRespawning = true
             ghost.pos = player2.gameObj.pos
                 if (!player1.isRespawning) {
@@ -293,7 +302,7 @@ const scenes = {
         level.drawMapLayout(level2Layout, level2Mappings, Level2Config.Scale)
 
         const music = play("music", {
-            volume: 1,
+            volume: 0.2,
             loop: true,
         })
         onSceneLeave(() => {
@@ -356,6 +365,7 @@ const scenes = {
 
         player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
             if (Level2Config.hasKey) {
+                play("door")
                 destroy(door)
                 Level2Config.hasKey = false
             }
@@ -363,12 +373,14 @@ const scenes = {
 
         player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
             if (Level2Config.hasKey) {
+                play("door")
                 destroy(door)
                 Level2Config.hasKey = false
             }
         })
 
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+            play("dead")
             player1.gameObj.angle = -90
             player1.isRespawning = true
             ghost.pos = player1.gameObj.pos
@@ -383,6 +395,7 @@ const scenes = {
         })
         
         player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+            play("dead")
             player2.gameObj.angle = -90
             player2.isRespawning = true
             ghost.pos = player2.gameObj.pos
@@ -405,6 +418,7 @@ const scenes = {
         })
 
         player1.gameObj.onCollide("dead", () => {
+            play("dead")
             player1.isRespawning = true
             ghost.pos = player1.gameObj.pos
                 if (!player2.isRespawning) {
@@ -418,6 +432,7 @@ const scenes = {
         })
 
         player2.gameObj.onCollide("dead", () => {
+            play("dead")
             player2.isRespawning = true
             ghost.pos = player2.gameObj.pos
                 if (!player1.isRespawning) {
@@ -469,7 +484,7 @@ const scenes = {
         level.drawMapLayout(level3Layout, level3Mappings, Level3Config.Scale)
 
         const music = play("music", {
-            volume: 1,
+            volume: 0.2,
             loop: true,
         })
         onSceneLeave(() => {
@@ -555,6 +570,7 @@ const scenes = {
         buttonUnpressed(player2.gameObj, "Level3Config", "button4", Level3Config.Scale)
 
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+            play("dead")
             player1.gameObj.angle = -90
             player1.isRespawning = true
             ghost.pos = player1.gameObj.pos
@@ -569,6 +585,7 @@ const scenes = {
         })
         
         player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+            play("dead")
             player2.gameObj.angle = -90
             player2.isRespawning = true
             ghost.pos = player2.gameObj.pos
@@ -584,6 +601,7 @@ const scenes = {
 
         player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
             if (Level3Config.hasKey) {
+                play("door")
                 destroy(door)
                 Level3Config.hasKey = false
             }
@@ -591,6 +609,7 @@ const scenes = {
 
         player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
             if (Level3Config.hasKey) {
+                play("door")
                 destroy(door)
                 Level3Config.hasKey = false
             }
@@ -651,7 +670,7 @@ const scenes = {
         level.drawMapLayout(level4Layout, level4Mappings, Level4Config.Scale)
 
         const music = play("music", {
-            volume: 1,
+            volume: 0.2,
             loop: true,
         })
         onSceneLeave(() => {
@@ -810,6 +829,7 @@ const scenes = {
 
         player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
             if (Level4Config.hasKey) {
+                play("door")
                 destroy(door)
                 Level4Config.hasKey = false
             }
@@ -817,6 +837,7 @@ const scenes = {
 
         player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
             if (Level4Config.hasKey) {
+                play("door")
                 destroy(door)
                 Level4Config.hasKey = false
             }
@@ -831,6 +852,7 @@ const scenes = {
         })
         
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+            play("dead")
             player1.gameObj.angle = -90
             player1.isRespawning = true
             ghost.pos = player1.gameObj.pos
@@ -845,6 +867,7 @@ const scenes = {
         })
         
         player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+            play("dead")
             player2.gameObj.angle = -90
             player2.isRespawning = true
             ghost.pos = player2.gameObj.pos

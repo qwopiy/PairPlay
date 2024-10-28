@@ -115,5 +115,13 @@ export const load = {
 
     sounds: () => {
         loadSound("music", "assets/Sounds/music.wav")
+        loadSound("jump", "assets/Sounds/lompat.wav")
+        loadSound("walk", "assets/Sounds/jalan.wav")
+        loadSound("dead", "assets/Sounds/mati.wav")
+        loadSound("button", "assets/Sounds/tombol.wav")
+        loadSound("door", "assets/Sounds/pintu.wav")
+        loadSound("key", "assets/Sounds/key.wav")
+        loadSound("portal", "assets/Sounds/portal.wav")
+        loadSound("bounce", "assets/Sounds/bounce.wav")
     }
 }

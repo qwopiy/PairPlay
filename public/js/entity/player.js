@@ -8,6 +8,7 @@ export class Player {
   speed = 0
   coyoteLapse = 0.05
   death = 0
+  walk = play("walk", { volume: 1, loop: true, paused: true })
 
 constructor(
     speed,
@@ -58,12 +59,18 @@ constructor(
     if (this.isMovingRight && !this.isRespawning) {
       if (this.gameObj.curAnim() !== "run" 
           && this.gameObj.isGrounded() 
-          && !this.isPushing)
-        this.gameObj.play("run")
+          && !this.isPushing) {
+        {this.gameObj.play("run")
+        this.walk.seek(0)
+        this.walk.paused = false}
+      }
       else if (this.gameObj.curAnim() !== "push" 
               && this.gameObj.isGrounded() 
-              && this.isPushing)
-        this.gameObj.play("push")
+              && this.isPushing) {
+        {this.gameObj.play("push") 
+        this.walk.seek(0)
+        this.walk.paused = false}
+      }
         
       if (!this.isTouchingIce)
         this.speed = this.regSpeed
@@ -74,12 +81,18 @@ constructor(
     } else if (this.isMovingLeft && !this.isRespawning) {
       if (this.gameObj.curAnim() !== "run" 
           && this.gameObj.isGrounded() 
-          && !this.isPushing)
-        this.gameObj.play("run")
+          && !this.isPushing) {
+        {this.gameObj.play("run")
+        this.walk.seek(0)
+        this.walk.paused = false}
+      }
       else if (this.gameObj.curAnim() !== "push" 
               && this.gameObj.isGrounded() 
-              && this.isPushing)
-        this.gameObj.play("push")
+              && this.isPushing) {
+        {this.gameObj.play("push") 
+        this.walk.seek(0)
+        this.walk.paused = false}
+      }
 
       if (!this.isTouchingIce)
         this.speed = -this.regSpeed
@@ -89,7 +102,8 @@ constructor(
       this.gameObj.flipX = true
     } else {
       if (this.gameObj.isGrounded()) this.gameObj.play("idle")
-        this.idle()
+      this.walk.paused = true
+      this.idle()
     }
 
     if (this.gameObj.paused) return
@@ -102,6 +116,7 @@ constructor(
         this.hasJumpedOnce = true
         this.gameObj.jump(this.jumpForce)
         this.gameObj.play("jump")
+        play("jump", { volume: 0.6 })
       }
 
       //coyote time
@@ -113,10 +128,12 @@ constructor(
         this.hasJumpedOnce = true
         this.gameObj.jump(this.jumpForce)
         this.gameObj.play("jump")
+        play("jump", { volume: 0.6 })
       }
   }
 
   bounce() {
+    play("bounce", { volume: 1})
     this.gameObj.jump(this.jumpForce * 2)
   }
 
