@@ -1,4 +1,4 @@
-import kaboom from "https://unpkg.com/kaboom@3000.1.17/dist/kaboom.js";
+import kaboom from "/public/js/libs/kaboom.mjs";
 import { load } from "./util/loader.js"
 import { UIManager } from "./util/UIManager.js";
 import { Level } from "./util/levelManager.js";
