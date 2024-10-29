@@ -50,11 +50,10 @@ export const load = {
         });
         loadSprite("ghost", "assets/ghost.png")
 
-        loadSprite("menuBackground", "assets/forestBackground.png");
         loadSprite("background", "assets/background.png");
-        loadSprite("logo", "assets/logo.png");
 
-        loadSprite("grass-tileset", "assets/grass-tileset.png", {
+
+        loadSprite("ground-tileset", "assets/ground-tileset.png", {
             sliceX: 3,
             sliceY: 3,
             anims: {
@@ -68,8 +67,18 @@ export const load = {
                 br: 8,
             }
         });
-        
-        loadSprite("lava", "assets/red.png")
+        loadSprite("door", "assets/door.png", {
+            sliceX: 5,
+            anims: {
+                closed: 0,
+                open: {
+                    from: 1,
+                    to: 4,
+                    loop: false,
+                },
+            }
+        });
+        loadSprite("doorBase", "assets/doorBase.png")
         loadSprite("items", "assets/items.png", {
             sliceX: 3,
             sliceY: 3,
@@ -84,10 +93,7 @@ export const load = {
                 button_on: 8,
             }
         });
-
-        loadSprite("leftButton", "assets/leftButton.png")
-        loadSprite("rightButton", "assets/rightButton.png")
-        loadSprite("jumpButton", "assets/jumpButton.png")
+        loadSprite("music", "assets/music.png")
         loadSprite("ice", "assets/ice.png",{
             sliceX: 3,
             sliceY: 3,
@@ -106,6 +112,19 @@ export const load = {
                 fs: 8,      //float single
             }
         });
+
+        loadSprite("obj", "assets/spriteSheet1.png", {
+            sliceX: 3,
+            sliceY: 3,
+            anims: {
+                win: 2,
+                lava: 4,
+                bounce: 5,
+                bounceBase: 8,
+                finishClose: 6,
+                finishOpen: 7,
+            }
+        })
 
         loadSprite("1", "assets/FrontPage/Progress1.png")
         loadSprite("2", "assets/FrontPage/Progress2.png")

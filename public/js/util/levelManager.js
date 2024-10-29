@@ -1,8 +1,8 @@
 export class Level {
-    drawWaves(type, Scale) {
+    drawLava() {
         let offset = -100
         for (let i = 0; i < 26; i++) {
-          add([sprite(type), pos(offset, 700), scale(Scale), fixed()])
+          add([sprite("obj", { anim: "lava"}), pos(offset, 675), scale(4), fixed()])
           offset += 64
         }
       } //ini buat bikin lava ikut kamera
@@ -25,7 +25,7 @@ export class Level {
     }    //ini buat bikin map
 
     drawBackground(bgSpriteName) {
-        add([sprite(bgSpriteName), fixed(), scale(1)]);
+        add([sprite(bgSpriteName), fixed(), scale(0.80)]);
     }   //ini buat bikin background
 
 }

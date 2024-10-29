@@ -1,7 +1,7 @@
 class UI {
     displayLevel(progress) {
         add([
-          sprite("menuBackground"), 
+          sprite("background"), 
           fixed(),
           scale(1),
         ]);
@@ -53,10 +53,10 @@ class UI {
 
     UIButton() {
         add([
-          rect(50, 50),
+          sprite("music"),
+          scale(3),
           pos(width() - 50, 0),
           area(),
-          color(0, 0, 0),
           fixed(),
           z(100),
           "muteMusic"

@@ -5,7 +5,7 @@ export function generateMappings(tileType) {
             area(), 
             body({ isStatic: true}), 
             offscreen(),
-            "grass"
+            "ground"
         ],
 
         1: () => [
@@ -13,7 +13,7 @@ export function generateMappings(tileType) {
             area(), 
             body({ isStatic: true}), 
             offscreen(),
-            "grass"
+            "ground"
         ],
 
         2: () => [
@@ -21,7 +21,7 @@ export function generateMappings(tileType) {
             area(), 
             body({ isStatic: true}), 
             offscreen(),
-            "grass"
+            "ground"
         ],
 
         3: () => [
@@ -29,13 +29,13 @@ export function generateMappings(tileType) {
             area(), 
             body({ isStatic: true}), 
             offscreen(),
-            "grass"
+            "ground"
         ],
 
         4: () => [
             sprite(`${tileType}-tileset`, { anim: 'mm' }),
             offscreen(),
-            "grass"
+            "ground"
         ],
 
         5: () => [
@@ -43,7 +43,7 @@ export function generateMappings(tileType) {
             area(), 
             body({ isStatic: true}), 
             offscreen(),
-            "grass"
+            "ground"
         ],
 
         6: () => [
@@ -53,12 +53,20 @@ export function generateMappings(tileType) {
 
         7: () => [
             sprite(`${tileType}-tileset`, { anim: 'bm' }),
-            offscreen()
+            offscreen(),
+            area(), 
+            body({ isStatic: true}), 
+            offscreen(),
+            "ground"
         ],
 
         8: () => [
             sprite(`${tileType}-tileset`, { anim: 'br' }),
-            offscreen()
+            offscreen(),
+            area(), 
+            body({ isStatic: true}), 
+            offscreen(),
+            "ground"
         ],
     
         K: () => [
@@ -90,7 +98,8 @@ export function generateMappings(tileType) {
         ],
 
         b: () => [
-            area({ shape: new Rect(vec2(0), 16, 16) }), 
+            sprite("obj", {anim: "bounceBase"}),
+            area(), 
             body({ isStatic: true }),
             offscreen(),
             "bouncy"
@@ -179,10 +188,19 @@ export function generateMappings(tileType) {
 
 
         D: () => [
+            sprite("door", {anim: "closed"}),
             area({ shape: new Rect(vec2(0), 16, 48)}),
             body({ isStatic: true }),
             offscreen(),
             "door"
+        ],
+
+        d: () => [
+            sprite("doorBase"),
+            area(),
+            body({ isStatic: true }),
+            offscreen(),
+            "doorBase"
         ],
 
         // o: () => [
@@ -207,7 +225,8 @@ export function generateMappings(tileType) {
         ],
 
         F: () => [
-            area({ shape: new Rect(vec2(0), 16, 48)}),
+            sprite("obj", {anim: "finishClose"}),
+            area(),
             offscreen(),
             "finish"
         ],

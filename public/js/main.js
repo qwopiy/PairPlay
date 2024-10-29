@@ -56,7 +56,7 @@ function teleport(object, portalIn, portalOut) {
     })
 }
 
-var progress = 3;
+var progress = 0;
 
 const scenes = {
     levelSelect: () => {
@@ -99,7 +99,7 @@ const scenes = {
         setGravity(Level1Config.gravity)
 
         const level = new Level()
-        level.drawBackground("menuBackground")
+        level.drawBackground("background")
         level.drawMapLayout(level1Layout, level1Mappings, Level1Config.Scale)
         
         const music = play("music", {
@@ -107,6 +107,8 @@ const scenes = {
             loop: true,
         })
         onSceneLeave(() => {
+            player1.walk.stop()
+            player2.walk.stop()
             music.stop()
         })
         
@@ -155,9 +157,9 @@ const scenes = {
         player2.update()
 
         onCollide("player1", "ice", () => {!player1.isTouchingIce ? (player1.isTouchingIce = true, player1.speed = 0) : null})
-        onCollide("player1", "grass", () => {player1.isTouchingIce ? (player1.isTouchingIce = false, player1.speed = 0) : null})
+        onCollide("player1", "ground", () => {player1.isTouchingIce ? (player1.isTouchingIce = false, player1.speed = 0) : null})
         onCollide("player2", "ice", () => {!player2.isTouchingIce ? (player2.isTouchingIce = true, player2.speed = 0) : null})
-        onCollide("player2", "grass", () => {player2.isTouchingIce ? (player2.isTouchingIce = false, player2.speed = 0) : null})
+        onCollide("player2", "ground", () => {player2.isTouchingIce ? (player2.isTouchingIce = false, player2.speed = 0) : null})
 
         buttonPressed(player1.gameObj, "Level1Config","button1", Level1Config.Scale)
         buttonUnpressed(player1.gameObj, "Level1Config", "button1", Level1Config.Scale)
@@ -179,7 +181,10 @@ const scenes = {
         player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
             if (Level1Config.hasKey) {
                 play("door")
-                destroy(door)
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
                 Level1Config.hasKey = false
             }
         })
@@ -187,17 +192,34 @@ const scenes = {
         player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
             if (Level1Config.hasKey) {
                 play("door")
-                destroy(door)
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
                 Level1Config.hasKey = false
             }
         })
 
-        player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
+        player1.gameObj.onCollide("finish", (finish) => {   //player1 collision with finish
             Level1Config.win1 = true
+            player1.win = true
+            player1.gameObj.move(0, -16000)
+            player1.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
         })
 
-        player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
+        player2.gameObj.onCollide("finish", (finish) => {   //player2 collision with finish
             Level1Config.win2 = true
+            player2.win = true
+            player2.gameObj.move(0, -16000)
+            player2.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
         })
         
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
@@ -210,6 +232,8 @@ const scenes = {
                 player1.isRespawning = false
                 player1.respawnPlayers()
                 player2.respawnPlayers()
+                Level1Config.win1 = false
+                Level1Config.win2 = false
                 player1.death++
                 }, 3000)
             }
@@ -225,6 +249,8 @@ const scenes = {
                 player2.isRespawning = false
                 player1.respawnPlayers()
                 player2.respawnPlayers()
+                Level1Config.win1 = false
+                Level1Config.win2 = false
                 player2.death++
                 }, 3000)
             }
@@ -239,6 +265,8 @@ const scenes = {
                         player1.isRespawning = false
                         player1.respawnPlayers()
                         player2.respawnPlayers()
+                        Level1Config.win1 = false
+                        Level1Config.win2 = false
                         player1.death++
                     }, 3000)
                 }
@@ -253,6 +281,8 @@ const scenes = {
                         player2.isRespawning = false
                         player1.respawnPlayers()
                         player2.respawnPlayers()
+                        Level1Config.win1 = false
+                        Level1Config.win2 = false
                         player2.death++
                     }, 3000)
                 }
@@ -291,14 +321,14 @@ const scenes = {
         })
         attachCamera(player1.gameObj, player2.gameObj, 0, 84, Level1Config.levelZoom)
         
-        // level.drawWaves("lava")
+        // level.drawLava()
     },
     
     2: () => {
         setGravity(Level2Config.gravity)
 
         const level = new Level()
-        level.drawBackground("menuBackground")
+        level.drawBackground("background")
         level.drawMapLayout(level2Layout, level2Mappings, Level2Config.Scale)
 
         const music = play("music", {
@@ -306,6 +336,8 @@ const scenes = {
             loop: true,
         })
         onSceneLeave(() => {
+            player1.walk.stop()
+            player2.walk.stop()
             music.stop()
         })
         
@@ -366,7 +398,10 @@ const scenes = {
         player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
             if (Level2Config.hasKey) {
                 play("door")
-                destroy(door)
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
                 Level2Config.hasKey = false
             }
         })
@@ -374,7 +409,10 @@ const scenes = {
         player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
             if (Level2Config.hasKey) {
                 play("door")
-                destroy(door)
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
                 Level2Config.hasKey = false
             }
         })
@@ -389,6 +427,8 @@ const scenes = {
                 player1.isRespawning = false
                 player1.respawnPlayers()
                 player2.respawnPlayers()
+                Level2Config.win1 = false
+                Level2Config.win2 = false
                 player1.death++
                 }, 3000)
             }
@@ -404,17 +444,33 @@ const scenes = {
                 player2.isRespawning = false
                 player1.respawnPlayers()
                 player2.respawnPlayers()
+                Level2Config.win1 = false
+                Level2Config.win2 = false
                 player2.death++
                 }, 3000)
             }
         })
 
-        player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
+        player1.gameObj.onCollide("finish", (finish) => {   //player1 collision with finish
             Level2Config.win1 = true
+            player1.win = true
+            player1.gameObj.move(0, -16000)
+            player1.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
         })
 
-        player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
+        player2.gameObj.onCollide("finish", (finish) => {   //player2 collision with finish
             Level2Config.win2 = true
+            player2.win = true
+            player2.gameObj.move(0, -16000)
+            player2.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
         })
 
         player1.gameObj.onCollide("dead", () => {
@@ -426,6 +482,8 @@ const scenes = {
                         player1.isRespawning = false
                         player1.respawnPlayers()
                         player2.respawnPlayers()
+                        Level2Config.win1 = false
+                        Level2Config.win2 = false
                         player1.death++
                     }, 3000)
                 }
@@ -440,6 +498,8 @@ const scenes = {
                         player2.isRespawning = false
                         player1.respawnPlayers()
                         player2.respawnPlayers()
+                        Level2Config.win1 = false
+                        Level2Config.win2 = false
                         player2.death++
                     }, 3000)
                 }
@@ -474,6 +534,7 @@ const scenes = {
         })
 
         attachCamera(player1.gameObj, player2.gameObj, 0, 84, Level2Config.levelZoom)
+        // level.drawLava()
         },
 
     3: () => {
@@ -488,6 +549,8 @@ const scenes = {
             loop: true,
         })
         onSceneLeave(() => {
+            player1.walk.stop()
+            player2.walk.stop()
             music.stop()
         })
         
@@ -579,6 +642,8 @@ const scenes = {
                 player1.isRespawning = false
                 player1.respawnPlayers()
                 player2.respawnPlayers()
+                Level3Config.win1 = false
+                Level3Config.win2 = false
                 player1.death++
                 }, 3000)
             }
@@ -594,6 +659,8 @@ const scenes = {
                 player2.isRespawning = false
                 player1.respawnPlayers()
                 player2.respawnPlayers()
+                Level3Config.win1 = false
+                Level3Config.win2 = false
                 player2.death++
                 }, 3000)
             }
@@ -602,7 +669,10 @@ const scenes = {
         player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
             if (Level3Config.hasKey) {
                 play("door")
-                destroy(door)
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
                 Level3Config.hasKey = false
             }
         })
@@ -610,17 +680,34 @@ const scenes = {
         player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
             if (Level3Config.hasKey) {
                 play("door")
-                destroy(door)
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
                 Level3Config.hasKey = false
             }
         })
 
-        player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
+        player1.gameObj.onCollide("finish", (finish) => {   //player1 collision with finish
             Level3Config.win1 = true
+            player1.win = true
+            player1.gameObj.move(0, -16000)
+            player1.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
         })
 
-        player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
+        player2.gameObj.onCollide("finish", (finish) => {   //player2 collision with finish
             Level3Config.win2 = true
+            player2.win = true
+            player2.gameObj.move(0, -16000)
+            player2.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
         })
 
         onCollide("player1", "player2", () => {
@@ -666,7 +753,7 @@ const scenes = {
         setGravity(Level4Config.gravity)
 
         const level = new Level()
-        level.drawBackground("menuBackground")
+        level.drawBackground("background")
         level.drawMapLayout(level4Layout, level4Mappings, Level4Config.Scale)
 
         const music = play("music", {
@@ -674,6 +761,8 @@ const scenes = {
             loop: true,
         })
         onSceneLeave(() => {
+            player1.walk.stop()
+            player2.walk.stop()
             music.stop()
         })
         
@@ -830,7 +919,10 @@ const scenes = {
         player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
             if (Level4Config.hasKey) {
                 play("door")
-                destroy(door)
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
                 Level4Config.hasKey = false
             }
         })
@@ -838,17 +930,34 @@ const scenes = {
         player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
             if (Level4Config.hasKey) {
                 play("door")
-                destroy(door)
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
                 Level4Config.hasKey = false
             }
         })
 
-        player1.gameObj.onCollide("finish", () => {   //player1 collision with finish
+        player1.gameObj.onCollide("finish", (finish) => {   //player1 collision with finish
             Level4Config.win1 = true
+            player1.win = true
+            player1.gameObj.move(0, -16000)
+            player1.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
         })
 
-        player2.gameObj.onCollide("finish", () => {   //player2 collision with finish
+        player2.gameObj.onCollide("finish", (finish) => {   //player2 collision with finish
             Level4Config.win2 = true
+            player2.win = true
+            player2.gameObj.move(0, -16000)
+            player2.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
         })
         
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
@@ -861,6 +970,8 @@ const scenes = {
                 player1.isRespawning = false
                 player1.respawnPlayers()
                 player2.respawnPlayers()
+                Level4Config.win1 = false
+                Level4Config.win2 = false
                 player1.death++
                 }, 3000)
             }
@@ -876,6 +987,8 @@ const scenes = {
                 player2.isRespawning = false
                 player1.respawnPlayers()
                 player2.respawnPlayers()
+                Level4Config.win1 = false
+                Level4Config.win2 = false
                 player2.death++
                 }, 3000)
             }

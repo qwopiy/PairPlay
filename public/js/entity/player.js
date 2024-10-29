@@ -4,6 +4,7 @@ export class Player {
   isMovingLeft = false
   isMovingRight = false
   isRespawning = false
+  win = false
   isPushing = false
   speed = 0
   coyoteLapse = 0.05
@@ -107,7 +108,7 @@ constructor(
     }
 
     if (this.gameObj.paused) return
-    if (!this.isRespawning) this.gameObj.move(speed, 0)
+    if (!this.isRespawning && !this.win) this.gameObj.move(speed, 0)
   }
 
   jump() {
@@ -232,6 +233,7 @@ constructor(
     this.gameObj.pos = vec2(this.initialX, this.initialY)
     this.gameObj.use(body({ gravityScale: 1 }))
     this.gameObj.angle = 0
+    this.win = false
     this.isRespawning = true
     setTimeout(() => this.isRespawning = false, 1000)
     this.speed = 0
