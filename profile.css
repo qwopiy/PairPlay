@@ -39,7 +39,7 @@ img {
 
 @font-face {
   font-family: Pixel-Font;
-  src: url(assets/FrontPage/4x4kanafont.ttf);
+  src: url("./assets/FrontPage/4x4kanafont.ttf");
 }
 
 .Pixel-Font {
