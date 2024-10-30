@@ -56,7 +56,7 @@ function teleport(object, portalIn, portalOut) {
     })
 }
 
-var progress = 0;
+var progress = 3;
 
 const scenes = {
     levelSelect: () => {
@@ -96,6 +96,8 @@ const scenes = {
     },
 
     1: () => {
+        Level1Config.win1 = false
+        Level1Config.win2 = false
         setGravity(Level1Config.gravity)
 
         const level = new Level()
@@ -170,11 +172,13 @@ const scenes = {
         player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
             play("key")
             destroy(key)
+            console.log("key Get")
             Level1Config.hasKey = true
         })
 
         player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
             destroy(key)
+            console.log("key Get")
             Level1Config.hasKey = true
         })
 
@@ -306,6 +310,7 @@ const scenes = {
 
             if (Level1Config.button1 && Level1Config.button2) {
                 Level1Config.hasKey = true
+                console.log("key Get")
             }
 
             player1.Move(player1.speed)
@@ -325,6 +330,8 @@ const scenes = {
     },
     
     2: () => {
+        Level2Config.win1 = false
+        Level2Config.win2 = false
         setGravity(Level2Config.gravity)
 
         const level = new Level()
@@ -387,11 +394,13 @@ const scenes = {
 
         player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
             destroy(key)
+            console.log("key Get")
             Level2Config.hasKey = true
         })
 
         player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
             destroy(key)
+            console.log("key Get")
             Level2Config.hasKey = true
         })
 
@@ -538,6 +547,8 @@ const scenes = {
         },
 
     3: () => {
+        Level3Config.win1 = false
+        Level3Config.win2 = false
         setGravity(Level3Config.gravity)
 
         const level = new Level()
@@ -591,7 +602,7 @@ const scenes = {
                 anchor("center"),
                 offscreen(),
                 scale(Level3Config.Scale),
-                "box", 
+                "box1", 
         ])
 
         const box2 = add([
@@ -602,7 +613,7 @@ const scenes = {
                 anchor("center"),
                 offscreen(),
                 scale(Level3Config.Scale),
-                "box", 
+                "box2", 
         ])
 
         const ghost = add([
@@ -610,7 +621,7 @@ const scenes = {
             pos(10000, 10000),
             anchor("center"),
             opacity(0.5),
-            scale(Level1Config.Scale),
+            scale(Level3Config.Scale),
             "ghost"
         ])
 
@@ -620,11 +631,26 @@ const scenes = {
         player1.update()
         player2.update()
 
-        buttonPressed(box1, "Level3Config", "button1", Level3Config.Scale)
-        buttonUnpressed(box1, "Level3Config", "button1", Level3Config.Scale)
+        // buttonPressed(box1, "Level3Config", "button1", Level3Config.Scale)
+        // buttonUnpressed(box1, "Level3Config", "button1", Level3Config.Scale)
+        onCollide("box1", "button_off", (source, target) => {
+            source.pos.x = target.pos.x + 8
+            source.pos.y = target.pos.y + 8
+            source.use(body({ isStatic: true }))
+            target.play("button_on")
+            Level3Config.button1 = true
+        })
 
-        buttonPressed(box2, "Level3Config", "button2", Level3Config.Scale)
-        buttonUnpressed(box2, "Level3Config", "button2", Level3Config.Scale)
+        // buttonPressed(box2, "Level3Config", "button2", Level3Config.Scale)
+        // buttonUnpressed(box2, "Level3Config", "button2", Level3Config.Scale)
+
+        onCollide("box2", "button_off", (source, target) => {
+            source.pos.x = target.pos.x + 8
+            source.pos.y = target.pos.y + 8
+            source.use(body({ isStatic: true }))
+            target.play("button_on")
+            Level3Config.button2 = true
+        })
 
         buttonPressed(player1.gameObj, "Level3Config", "button3", Level3Config.Scale)
         buttonUnpressed(player1.gameObj, "Level3Config", "button3", Level3Config.Scale)
@@ -720,11 +746,15 @@ const scenes = {
             player2.isPushing = false
         })
 
-        onCollide("player1", "box", () => { player1.isPushing = true })
-        onCollideEnd("player1", "box", () => { player1.isPushing = false })
+        onCollide("player1", "box1", () => { player1.isPushing = true })
+        onCollideEnd("player1", "box1", () => { player1.isPushing = false })
+        onCollide("player1", "box2", () => { player1.isPushing = true })
+        onCollideEnd("player1", "box2", () => { player1.isPushing = false })
 
-        onCollide("player2", "box", () => { player2.isPushing = true })
-        onCollideEnd("player2", "box", () => { player2.isPushing = false })
+        onCollide("player2", "box1", () => { player2.isPushing = true })
+        onCollideEnd("player2", "box1", () => { player2.isPushing = false })
+        onCollide("player2", "box2", () => { player2.isPushing = true })
+        onCollideEnd("player2", "box2", () => { player2.isPushing = false })
 
         onUpdate(() => {
             if (player1.isRespawning || player2.isRespawning) {
@@ -736,6 +766,7 @@ const scenes = {
 
             if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4) {
                 Level3Config.hasKey = true
+                console.log("key Get")
             }
 
             if (Level3Config.win1 && Level3Config.win2) {
@@ -750,6 +781,8 @@ const scenes = {
     },
 
     4: () => {
+        Level4Config.win1 = false
+        Level4Config.win2 = false
         setGravity(Level4Config.gravity)
 
         const level = new Level()
@@ -1016,6 +1049,7 @@ const scenes = {
             player2.Move(player2.speed)
 
             if (Level4Config.button1 || Level4Config.button2) {
+                console.log("key Get")
                 Level4Config.hasKey = true
             }
 
