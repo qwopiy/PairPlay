@@ -87,13 +87,13 @@ section {
 
 .edit_profile {
   background-color: #574f7d;
-  height: auto;
+  height: 100%;
   margin-bottom: 0%;
   padding-bottom: 0%;
 }
 
 .scroll{
-  height: auto;
+  height: 100%;
   overflow: auto;
 }
 
