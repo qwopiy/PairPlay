@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/qwopiy/PairPlay/issues"
   },
-  "homepage": "https://github.com/qwopiy/PairPlay#readme",
+  "homepage": "https://qwopiy.github.io/PairPlay/",
   "dependencies": {
     "express": "^4.21.1",
     "kaboom": "^3000.1.17",
