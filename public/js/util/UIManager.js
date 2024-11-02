@@ -1,7 +1,7 @@
 class UI {
     displayLevel(progress) {
         add([
-          sprite("menuBackground"), 
+          sprite("background"), 
           fixed(),
           scale(1),
         ]);
@@ -49,9 +49,19 @@ class UI {
           opacity(progress >= 3 ? 1 : 0.5),
           "4"
         ])
-    }
+    };
 
-    
+    UIButton() {
+        add([
+          sprite("music"),
+          scale(3),
+          pos(width() - 50, 0),
+          area(),
+          fixed(),
+          z(100),
+          "muteMusic"
+        ])
+    }
 }
 
 export const UIManager = new UI();

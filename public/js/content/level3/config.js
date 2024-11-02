@@ -9,7 +9,7 @@ export const Level3Config = {
     win2: false,
     Scale: 1,
     gravity: 700,
-    playerSpeed: 200,
+    playerSpeed: 100,
     jumpForce: 160,
     playerStartPosX: 160,
     playerStartPosY: 140,
