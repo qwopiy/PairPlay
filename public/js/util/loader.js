@@ -48,11 +48,16 @@ export const load = {
                 idle: 24,
             }
         });
+        loadSprite("moveButton", "assets/moveButton.png", {
+            sliceX: 3,
+            anims: {
+                left: 0,
+                right: 1,
+                jump: 2,
+            }
+        })
         loadSprite("ghost", "assets/ghost.png")
-
-        loadSprite("background", "assets/background.png");
-
-
+        loadSprite("background", "assets/background.png")
         loadSprite("ground-tileset", "assets/ground-tileset.png", {
             sliceX: 3,
             sliceY: 3,

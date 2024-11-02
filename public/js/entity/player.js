@@ -176,7 +176,7 @@ constructor(
 
     if (this.isTouchEnabled()) {
       const leftButton = add([
-        sprite("leftButton"),
+        sprite("moveButton", { anim: "left" }),
         pos(10, height() - 100),
         scale(2),
         opacity(0.5),
@@ -185,7 +185,7 @@ constructor(
         "leftButton"
       ]);
       const rightButton = add([
-        sprite("rightButton"),
+        sprite("moveButton", { anim: "right" }),
         pos(140, height() - 100),
         scale(2),
         opacity(0.5),
@@ -194,7 +194,7 @@ constructor(
         "rightButton"
       ]);
       const jumpButton = add([
-        sprite("jumpButton"),
+        sprite("moveButton", { anim: "jump" }),
         pos(width() - 120, height() - 100),
         scale(2),
         opacity(0.5),
@@ -205,6 +205,7 @@ constructor(
     }
 }
 
+  // fix later
   touchControls() {
     onTouchStart((position) => {
       if (position.x < width() / 10) {
@@ -241,8 +242,6 @@ constructor(
   
   update() {
     onUpdate(() => {
-      // if (this.isTouchEnabled())  this.touchControls()
-
       if (this.gameObj.isGrounded()) {
         this.hasJumpedOnce = false
         this.timeSinceLastGrounded = time()
