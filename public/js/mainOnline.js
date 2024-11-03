@@ -155,7 +155,7 @@ const scenes = {
         //         scale(Level1Config.Scale),
         //         "ghost"
         //     ])
-        //     frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, id, Level1Config.Scale)
+        //     frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, `player${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
         //     frontEndPlayers[id].update();
         //     if (frontEndPlayers[id].isTouchEnabled()) frontEndPlayers[id].touchControls()
 
@@ -242,7 +242,7 @@ const scenes = {
                         scale(Level1Config.Scale),
                         "ghost"
                     ])
-                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, id, Level1Config.Scale)
+                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, `player${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
                     frontEndPlayers[id].update();
                     if (frontEndPlayers[id].isTouchEnabled())frontEndPlayers[id].touchControls()
 
@@ -352,6 +352,18 @@ const scenes = {
         onKeyPress("r", () => {
             socket.emit('keyPress', 'r')
         })
+        
+        onCollide("player1", "player2", () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].isPushing = true
+            }
+        })
+        
+        onCollideEnd("player1", "player2", () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].isPushing = false
+            }
+        })
 
         socket.on('respawn', () => {
             for (const id in frontEndPlayers) {
@@ -378,6 +390,7 @@ const scenes = {
             }, 1000);
             go("levelSelect")
         })
+
 
         const camX = {}
         onUpdate(() => {
@@ -474,7 +487,7 @@ const scenes = {
                         scale(Level2Config.Scale),
                         "ghost"
                     ])
-                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, id, Level2Config.Scale)
+                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, `player${frontEndPlayers[id].playerNumber}`, Level2Config.Scale)
                     frontEndPlayers[id].update();
                     if (frontEndPlayers[id].isTouchEnabled())frontEndPlayers[id].touchControls()
 
@@ -572,6 +585,18 @@ const scenes = {
             socket.emit('keyPress', 'r')
         })
 
+        onCollide("player1", "player2", () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].isPushing = true
+            }
+        })
+        
+        onCollideEnd("player1", "player2", () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].isPushing = false
+            }
+        })        
+
         socket.on('respawn', () => {
             for (const id in frontEndPlayers) {
                 frontEndPlayers[id].respawnPlayers()
@@ -615,7 +640,7 @@ const scenes = {
                 sum += camX[id]
             }
             camPos(sum / 2, 84)     // camera position x = rata rata posisi player, kalau 2 player (x + x) / 2
-            camScale(2, 2)
+            camScale(4, 4)
         })
 
         setInterval(() => {
@@ -716,7 +741,7 @@ const scenes = {
                         scale(Level3Config.Scale),
                         "ghost"
                     ])
-                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 48, backEndPlayer.y + 32, id, Level3Config.Scale)
+                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 48, backEndPlayer.y + 32, `player${frontEndPlayers[id].playerNumber}`, Level3Config.Scale)
                     frontEndPlayers[id].update();
                     if (frontEndPlayers[id].isTouchEnabled())frontEndPlayers[id].touchControls()
 
@@ -761,6 +786,11 @@ const scenes = {
 
                     buttonPressed(frontEndPlayers[id].gameObj, "Level3Config",`button${frontEndPlayers[id].playerNumber}`, Level3Config.Scale)
                     buttonUnpressed(frontEndPlayers[id].gameObj, "Level3Config", `button${frontEndPlayers[id].playerNumber}`, Level3Config.Scale)
+
+                    frontEndPlayers[id].gameObj.onCollide("box1", () => { frontEndPlayers[id].isPushing = true })
+                    frontEndPlayers[id].gameObj.onCollideEnd("box1", () => { frontEndPlayers[id].isPushing = false })
+                    frontEndPlayers[id].gameObj.onCollide("box2", () => { frontEndPlayers[id].isPushing = true })
+                    frontEndPlayers[id].gameObj.onCollideEnd("box2", () => { frontEndPlayers[id].isPushing = false })
 
                     console.log(frontEndPlayers[socket.id]);
                 } else {
@@ -811,6 +841,18 @@ const scenes = {
         
         onKeyPress("r", () => {
             socket.emit('keyPress', 'r')
+        })
+
+        onCollide("player1", "player2", () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].isPushing = true
+            }
+        })
+        
+        onCollideEnd("player1", "player2", () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].isPushing = false
+            }
         })
 
         socket.on('respawn', () => {
@@ -1025,7 +1067,7 @@ const scenes = {
                         scale(Level4Config.Scale),
                         "ghost"
                     ])
-                    frontEndPlayers[id].makePlayer(backEndPlayer.x - 64, backEndPlayer.y + 48, id, Level4Config.Scale)
+                    frontEndPlayers[id].makePlayer(backEndPlayer.x - 64, backEndPlayer.y + 48, `player${frontEndPlayers[id].playerNumber}`, Level4Config.Scale)
                     frontEndPlayers[id].update();
                     if (frontEndPlayers[id].isTouchEnabled())frontEndPlayers[id].touchControls()
 
@@ -1161,6 +1203,18 @@ const scenes = {
             socket.emit('keyPress', 'r')
         })
 
+        onCollide("player1", "player2", () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].isPushing = true
+            }
+        })
+        
+        onCollideEnd("player1", "player2", () => {
+            for (const id in frontEndPlayers) {
+                frontEndPlayers[id].isPushing = false
+            }
+        })
+    
         socket.on('respawn', () => {
             for (const id in frontEndPlayers) {
                 frontEndPlayers[id].respawnPlayers()
@@ -1244,4 +1298,4 @@ for (const key in scenes) {
 
 load.assets();
 load.sounds();
-go(4);
+go(3);
