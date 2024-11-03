@@ -85,22 +85,18 @@ const scenes = {
             
             if (level >= 0)
             onClick("1", () => {
-                go(1)
                 socket.emit('level', 1)
             })
             if (level >= 1)
             onClick("2", () => {
-                go(2)
                 socket.emit('level', 2)
             })
             if (level >= 2)
             onClick("3", () => {
-                go(3)
                 socket.emit('level', 3)
             })
             if (level >= 3)
             onClick("4", () => {
-                go(4)
                 socket.emit('level', 4)
             })
         })
@@ -424,6 +420,8 @@ const scenes = {
     },
     
     2: () => {
+        Level2Config.win1 = false
+        Level2Config.win2 = false
         socket.emit('inLevel', true)
         setGravity(Level2Config.gravity)
 
@@ -431,9 +429,26 @@ const scenes = {
         level.drawBackground("background")
         level.drawMapLayout(level2Layout, level2Mappings, Level2Config.Scale)
 
+        const music = play("music", {
+            volume: 0.2,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            for (const id in frontEndPlayers) {
+                destroy(frontEndPlayers[id].gameObj)
+                delete frontEndPlayers[id]
+                frontEndPlayers[id].walk.stop()
+            }
+            music.stop()
+        })
+
+        UIManager.UIButton()
+        onClick("muteMusic", () => {
+            music.paused = !music.paused
+        })
+
         const frontEndPlayers = {}
-        
-        socket.emit('moveSpeed', Level2Config.playerSpeed)
+        const ghost = {}
         
         socket.on('updatePlayers', (backEndPlayers) => {
             for (const id in backEndPlayers) {
@@ -444,18 +459,32 @@ const scenes = {
                         Level2Config.playerSpeed,
                         Level2Config.jumpForce,
                         Level2Config.nbLives,
-                        "a",
-                        "d",
-                        "w",
+                        "",
+                        "",
+                        "",
                         backEndPlayer.playerNumber,
                         1,
                         false
                     )
+                    ghost[id] = add([
+                        sprite("ghost"),
+                        pos(10000, 10000),
+                        anchor("center"),
+                        opacity(0.5),
+                        scale(Level2Config.Scale),
+                        "ghost"
+                    ])
                     frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, id, Level2Config.Scale)
                     frontEndPlayers[id].update();
+                    if (frontEndPlayers[id].isTouchEnabled())frontEndPlayers[id].touchControls()
 
                     frontEndPlayers[id].gameObj.onCollide("spike", () => {
-                        socket.emit('respawning')
+                        ghost[id].pos = frontEndPlayers[id].gameObj.pos
+                        frontEndPlayers[id].gameObj.angle = -90
+                        frontEndPlayers[id].isRespawning = true
+                        ghost.pos = frontEndPlayers[id].gameObj.pos
+                        if (!respawning) socket.emit('respawning')
+                        respawning = true
                     })
 
                     frontEndPlayers[id].gameObj.onCollide("key", (key) => {
@@ -466,23 +495,13 @@ const scenes = {
 
                     frontEndPlayers[id].gameObj.onCollide("door", (door) => {
                         if (Level2Config.hasKey) {
-                            destroy(door)
+                            play("door")
+                            door.play("open")
+                            setTimeout(() => {
+                                destroy(door)
+                            }, 400);
                             Level2Config.hasKey = false
                             socket.emit('door')
-                        }
-                    })
-
-                    frontEndPlayers[id].gameObj.onCollide("ice", () => {
-                        if (!frontEndPlayers[id].isTouchingIce) {
-                            frontEndPlayers[id].isTouchingIce = true
-                            frontEndPlayers[id].speed = 0
-                        }
-                    })
-
-                    frontEndPlayers[id].gameObj.onCollide("grass", () => {
-                        if (frontEndPlayers[id].isTouchingIce) {
-                            frontEndPlayers[id].isTouchingIce = false
-                            frontEndPlayers[id].speed = 0
                         }
                     })
 
@@ -490,8 +509,15 @@ const scenes = {
                         frontEndPlayers[id].bounce()
                     })
 
-                    frontEndPlayers[id].gameObj.onCollide("finish", () => {
+                    frontEndPlayers[id].gameObj.onCollide("finish", (finish) => {
+                        Level2Config.win2 = true
                         frontEndPlayers[id].win = true
+                        frontEndPlayers[id].gameObj.move(0, -16000)
+                        frontEndPlayers[id].gameObj.use(body({gravityScale: 0}))
+                        finish.play("finishOpen")
+                        setTimeout(() => {
+                            finish.play("finishClose")
+                        }, 400);
                         socket.emit('win', (frontEndPlayers[id].playerNumber))
                     })
 
@@ -514,7 +540,7 @@ const scenes = {
             delete frontEndPlayers[id]
         })
 
-        onKeyDown("w", () => {
+        onKeyPress("w", () => {
             frontEndPlayers[socket.id].jump()
             socket.emit('keyPress', 'w')
         })
@@ -524,7 +550,7 @@ const scenes = {
             socket.emit('keyRelease', 'w')
         })
 
-        onKeyDown("a", () => {
+        onKeyPress("a", () => {
             frontEndPlayers[socket.id].isMovingLeft = true
             socket.emit('keyPress', 'a')
         })
@@ -542,10 +568,16 @@ const scenes = {
             socket.emit('keyRelease', 'd')
         })
 
+        onKeyPress("r", () => {
+            socket.emit('keyPress', 'r')
+        })
+
         socket.on('respawn', () => {
             for (const id in frontEndPlayers) {
                 frontEndPlayers[id].respawnPlayers()
+                ghost[id].y = 10000
             }
+            respawning = false
         })
 
         socket.on('keyGet', () => {
@@ -555,15 +587,26 @@ const scenes = {
         })
 
         socket.on('nextLevel', () => {
+            for (const id in frontEndPlayers) {
+                destroy(frontEndPlayers[id].gameObj)
+                delete frontEndPlayers[id]
+            }
+            setTimeout(() => {
+            }, 1000);
             go("levelSelect")
         })
 
         const camX = {}
         onUpdate(() => {
             for (const id in frontEndPlayers){
-                camX[id] = frontEndPlayers[id].gameObj.pos.x
-                if (frontEndPlayers[id].gameObj.pos.y > 400) {
-                    socket.emit('respawning')
+                const player = frontEndPlayers[id]
+                camX[id] = player.gameObj.pos.x
+                player.Move(player.speed)
+                // console.log(player.gameObj.pos)
+                if (player.isJumping) 
+                    player.jump()
+                if (player.isRespawning) {
+                    ghost[id].move(0, -80)
                 }
             }
 
@@ -576,22 +619,13 @@ const scenes = {
         })
 
         setInterval(() => {
-            for (const id in frontEndPlayers) {
-                const player = frontEndPlayers[id]
-                player.Move(player.speed)
-                // console.log(player.gameObj.pos)
-                if (player.isJumping) 
-                    player.jump()
-                // socket.emit('update', player.gameObj.pos)
-            }
-        }, 15)
-
-        setInterval(() => {
             socket.emit('update', frontEndPlayers[socket.id].gameObj.pos)
         }, 100)
     },
 
     3: () => {
+        Level3Config.win1 = false
+        Level3Config.win2 = false
         socket.emit('inLevel', true)
         setGravity(Level3Config.gravity)
 
@@ -599,7 +633,26 @@ const scenes = {
         level.drawBackground("background")
         level.drawMapLayout(level3Layout, level3Mappings, Level3Config.Scale)
 
+        const music = play("music", {
+            volume: 0.2,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            for (const id in frontEndPlayers) {
+                destroy(frontEndPlayers[id].gameObj)
+                delete frontEndPlayers[id]
+                frontEndPlayers[id].walk.stop()
+            }
+            music.stop()
+        })
+
+        UIManager.UIButton()
+        onClick("muteMusic", () => {
+            music.paused = !music.paused
+        })
+
         const frontEndPlayers = {}
+        const ghost = {}
 
         const box1 = add([
                 sprite("items", {anim: "box"}),
@@ -609,7 +662,7 @@ const scenes = {
                 anchor("center"),
                 offscreen(),
                 scale(Level3Config.Scale),
-                "box", 
+                "box1", 
         ])
 
         const box2 = add([
@@ -620,16 +673,24 @@ const scenes = {
                 anchor("center"),
                 offscreen(),
                 scale(Level3Config.Scale),
-                "box", 
+                "box2", 
         ])
 
-        buttonPressed(box1, "Level3Config", "button3", Level3Config.Scale)
-        buttonUnpressed(box1, "Level3Config", "button3", Level3Config.Scale)
+        onCollide("box1", "button_off", (source, target) => {
+            source.pos.x = target.pos.x + 8
+            source.pos.y = target.pos.y + 8
+            source.use(body({ isStatic: true }))
+            target.play("button_on")
+            Level3Config.button1 = true
+        })
 
-        buttonPressed(box2, "Level3Config", "button4", Level3Config.Scale)
-        buttonUnpressed(box2, "Level3Config", "button4", Level3Config.Scale)
-        
-        socket.emit('moveSpeed', Level3Config.playerSpeed)
+        onCollide("box2", "button_off", (source, target) => {
+            source.pos.x = target.pos.x + 8
+            source.pos.y = target.pos.y + 8
+            source.use(body({ isStatic: true }))
+            target.play("button_on")
+            Level3Config.button2 = true
+        })
         
         socket.on('updatePlayers', (backEndPlayers) => {
             for (const id in backEndPlayers) {
@@ -640,18 +701,32 @@ const scenes = {
                         Level3Config.playerSpeed,
                         Level3Config.jumpForce,
                         Level3Config.nbLives,
-                        "a",
-                        "d",
-                        "w",
+                        "",
+                        "",
+                        "",
                         backEndPlayer.playerNumber,
                         1,
                         false
                     )
-                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 72, backEndPlayer.y + 64, id, Level3Config.Scale)
+                    ghost[id] = add([
+                        sprite("ghost"),
+                        pos(10000, 10000),
+                        anchor("center"),
+                        opacity(0.5),
+                        scale(Level3Config.Scale),
+                        "ghost"
+                    ])
+                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 48, backEndPlayer.y + 32, id, Level3Config.Scale)
                     frontEndPlayers[id].update();
+                    if (frontEndPlayers[id].isTouchEnabled())frontEndPlayers[id].touchControls()
 
                     frontEndPlayers[id].gameObj.onCollide("spike", () => {
-                        socket.emit('respawning')
+                        ghost[id].pos = frontEndPlayers[id].gameObj.pos
+                        frontEndPlayers[id].gameObj.angle = -90
+                        frontEndPlayers[id].isRespawning = true
+                        ghost.pos = frontEndPlayers[id].gameObj.pos
+                        if (!respawning) socket.emit('respawning')
+                        respawning = true
                     })
 
                     frontEndPlayers[id].gameObj.onCollide("key", (key) => {
@@ -662,19 +737,30 @@ const scenes = {
 
                     frontEndPlayers[id].gameObj.onCollide("door", (door) => {
                         if (Level3Config.hasKey) {
-                            destroy(door)
+                            play("door")
+                            door.play("open")
+                            setTimeout(() => {
+                                destroy(door)
+                            }, 400);
                             Level3Config.hasKey = false
                             socket.emit('door')
                         }
                     })
 
-                    frontEndPlayers[id].gameObj.onCollide("finish", () => {
+                    frontEndPlayers[id].gameObj.onCollide("finish", (finish) => {
+                        Level3Config.win2 = true
                         frontEndPlayers[id].win = true
+                        frontEndPlayers[id].gameObj.move(0, -16000)
+                        frontEndPlayers[id].gameObj.use(body({gravityScale: 0}))
+                        finish.play("finishOpen")
+                        setTimeout(() => {
+                            finish.play("finishClose")
+                        }, 400);
                         socket.emit('win', (frontEndPlayers[id].playerNumber))
                     })
 
-                    buttonPressed(frontEndPlayers[id].gameObj, "Level1Config",`button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
-                    buttonUnpressed(frontEndPlayers[id].gameObj, "Level1Config", `button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
+                    buttonPressed(frontEndPlayers[id].gameObj, "Level3Config",`button${frontEndPlayers[id].playerNumber}`, Level3Config.Scale)
+                    buttonUnpressed(frontEndPlayers[id].gameObj, "Level3Config", `button${frontEndPlayers[id].playerNumber}`, Level3Config.Scale)
 
                     console.log(frontEndPlayers[socket.id]);
                 } else {
@@ -695,7 +781,7 @@ const scenes = {
             delete frontEndPlayers[id]
         })
 
-        onKeyDown("w", () => {
+        onKeyPress("w", () => {
             frontEndPlayers[socket.id].jump()
             socket.emit('keyPress', 'w')
         })
@@ -705,7 +791,7 @@ const scenes = {
             socket.emit('keyRelease', 'w')
         })
 
-        onKeyDown("a", () => {
+        onKeyPress("a", () => {
             frontEndPlayers[socket.id].isMovingLeft = true
             socket.emit('keyPress', 'a')
         })
@@ -722,11 +808,17 @@ const scenes = {
             frontEndPlayers[socket.id].isMovingRight = false
             socket.emit('keyRelease', 'd')
         })
+        
+        onKeyPress("r", () => {
+            socket.emit('keyPress', 'r')
+        })
 
         socket.on('respawn', () => {
             for (const id in frontEndPlayers) {
                 frontEndPlayers[id].respawnPlayers()
+                ghost[id].y = 10000
             }
+            respawning = false
         })
 
         socket.on('keyGet', () => {
@@ -735,21 +827,41 @@ const scenes = {
             console.log(Level3Config.hasKey)
         })
 
+        var key = true;
+
         socket.on('nextLevel', () => {
+            for (const id in frontEndPlayers) {
+                destroy(frontEndPlayers[id].gameObj)
+                delete frontEndPlayers[id]
+            }
+            setTimeout(() => {
+            }, 1000);
             go("levelSelect")
         })
 
         const camX = {}
         onUpdate(() => {
             for (const id in frontEndPlayers){
-                if (frontEndPlayers[id].gameObj.pos.y > 400) {
-                    socket.emit('respawning')
+                const player = frontEndPlayers[id]
+                camX[id] = player.gameObj.pos.x
+                player.Move(player.speed)
+                // console.log(player.gameObj.pos)
+                if (player.isJumping) 
+                    player.jump()
+                if (player.isRespawning) {
+                    ghost[id].move(0, -80)
                 }
             }
 
-            if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4) {
-                Level3Config.hasKey = true
-                socket.emit('key')
+            if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4 && key) {
+                key = false
+                add([
+                    sprite("items", {anim: "key"}), 
+                    pos(16 * 12, 16 * 4),
+                    scale(Level1Config.Scale),
+                    area(),
+                    "key"
+                ])
             }
 
             camPos((16 * 24), 100)
@@ -757,22 +869,13 @@ const scenes = {
         })
 
         setInterval(() => {
-            for (const id in frontEndPlayers) {
-                const player = frontEndPlayers[id]
-                player.Move(player.speed)
-                // console.log(player.gameObj.pos)
-                if (player.isJumping) 
-                    player.jump()
-                // socket.emit('update', player.gameObj.pos)
-            }
-        }, 15)
-
-        setInterval(() => {
             socket.emit('update', frontEndPlayers[socket.id].gameObj.pos)
         }, 100)
     },
 
     4: () => {
+        Level4Config.win1 = false
+        Level4Config.win2 = false
         socket.emit('inLevel', true)
         setGravity(Level4Config.gravity)
 
@@ -780,7 +883,26 @@ const scenes = {
         level.drawBackground("background")
         level.drawMapLayout(level4Layout, level4Mappings, Level4Config.Scale)
 
+        const music = play("music", {
+            volume: 0.2,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            for (const id in frontEndPlayers) {
+                destroy(frontEndPlayers[id].gameObj)
+                delete frontEndPlayers[id]
+                frontEndPlayers[id].walk.stop()
+            }
+            music.stop()
+        })
+
+        UIManager.UIButton()
+        onClick("muteMusic", () => {
+            music.paused = !music.paused
+        })
+
         const frontEndPlayers = {}
+        const ghost = {}
 
         const portalDestroyed = {
             1: false,
@@ -878,9 +1000,7 @@ const scenes = {
             offscreen(),
             "portalOut5"
         ])
-        
-        socket.emit('moveSpeed', Level4Config.playerSpeed)
-        
+
         socket.on('updatePlayers', (backEndPlayers) => {
             for (const id in backEndPlayers) {
                 const backEndPlayer = backEndPlayers[id]
@@ -890,18 +1010,32 @@ const scenes = {
                         Level4Config.playerSpeed,
                         Level4Config.jumpForce,
                         Level4Config.nbLives,
-                        "a",
-                        "d",
-                        "w",
+                        "",
+                        "",
+                        "",
                         backEndPlayer.playerNumber,
                         1,
                         false
                     )
-                    frontEndPlayers[id].makePlayer(backEndPlayer.x - 16, backEndPlayer.y + 32, id, Level4Config.Scale)
+                    ghost[id] = add([
+                        sprite("ghost"),
+                        pos(10000, 10000),
+                        anchor("center"),
+                        opacity(0.5),
+                        scale(Level4Config.Scale),
+                        "ghost"
+                    ])
+                    frontEndPlayers[id].makePlayer(backEndPlayer.x - 64, backEndPlayer.y + 48, id, Level4Config.Scale)
                     frontEndPlayers[id].update();
+                    if (frontEndPlayers[id].isTouchEnabled())frontEndPlayers[id].touchControls()
 
                     frontEndPlayers[id].gameObj.onCollide("spike", () => {
-                        socket.emit('respawning')
+                        ghost[id].pos = frontEndPlayers[id].gameObj.pos
+                        frontEndPlayers[id].gameObj.angle = -90
+                        frontEndPlayers[id].isRespawning = true
+                        ghost.pos = frontEndPlayers[id].gameObj.pos
+                        if (!respawning) socket.emit('respawning')
+                        respawning = true
                     })
 
                     frontEndPlayers[id].gameObj.onCollide("key", (key) => {
@@ -912,65 +1046,69 @@ const scenes = {
 
                     frontEndPlayers[id].gameObj.onCollide("door", (door) => {
                         if (Level4Config.hasKey) {
-                            destroy(door)
+                            play("door")
+                            door.play("open")
+                            setTimeout(() => {
+                                destroy(door)
+                            }, 400);
                             Level4Config.hasKey = false
                             socket.emit('door')
                         }
                     })
 
-                    frontEndPlayers[id].gameObj.onCollide("finish", () => {
+                    frontEndPlayers[id].gameObj.onCollide("finish", (finish) => {
+                        Level4Config.win2 = true
                         frontEndPlayers[id].win = true
+                        frontEndPlayers[id].gameObj.move(0, -16000)
+                        frontEndPlayers[id].gameObj.use(body({gravityScale: 0}))
+                        finish.play("finishOpen")
+                        setTimeout(() => {
+                            finish.play("finishClose")
+                        }, 400);
                         socket.emit('win', (frontEndPlayers[id].playerNumber))
                     })
 
-                        buttonPressed(frontEndPlayers[id].gameObj, "Level4Config", `button${frontEndPlayers[id].playerNumber}`, Level4Config.Scale)
+                    buttonPressed(frontEndPlayers[id].gameObj, "Level4Config", `button${frontEndPlayers[id].playerNumber}`, Level4Config.Scale)
 
-                        // teleport(frontEndPlayers[id].gameObj, "portalIn1", portalOut1)
-                        // teleport(frontEndPlayers[id].gameObj, "portalIn2", portalOut2)
-                        // teleport(frontEndPlayers[id].gameObj, "portalIn3", portalOut3)
-                        // teleport(frontEndPlayers[id].gameObj, "portalIn4", portalOut4)
-                        // teleport(frontEndPlayers[id].gameObj, "portalIn5", portalOut5)
+                    frontEndPlayers[id].gameObj.onCollide( "portalIn1" , () => {
+                        frontEndPlayers[id].pos = portalOut1.pos
+                        socket.emit('update', frontEndPlayers[id].pos)
+                        portalIn1.pos = vec2(-100, -100)
+                        portalOut1.pos = vec2(-100, -100)
+                        portalDestroyed[1] = true
+                    })
 
-                        frontEndPlayers[id].gameObj.onCollide( "portalIn1" , () => {
-                            frontEndPlayers[id].pos = portalOut1.pos
-                            socket.emit('update', frontEndPlayers[id].pos)
-                            portalIn1.pos = vec2(-100, -100)
-                            portalOut1.pos = vec2(-100, -100)
-                            portalDestroyed[1] = true
-                        })
+                    frontEndPlayers[id].gameObj.onCollide( "portalIn2" , () => {
+                        frontEndPlayers[id].pos = portalOut2.pos
+                        socket.emit('update', frontEndPlayers[id].pos)
+                        portalIn2.pos = vec2(-100, -100)
+                        portalOut2.pos = vec2(-100, -100)
+                        portalDestroyed[2] = true
+                    })
 
-                        frontEndPlayers[id].gameObj.onCollide( "portalIn2" , () => {
-                            frontEndPlayers[id].pos = portalOut2.pos
-                            socket.emit('update', frontEndPlayers[id].pos)
-                            portalIn2.pos = vec2(-100, -100)
-                            portalOut2.pos = vec2(-100, -100)
-                            portalDestroyed[2] = true
-                        })
+                    frontEndPlayers[id].gameObj.onCollide( "portalIn3" , () => {
+                        frontEndPlayers[id].pos = portalOut3.pos
+                        socket.emit('update', frontEndPlayers[id].pos)
+                        portalIn3.pos = vec2(-100, -100)
+                        portalOut3.pos = vec2(-100, -100)
+                        portalDestroyed[3] = true
+                    })
 
-                        frontEndPlayers[id].gameObj.onCollide( "portalIn3" , () => {
-                            frontEndPlayers[id].pos = portalOut3.pos
-                            socket.emit('update', frontEndPlayers[id].pos)
-                            portalIn3.pos = vec2(-100, -100)
-                            portalOut3.pos = vec2(-100, -100)
-                            portalDestroyed[3] = true
-                        })
+                    frontEndPlayers[id].gameObj.onCollide( "portalIn4" , () => {
+                        frontEndPlayers[id].pos = portalOut4.pos
+                        socket.emit('update', frontEndPlayers[id].pos)
+                        portalIn4.pos = vec2(-100, -100)
+                        portalOut4.pos = vec2(-100, -100)
+                        portalDestroyed[4] = true
+                    })
 
-                        frontEndPlayers[id].gameObj.onCollide( "portalIn4" , () => {
-                            frontEndPlayers[id].pos = portalOut4.pos
-                            socket.emit('update', frontEndPlayers[id].pos)
-                            portalIn4.pos = vec2(-100, -100)
-                            portalOut4.pos = vec2(-100, -100)
-                            portalDestroyed[4] = true
-                        })
-
-                        frontEndPlayers[id].gameObj.onCollide( "portalIn5" , () => {
-                            frontEndPlayers[id].pos = portalOut5.pos
-                            socket.emit('update', frontEndPlayers[id].pos)
-                            portalIn5.pos = vec2(-100, -100)
-                            portalOut5.pos = vec2(-100, -100)
-                            portalDestroyed[5] = true
-                        })
-
+                    frontEndPlayers[id].gameObj.onCollide( "portalIn5" , () => {
+                        frontEndPlayers[id].pos = portalOut5.pos
+                        socket.emit('update', frontEndPlayers[id].pos)
+                        portalIn5.pos = vec2(-100, -100)
+                        portalOut5.pos = vec2(-100, -100)
+                        portalDestroyed[5] = true
+                    })
 
                     console.log(frontEndPlayers[socket.id]);
                 } else {
@@ -991,7 +1129,7 @@ const scenes = {
             delete frontEndPlayers[id]
         })
 
-        onKeyDown("w", () => {
+        onKeyPress("w", () => {
             frontEndPlayers[socket.id].jump()
             socket.emit('keyPress', 'w')
         })
@@ -1001,7 +1139,7 @@ const scenes = {
             socket.emit('keyRelease', 'w')
         })
 
-        onKeyDown("a", () => {
+        onKeyPress("a", () => {
             frontEndPlayers[socket.id].isMovingLeft = true
             socket.emit('keyPress', 'a')
         })
@@ -1019,39 +1157,42 @@ const scenes = {
             socket.emit('keyRelease', 'd')
         })
 
+        onKeyPress("r", () => {
+            socket.emit('keyPress', 'r')
+        })
+
         socket.on('respawn', () => {
             for (const id in frontEndPlayers) {
                 frontEndPlayers[id].respawnPlayers()
-
+                ghost[id].y = 10000
             }
-            if (portalDestroyed[1]) {
-                portalIn1.pos = vec2(16 * 6, 16 * 7)
-                portalOut1.pos = vec2(16 * 11, 16 * 1)
-                portalDestroyed[1] = false
-            }
-
-            if (portalDestroyed[2]) {
-                portalIn2.pos = vec2(16 * 26, 16 * 3)
-                portalOut2.pos = vec2(16 * 31, 16 * 1)
-                portalDestroyed[2] = false
-            }
-
-            if (portalDestroyed[3]) {
-                portalIn3.pos = vec2(16 * 26, 16 * 10)
-                portalOut3.pos = vec2(16 * 35, 16 * 1)
-                portalDestroyed[3] = false
-            }
-
-            if (portalDestroyed[4]) {
-                portalIn4.pos = vec2(16 * 47, 16 * 10)
-                portalOut4.pos = vec2(16 * 43, 16 * 6)
-                portalDestroyed[4] = false
-            }
-
-            if (portalDestroyed[5]) {
-                portalIn5.pos = vec2(16 * 47, 16 * 3)
-                portalOut5.pos = vec2(16 * 41, 16 * 6)
-                portalDestroyed[5] = false
+            respawning = false
+            for (let i = 1; i <= 5; i++) {
+                if (portalDestroyed[i]) {
+                    switch (i) {
+                        case 1:
+                            portalIn1.pos = vec2(16 * 6, 16 * 7);
+                            portalOut1.pos = vec2(16 * 11, 16 * 1);
+                            break;
+                        case 2:
+                            portalIn2.pos = vec2(16 * 26, 16 * 3);
+                            portalOut2.pos = vec2(16 * 31, 16 * 1);
+                            break;
+                        case 3:
+                            portalIn3.pos = vec2(16 * 26, 16 * 10);
+                            portalOut3.pos = vec2(16 * 35, 16 * 1);
+                            break;
+                        case 4:
+                            portalIn4.pos = vec2(16 * 47, 16 * 10);
+                            portalOut4.pos = vec2(16 * 43, 16 * 6);
+                            break;
+                        case 5:
+                            portalIn5.pos = vec2(16 * 47, 16 * 3);
+                            portalOut5.pos = vec2(16 * 41, 16 * 6);
+                            break;
+                    }
+                    portalDestroyed[i] = false;
+                }
             }
         })
 
@@ -1068,9 +1209,14 @@ const scenes = {
         const camX = {}
         onUpdate(() => {
             for (const id in frontEndPlayers){
-                camX[id] = frontEndPlayers[id].gameObj.pos.x
-                if (frontEndPlayers[id].gameObj.pos.y > 400) {
-                    socket.emit('respawning')
+                const player = frontEndPlayers[id]
+                camX[id] = player.gameObj.pos.x
+                player.Move(player.speed)
+                // console.log(player.gameObj.pos)
+                if (player.isJumping) 
+                    player.jump()
+                if (player.isRespawning) {
+                    ghost[id].move(0, -80)
                 }
             }
 
@@ -1083,19 +1229,8 @@ const scenes = {
                 sum += camX[id]
             }
             camPos(sum / 2, 116)     // camera position x = rata rata posisi player, kalau 2 player (x + x) / 2
-            camScale(2, 2)
+            camScale(3, 3)
         })
-
-        setInterval(() => {
-            for (const id in frontEndPlayers) {
-                const player = frontEndPlayers[id]
-                player.Move(player.speed)
-                // console.log(player.gameObj.pos)
-                if (player.isJumping) 
-                    player.jump()
-                // socket.emit('update', player.gameObj.pos)
-            }
-        }, 15)
 
         setInterval(() => {
             socket.emit('update', frontEndPlayers[socket.id].gameObj.pos)
@@ -1109,4 +1244,4 @@ for (const key in scenes) {
 
 load.assets();
 load.sounds();
-go(1);
+go(4);
