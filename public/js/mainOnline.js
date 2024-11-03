@@ -325,7 +325,7 @@ const scenes = {
             delete frontEndPlayers[id]
         })
 
-        onKeyDown("w", () => {
+        onKeyPress("w", () => {
             frontEndPlayers[socket.id].jump()
             socket.emit('keyPress', 'w')
         })
@@ -335,7 +335,7 @@ const scenes = {
             socket.emit('keyRelease', 'w')
         })
 
-        onKeyDown("a", () => {
+        onKeyPress("a", () => {
             frontEndPlayers[socket.id].isMovingLeft = true
             socket.emit('keyPress', 'a')
         })
@@ -353,6 +353,10 @@ const scenes = {
             socket.emit('keyRelease', 'd')
         })
 
+        onKeyPress("r", () => {
+            socket.emit('keyPress', 'r')
+        })
+
         socket.on('respawn', () => {
             for (const id in frontEndPlayers) {
                 frontEndPlayers[id].respawnPlayers()
@@ -366,6 +370,8 @@ const scenes = {
             Level1Config.hasKey = true
             console.log(Level1Config.hasKey)
         })
+
+        var key = true;
 
         socket.on('nextLevel', () => {
             for (const id in frontEndPlayers) {
@@ -398,8 +404,15 @@ const scenes = {
             camPos(sum / 2, 84)     // camera position x = rata rata posisi player, kalau 2 player (x + x) / 2
             camScale(4, 4)
         
-            if (Level1Config.button1 && Level1Config.button2) {
-                Level1Config.hasKey = true
+            if (Level1Config.button1 && Level1Config.button2 & key) {
+                key = false
+                add([
+                    sprite("items", {anim: "key"}), 
+                    pos(16 * 30, 16 * 2),
+                    scale(Level1Config.Scale),
+                    area(),
+                    "key"
+                ])
             }
 
             // console.log(Level1Config.button1, Level1Config.button2, Level1Config.hasKey)

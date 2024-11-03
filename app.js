@@ -92,6 +92,14 @@ io.on('connection', (socket) => {
       case 'd':
         backEndPlayers[socket.id].isMovingRight = true;
         break;
+      case 'r':
+        for (const id in backEndPlayers) {
+          backEndPlayers[id].x = config.x;
+          backEndPlayers[id].y = config.y;
+        };
+        
+        io.emit('respawn');
+        break;
     }
   })
 
