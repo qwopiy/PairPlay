@@ -260,38 +260,6 @@ const scenes = {
             }
         })
 
-        player1.gameObj.onCollide("dead", () => {
-            play("dead")
-            player1.isRespawning = true
-            ghost.pos = player1.gameObj.pos
-                if (!player2.isRespawning) {
-                    setTimeout(() => {
-                        player1.isRespawning = false
-                        player1.respawnPlayers()
-                        player2.respawnPlayers()
-                        Level1Config.win1 = false
-                        Level1Config.win2 = false
-                        player1.death++
-                    }, 3000)
-                }
-        })
-
-        player2.gameObj.onCollide("dead", () => {
-            play("dead")
-            player2.isRespawning = true
-            ghost.pos = player2.gameObj.pos
-                if (!player1.isRespawning) {
-                    setTimeout(() => {
-                        player2.isRespawning = false
-                        player1.respawnPlayers()
-                        player2.respawnPlayers()
-                        Level1Config.win1 = false
-                        Level1Config.win2 = false
-                        player2.death++
-                    }, 3000)
-                }
-        })
-
         onCollide("player1", "player2", () => {
             player1.isPushing = true
             player2.isPushing = true
@@ -480,38 +448,6 @@ const scenes = {
             setTimeout(() => {
                 finish.play("finishClose")
             }, 400);
-        })
-
-        player1.gameObj.onCollide("dead", () => {
-            play("dead")
-            player1.isRespawning = true
-            ghost.pos = player1.gameObj.pos
-                if (!player2.isRespawning) {
-                    setTimeout(() => {
-                        player1.isRespawning = false
-                        player1.respawnPlayers()
-                        player2.respawnPlayers()
-                        Level2Config.win1 = false
-                        Level2Config.win2 = false
-                        player1.death++
-                    }, 3000)
-                }
-        })
-
-        player2.gameObj.onCollide("dead", () => {
-            play("dead")
-            player2.isRespawning = true
-            ghost.pos = player2.gameObj.pos
-                if (!player1.isRespawning) {
-                    setTimeout(() => {
-                        player2.isRespawning = false
-                        player1.respawnPlayers()
-                        player2.respawnPlayers()
-                        Level2Config.win1 = false
-                        Level2Config.win2 = false
-                        player2.death++
-                    }, 3000)
-                }
         })
 
         onCollide("player1", "bouncy", () => {player1.bounce()})
