@@ -24,12 +24,16 @@ let achievmentSaveBoolean = ["false", "false", "false", "false"];
 let achievmentSave = [document.getElementById("achievment-edit1"), document.getElementById("achievment-edit2"), document.getElementById("achievment-edit3"), document.getElementById("achievment-edit4")];
 let achievmentProfile = [document.getElementById("achievment-profile1"), document.getElementById("achievment-profile2"), document.getElementById("achievment-profile3"), document.getElementById("achievment-profile4")];
 
+let darkBackground = document.createElement('div');
+darkBackground.classList.add("dark-background");
+
 editProfileBtn.addEventListener("click", () => {
+
   imageEditPreview.src = imgProfile.src;
   nameEdit.value = nameProfile.innerHTML;
   bioEdit.value = bioProfile.innerHTML;
   body.classList.toggle("show-edit");
-
+  
   imageEdit.onchange = function () {
     imageEditPreview.src = URL.createObjectURL(imageEdit.files[0]);
   };
