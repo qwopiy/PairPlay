@@ -14,8 +14,8 @@ show_pw_btn.addEventListener('click', (event) => {
 
 
 	show_pw_icon1.src = show_pw_icon1.src.includes('open') 
-		? '/assets/FrontPage/eye_closed.svg' 
-		: '/assets/FrontPage/eye_open.svg'
+		? './assets/FrontPage/eye_closed.svg' 
+		: './assets/FrontPage/eye_open.svg'
 })
 show_pw_btn_check.addEventListener('click', (event) => {
 	
@@ -26,8 +26,8 @@ show_pw_btn_check.addEventListener('click', (event) => {
 
 
 	show_pw_icon2.src = show_pw_icon2.src.includes('open') 
-		? '/assets/FrontPage/eye_closed.svg' 
-		: '/assets/FrontPage/eye_open.svg'
+		? './assets/FrontPage/eye_closed.svg' 
+		: './assets/FrontPage/eye_open.svg'
 })
 btnSubmit.onclick = function() {
     if (pw_input.value !== "") {
