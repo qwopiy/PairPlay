@@ -1,5 +1,5 @@
 body{
-    background-image: url("./assets/FrontPage/dungeon2.png");
+    background-image: url("../../assets/FrontPage/dungeon2.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -61,20 +61,6 @@ a {
     text-decoration: none;   
     color: inherit;   
 }  
-/* .btn-login, .btn-play {
-    border: 1px solid black;
-    background-color: #95adbe;
-    transition: background-color 0.3s ease; 
-    box-shadow: 3px 3px 5px black;
-}
-.btn-login:hover, .btn-play:hover {
-    background-color: #728a9d; 
-    color: white; 
-}
-a {  
-    text-decoration: none;   
-    color: inherit;   
-}   */
 
 
 

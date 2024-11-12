@@ -11,6 +11,6 @@ show_pw_btn.addEventListener('click', (event) => {
 
 
 	show_pw_icon1.src = show_pw_icon1.src.includes('open') 
-		? './assets/FrontPage/eye_closed.svg' 
-		: './assets/FrontPage/eye_open.svg'
+		? '../../assets/FrontPage/eye_closed.svg' 
+		: '../../assets/FrontPage/eye_open.svg'
 })
