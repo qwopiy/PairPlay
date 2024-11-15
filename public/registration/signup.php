@@ -1,5 +1,5 @@
 <?php
-require_once 'config_session.inc.php';
+require_once '../../Signup and Login/config_session.inc.php';
 require_once 'signup_view.inc.php'; 
 
 if (isset($_SESSION['errors'])) {
@@ -16,7 +16,7 @@ if (isset($_SESSION['errors'])) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-      <link rel="stylesheet" href="email.css">
+      <link rel="stylesheet" href="login.css">
       <title>Registration</title>
 </head>
 <body>
@@ -30,6 +30,7 @@ if (isset($_SESSION['error'])) {
 ?>
       <form action="signup.inc.php" method="post">
             <a>
+            <a href="login.php">
                     <i class="bi bi-arrow-left fs-3 text-dark"></i>
             </a>
             <div class="mb-3">
@@ -45,14 +46,14 @@ if (isset($_SESSION['error'])) {
                     <label for="password" class="form-label">Password</label>
                     <input type="password" name="password" class="form-control" id="password" placeholder="Enter Your Password">
                     <button id="show-password">
-                          <img src="assets/FrontPage/eye_open.svg" alt="show icon">
+                          <img src="../../assets/FrontPage/eye_open.svg" alt="show icon">
                     </button>
             </div>
             <div class="password-container mb-3">
                     <label for="password-check" class="form-label">Password Check</label>
                     <input type="password" name="repeat_password" class="form-control" id="password-check" placeholder="Enter Your Password">
                     <button id="show-password-check">
-                          <img src="assets/FrontPage/eye_open.svg" alt="show icon">
+                          <img src="../../assets/FrontPage/eye_open.svg" alt="show icon">
                     </button>
             </div>
             <div type="button" class="text-end">
@@ -62,26 +63,6 @@ if (isset($_SESSION['error'])) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script>
-      document.getElementById('show-password').addEventListener('click', function (e) {
-            e.preventDefault();
-            var passwordField = document.getElementById('password');
-            if (passwordField.type === 'password') {
-                  passwordField.type = 'text';
-            } else {
-                  passwordField.type = 'password';
-            }
-      });
-
-      document.getElementById('show-password-check').addEventListener('click', function (e) {
-            e.preventDefault();
-            var passwordField = document.getElementById('password-check');
-            if (passwordField.type === 'password') {
-                  passwordField.type = 'text';
-            } else {
-                  passwordField.type = 'password';
-            }
-      });
-</script>
+<script src="signup.js"></script>
 </body>
 </html>
