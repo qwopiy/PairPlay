@@ -1,5 +1,5 @@
 <?php
-require_once 'config_session.inc.php'; 
+require_once '../Signup and Login/config_session.inc.php'; 
 ?>
 
 <!DOCTYPE html>
@@ -17,11 +17,11 @@ require_once 'config_session.inc.php';
                         echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'User';
                     ?>!
                 </p> 
-                <a href="logout.php" class="btn btn-light">Logout</a> 
+                <a href="registration/logout.php" class="btn btn-light">Logout</a> 
             </div>
         <?php else: ?>
             <div class="guest-container">
-                <a href="signup.php">
+                <a href="registration/ignup.php">
                     <img src="/assets/FrontPage/guest image.svg" alt="User Avatar" class="gambar">
                     <button class="btn btn-light">Guest</button>
                 </a>
@@ -43,14 +43,14 @@ require_once 'config_session.inc.php';
                     <input type="text" name="username" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="Username" minlength="10" value="<?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?>">
                 </div>
                 <div class="d-grid gap-2 col-5 mx-auto mt-2">
-                    <a href="selection.html" class="btn btn-login">Play</a>
+                    <a href="selection/selection.html" class="btn btn-login">Play</a>
                 </div>
             </form>
         </div>
     <?php else: ?>
         <!-- Content for guests (not logged in) -->
         <div class="text-center">
-            <p>You are not logged in. Please <a href="login.php">sign up</a> to play.</p>
+            <p>You are not logged in. Please <a href="registration/login.php">sign up</a> to play.</p>
         </div>
     <?php endif; ?>
 

@@ -1,5 +1,5 @@
 <?php
-require_once 'config_session.inc.php';  // Include session config first
+require_once '../../Signup and Login/config_session.inc.php';  // Include session config first
 require_once 'login_view.inc.php';
 
 if (isset($_SESSION['errors'])) {
@@ -21,7 +21,7 @@ if (isset($_SESSION['errors'])) {
 <body>
       <div class="email-container">
             <form method="POST" action="login.inc.php">
-                    <a href="index.php">
+                    <a href="../index.php">
                           <i class="bi bi-arrow-left fs-3 text-dark"></i>
                     </a>
                     <div class="mb-3">

@@ -1,6 +1,6 @@
 <?php
-require_once 'config_session.inc.php'; 
-require_once 'dbh.inc.php';
+require_once '../../Signup and Login/config_session.inc.php'; 
+require_once '../../Signup and Login/dbh.inc.php';
 require_once 'login_contr.inc.php';
 require_once 'login_view.inc.php';
 
@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (empty($errors)) {
             session_id($_SESSION['user_id']);
-            header("Location: index.php"); 
+            header("Location: ../index.php"); 
             exit();
         } else {
             $_SESSION['errors'] = $errors;
