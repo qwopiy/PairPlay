@@ -1,22 +1,5 @@
-level1              siap
-ice             siap
-bouncy          siap
-gerbang         siap
-level2          siap
+mobile control  : jalan tapi belum bagus
 
+pause           : 
 
-level3          siap
-movable boks    siap
-
-level4          siap
-portal          siap
-
-finish harus dua dua nyampe     siap
-
-achievement
-easter egg
-
-collision kiri kanan
-
-fix mobile touchControls
-masalah transisi antar scene
+achievement     : 
