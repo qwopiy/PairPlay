@@ -57,6 +57,7 @@ constructor(
   }
 
   Move(speed) {
+    if (this.gameObj.paused) return
     if (this.isMovingRight && !this.isRespawning) {
       if (this.gameObj.curAnim() !== "run" 
           && this.gameObj.isGrounded() 
@@ -107,7 +108,6 @@ constructor(
       this.idle()
     }
 
-    if (this.gameObj.paused) return
     if (!this.isRespawning && !this.win) this.gameObj.move(speed, 0)
   }
 
@@ -206,28 +206,28 @@ constructor(
 }
 
   // fix later
-  touchControls() {
-    onTouchStart((position) => {
-      if (position.x < width() / 10) {
-        this.isMovingLeft = true
-      } else
-      if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
-        this.isMovingRight = true
-      } else{
-        this.jump()
-      }
-    })
+  // touchControls() {
+  //   onTouchStart((position) => {
+  //     if (position.x < width() / 10) {
+  //       this.isMovingLeft = true
+  //     } else
+  //     if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+  //       this.isMovingRight = true
+  //     } else{
+  //       this.jump()
+  //     }
+  //   })
 
-    onTouchEnd((position) => {
-      if (position.x < width() / 10) {
-        this.isMovingLeft = false
-      }
-      if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
-        this.isMovingRight = false
-      }
-    })
+  //   onTouchEnd((position) => {
+  //     if (position.x < width() / 10) {
+  //       this.isMovingLeft = false
+  //     }
+  //     if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+  //       this.isMovingRight = false
+  //     }
+  //   })
 
-  }
+  // }
   
   respawnPlayers() {
     this.gameObj.use(body({ gravityScale: 0 }))

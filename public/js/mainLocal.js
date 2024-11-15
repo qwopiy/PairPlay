@@ -14,6 +14,10 @@ import { Level3Config } from "./content/level3/config.js";
 import { Level4Config } from "./content/level4/config.js";
 
 kaboom({
+    height: 720,
+    width: 1280,
+    letterbox: true,
+    maxFPS: 1000,
     canvas: document.getElementById("game"),
 });
 
@@ -67,11 +71,6 @@ const scenes = {
         onSceneLeave(() => {
             music.stop()
         })
-        
-        UIManager.UIButton()
-        onClick("muteMusic", () => {
-            music.paused = !music.paused
-        })
 
         UIManager.displayLevel(progress)
             console.log(progress)
@@ -99,7 +98,7 @@ const scenes = {
         Level1Config.win1 = false
         Level1Config.win2 = false
         setGravity(Level1Config.gravity)
-
+        
         const level = new Level()
         level.drawBackground("background")
         level.drawMapLayout(level1Layout, level1Mappings, Level1Config.Scale)
@@ -114,9 +113,51 @@ const scenes = {
             music.stop()
         })
         
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const player1 = new Player(
@@ -177,6 +218,7 @@ const scenes = {
         })
 
         player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+            play("key")
             destroy(key)
             console.log("key Get")
             Level1Config.hasKey = true
@@ -270,15 +312,28 @@ const scenes = {
             player2.isPushing = false
         })
         
+        onKeyPress("escape", () => {
+            paused = !paused
+
+        })
+
+        let key = true
+
         onUpdate(() => {
             console.log(player1.isPushing, player2.isPushing)
             if (player1.isRespawning || player2.isRespawning) {
                 ghost.move(0, -80)
             }
 
-            if (Level1Config.button1 && Level1Config.button2) {
-                Level1Config.hasKey = true
-                console.log("key Get")
+            if (Level1Config.button1 && Level1Config.button2 & key) {
+                key = false
+                add([
+                    sprite("items", {anim: "key"}), 
+                    pos(16 * 30, 16 * 2),
+                    scale(Level1Config.Scale),
+                    area(),
+                    "key"
+                ])
             }
 
             player1.Move(player1.speed)
@@ -316,9 +371,51 @@ const scenes = {
             music.stop()
         })
         
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const player1 = new Player(
@@ -361,12 +458,14 @@ const scenes = {
         player2.update()
 
         player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
+            play("key")
             destroy(key)
             console.log("key Get")
             Level2Config.hasKey = true
         })
 
         player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+            play("key")
             destroy(key)
             console.log("key Get")
             Level2Config.hasKey = true
@@ -501,9 +600,51 @@ const scenes = {
             music.stop()
         })
         
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const player1 = new Player(
@@ -692,6 +833,7 @@ const scenes = {
         onCollide("player2", "box2", () => { player2.isPushing = true })
         onCollideEnd("player2", "box2", () => { player2.isPushing = false })
 
+        let key = true
         onUpdate(() => {
             if (player1.isRespawning || player2.isRespawning) {
                 ghost.move(0, -100)
@@ -700,10 +842,17 @@ const scenes = {
             player1.Move(player1.speed)
             player2.Move(player2.speed)
 
-            if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4) {
-                Level3Config.hasKey = true
-                console.log("key Get")
+            if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4 && key) {
+                key = false
+                add([
+                    sprite("items", {anim: "key"}), 
+                    pos(16 * 12, 16 * 4),
+                    scale(Level1Config.Scale),
+                    area(),
+                    "key"
+                ])
             }
+
 
             if (Level3Config.win1 && Level3Config.win2) {
                 if (progress < 3)
@@ -735,9 +884,51 @@ const scenes = {
             music.stop()
         })
         
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const player1 = new Player(

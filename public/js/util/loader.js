@@ -55,6 +55,19 @@ export const load = {
                 right: 1,
                 jump: 2,
             }
+        });
+        loadSprite("pauseButtons", "assets/pauseButtons.png", {
+            sliceX: 8,
+            anims: {
+                pause: 0,
+                exit: 1,
+                restart: 2,
+                resume: 3,
+                SFX: 4,
+                muteSFX: 5,
+                music: 6,
+                muteMusic: 7,
+            }
         })
         loadSprite("ghost", "assets/ghost.png")
         loadSprite("background", "assets/background.png")
@@ -98,7 +111,6 @@ export const load = {
                 button_on: 8,
             }
         });
-        loadSprite("music", "assets/music.png")
         loadSprite("ice", "assets/ice.png",{
             sliceX: 3,
             sliceY: 3,
