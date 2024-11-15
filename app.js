@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 const maxPlayers = 2;
 var currentPlayers = 0;
 const backEndPlayers = {};
-const config = {x: 80, y: 100};
+const config = {x: 100, y: 100};
 var key = false;
 var win1 = false;
 var win2 = false;
@@ -27,12 +27,34 @@ var inLevel = false;
 var progress = 4;
 
 io.on('connection', (socket) => {
+  // socket.emit('init', backEndPlayers[socket.id]);
   io.emit('progress', progress);
   socket.on('inLevel', (bool) => {
     inLevel = bool;
   })
+
+  socket.on('level', (num) => {
+    io.emit('level', num);
+  })
   
   console.log('a user connected');
+
+  // socket.on('init', () => {
+  //   if (currentPlayers < maxPlayers) {
+  //     backEndPlayers[socket.id] = {
+  //       x: config.x + (currentPlayers * 16),
+  //       y: config.y, 
+  //       isMovingLeft: false, 
+  //       isMovingRight: false,
+  //       isJumping: false,
+  //       death: 0,
+  //       playerNumber: currentPlayers + 1
+  //     };
+  //     currentPlayers++;
+  //   }
+  //   console.log(backEndPlayers);
+  //   socket.emit('init', backEndPlayers[socket.id]);
+  // })
   if (currentPlayers < maxPlayers) {
     backEndPlayers[socket.id] = {
       x: config.x + (currentPlayers * 16),
@@ -70,6 +92,14 @@ io.on('connection', (socket) => {
       case 'd':
         backEndPlayers[socket.id].isMovingRight = true;
         break;
+      case 'r':
+        for (const id in backEndPlayers) {
+          backEndPlayers[id].x = config.x;
+          backEndPlayers[id].y = config.y;
+        };
+        
+        io.emit('respawn');
+        break;
     }
   })
 
@@ -99,17 +129,19 @@ io.on('connection', (socket) => {
   })  
 
   socket.on('respawning', () => {
-    for (const id in backEndPlayers) {
-      backEndPlayers[id].x = config.x;
-      backEndPlayers[id].y = config.y;
-    };
-
-    backEndPlayers[socket.id].death++;
-    io.emit('respawn');
-
-    for (const id in backEndPlayers) {
-      console.log(id + '.death : ' + backEndPlayers[id].death);
-    }
+    setTimeout(() => {
+      for (const id in backEndPlayers) {
+        backEndPlayers[id].x = config.x;
+        backEndPlayers[id].y = config.y;
+      };
+  
+      backEndPlayers[socket.id].death++;
+      io.emit('respawn');
+  
+      for (const id in backEndPlayers) {
+        console.log(id + '.death : ' + backEndPlayers[id].death);
+      }
+    }, 3000);
   })
 
   socket.on('key', () => {
@@ -138,6 +170,9 @@ setInterval(() => {
   io.emit('updatePlayers', backEndPlayers);
   // console.log(backEndPlayers.x, backEndPlayers.y);
   if (win1 && win2) {
+    for (const id in backEndPlayers) {
+      delete backEndPlayers[id]
+    }
     console.log('win');
     io.emit('nextLevel');
     win1 = false;

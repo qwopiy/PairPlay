@@ -1,4 +1,4 @@
-level1              siap
+level1          siap
 ice             siap
 bouncy          siap
 gerbang         siap
@@ -11,9 +11,12 @@ movable boks    siap
 level4          siap
 portal          siap
 
-finish harus dua dua nyampe     siap
+finish harus dua dua nyampe   siap
 
 achievement
 easter egg
 
 collision kiri kanan
+
+fix mobile touchControls
+masalah transisi antar scene

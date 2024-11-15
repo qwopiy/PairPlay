@@ -232,9 +232,9 @@ export function generateMappings(tileType) {
         ],
 
         _: () => [
-            area({ shape: new Rect(vec2(0), 1600, 16)}),
+            area({ shape: new Rect(vec2(0), 3200, 16)}),
             offscreen(),
-            "dead"
+            "spike"
         ],
     }
 }
