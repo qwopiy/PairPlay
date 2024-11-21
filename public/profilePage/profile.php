@@ -1,3 +1,39 @@
+<?php
+  require "../../Signup and Login/verify/functions.php";
+  check_login();
+
+  $pemain= [
+    [
+      "nama" => "Muhammad Ariiq",
+      "bio" => "ngetes doang",
+      "photo" => "../../assets/FrontPage/images.png",
+      "deathCount" => 100,
+      "achievementCount" => 5,
+      "achievementProfile" => [
+                        "../../assets/Frontpage/transparent.png", 
+                        "../../assets/Frontpage/transparent.png", 
+                        "../../assets/Frontpage/transparent.png",
+                        "../../assets/Frontpage/transparent.png",
+                        "../../assets/Frontpage/transparent.png"
+                      ],
+      "achievement" => [true, true, true, true, true],
+      "progress" => [false, false, false, false, false],
+    ]
+  ];
+
+
+
+  if(check_login(false)){
+    
+
+    $pemain["username"] = $_SESSION['USER']->username;
+    $pemain["bio"] = $_SESSION['USER']->bio;
+    $pemain["photo"] = $_SESSION['USER']->photo;
+  }
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,7 +47,7 @@
   <body id="profile">
     <div class="container edit-profile">
       <section class="jumbotron text-center">
-        <img src="./assets/FrontPage/images.png" id="profile-edit" alt="profil" class="rounded-circle border border-1 border-black" width="160" height="160" />
+        <img src="../../assets/FrontPage/images.png" id="profile-edit" alt="profil" class="rounded-circle border border-1 border-black" width="160" height="160" />
         <div class="mt-3">
           <label for="image-edit" type="button" class="btn form-label text-dark btn-outline-dark" style="background-color: #95adbe">Edit Photo</label>
           <input id="image-edit" class="form-control" type="file" accept="image/jpeg, image/png, image/jpg" />
@@ -37,13 +73,13 @@
           </button>
           <div class="dropdown-menu" style="background-color: #95adbe">
             <div class="d-md-flex flex-row mb-sm-3">
-              <div class="p-2 achievment-dropdown"><img id="achievment-dropdown1" src="assets/FrontPage/Death10.png" alt="profil" class="m-sm-2" width="100" /></div>
-              <div class="p-2 achievment-dropdown"><img id="achievment-dropdown2" src="assets/FrontPage/death50.png" alt="profil" class="m-sm-2" width="100" /></div>
-              <div class="p-2 achievment-dropdown"><img id="achievment-dropdown3" src="assets/FrontPage/death100.png" alt="profil" class="m-sm-2" width="100" /></div>
-              <div class="p-2 achievment-dropdown"><img id="achievment-dropdown4" src="assets/FrontPage/end.png" alt="profil" class="m-sm-2" width="100" /></div>
+              <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown1" src="../../assets/FrontPage/Death10.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
+              <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown2" src="../../assets/FrontPage/death50.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
+              <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown3" src="../../assets/FrontPage/death100.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
+              <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
             </div>
             <div class="d-md-flex flex-row mb-sm-3">
-              <div class="p-2 achievment-dropdown"><img id="achievment-dropdown5" src="assets/FrontPage/easteregg.png" alt="profil" class="m-sm-2" width="100" /></div>
+              <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown5" src="../../assets/FrontPage/easteregg.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
             </div>
           </div>
         </div>
@@ -51,16 +87,16 @@
       <div class="container rounded edit_achievment mb-2 ps-2 pe-2" style="width: 97%">
         <div class="row text-center">
           <div class="col-md-3">
-            <img src="./assets/FrontPage/transparent.png" id="achievment-edit1" alt="profil" class="m-sm-2" width="100" />
+            <img src="../../assets/FrontPage/transparent.png" id="achievment-edit1" alt="profil" class="m-sm-2" width="100" />
           </div>
           <div class="col-md-3">
-            <img src="./assets/FrontPage/transparent.png" id="achievment-edit2" alt="profil" class="m-sm-2" width="100" />
+            <img src="../../assets/FrontPage/transparent.png" id="achievment-edit2" alt="profil" class="m-sm-2" width="100" />
           </div>
           <div class="col-md-3">
-            <img src="./assets/FrontPage/transparent.png" id="achievment-edit3" alt="profil" class="m-sm-2" width="100" />
+            <img src="../../assets/FrontPage/transparent.png" id="achievment-edit3" alt="profil" class="m-sm-2" width="100" />
           </div>
           <div class="col-md-3">
-            <img src="./assets/FrontPage/transparent.png" id="achievment-edit4" alt="profil" class="m-sm-2" width="100" />
+            <img src="../../assets/FrontPage/transparent.png" id="achievment-edit4" alt="profil" class="m-sm-2" width="100" />
           </div>
         </div>
       </div>
@@ -85,24 +121,24 @@
         </div>
       </div>
       <section class="jumbotron text-center">
-        <img src="./assets/FrontPage/images.png" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
-        <h1 id="name-profile" class="display-4">user-123</h1>
+        <img src=" <?= $pemain["photo"]; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
+        <h1 id="name-profile" class="display-4"> <?= $pemain["username"]; ?> </h1>
         <div>
-          <p id="bio-profile" class="lead">,</p>
+          <p id="bio-profile" class="lead"> <?= $pemain["bio"];  ?> </p>
         </div>
       </section>
 
       <section id="death-achievment" class="">
         <div class="row justify-content-evenly mb-3">
           <div class="col-md-4 text-center">
-            <img src="./assets/Frontpage/Death.png" alt="profil" class="" width="150" />
+            <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="150" />
             <p class="mb-1 fs-3">Total Death</p>
-            <p class="fs-4">100</p>
+            <p class="fs-4"> <?= $pemain[0]["deathCount"]; ?> </p>
           </div>
           <div class="col-md-4 text-center">
-            <img src="./assets/Frontpage/achievement.png" alt="profil" class="" width="150" />
+            <img src="../../assets/Frontpage/achievement.png" alt="profil" class="" width="150" />
             <p class="mb-1 fs-3">Achievement</p>
-            <p class="fs-4">5</p>
+            <p class="fs-4"> <?= $pemain[0]["achievementCount"]; ?> </p>
           </div>
         </div>
       </section>
@@ -114,16 +150,16 @@
         <div class="container">
           <div class="row text-center">
             <div class="col-md-3">
-              <img src="./assets/Frontpage/transparent.png" id="achievment-profile1" alt="profil" class="m-sm-2" width="200" />
+              <img src="<?= $pemain[0]["achievementProfile"][0]?>" id="achievment-profile1" alt="profil" class="m-sm-2" width="200" />
             </div>
             <div class="col-md-3">
-              <img src="./assets/Frontpage/transparent.png" id="achievment-profile2" alt="profil" class="m-sm-2" width="200" />
+              <img src="<?= $pemain[0]["achievementProfile"][1]?>" id="achievment-profile2" alt="profil" class="m-sm-2" width="200" />
             </div>
             <div class="col-md-3">
-              <img src="./assets/Frontpage/transparent.png" id="achievment-profile3" alt="profil" class="m-sm-2" width="200" />
+              <img src="<?= $pemain[0]["achievementProfile"][2]?>" id="achievment-profile3" alt="profil" class="m-sm-2" width="200" />
             </div>
             <div class="col-md-3">
-              <img src="./assets/Frontpage/transparent.png" id="achievment-profile4" alt="profil" class="m-sm-2" width="200" />
+              <img src="<?= $pemain[0]["achievementProfile"][3]?>" id="achievment-profile4" alt="profil" class="m-sm-2" width="200" />
             </div>
           </div>
         </div>
@@ -136,16 +172,16 @@
         <div class="container">
           <div class="row text-center">
             <div class="col-md-3">
-              <img id="progress1" src="./assets/Frontpage/Progress1.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
+              <img id="progress1" src="../../assets/Frontpage/Progress1.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
             </div>
             <div class="col-md-3">
-              <img id="progress2" src="./assets/Frontpage/Progress2.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
+              <img id="progress2" src="../../assets/Frontpage/Progress2.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
             </div>
             <div class="col-md-3">
-              <img id="progress3" src="./assets/Frontpage/Progress3.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
+              <img id="progress3" src="../../assets/Frontpage/Progress3.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
             </div>
             <div class="col-md-3">
-              <img id="progress4" src="./assets/Frontpage/Progress4.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
+              <img id="progress4" src="../../assets/Frontpage/Progress4.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
             </div>
           </div>
         </div>

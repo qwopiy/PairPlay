@@ -92,7 +92,7 @@ textarea {
 /*  */
 
 #profile {
-  background-image: url("assets/FrontPage/dungeon2.png");
+  background-image: url("../../assets/FrontPage/dungeon2.png");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
