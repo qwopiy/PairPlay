@@ -1,0 +1,33 @@
+.selection-form{   
+    width: 100%;
+    max-width: 50%; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+
+}
+body{
+    background-image: url("../../assets/FrontPage/dungeon2.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+}
+.btn{
+    border-radius: 30px;
+}
+.btn-local, .btn-join, .btn-room  {
+    border: 1px solid black;
+    background-color: #95adbe;
+    transition: background-color 0.3s ease; 
+    box-shadow: 3px 3px 5px black;
+}
+.btn-local:hover, .btn-join:hover, .btn-room:hover {
+    background-color: #728a9d; 
+    color: white; 
+}
+.back{
+    color: white;
+}
