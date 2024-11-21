@@ -23,7 +23,7 @@ function signup($data)
 		$errors[] = "Passwords must match";
 	}
 
-	$check = database_run("select * from users where email = :email limit 1",['email'=>$data['email']]);
+	$check = database_run("select * from pemain where email = :email limit 1",['email'=>$data['email']]);
 	if(is_array($check)){
 		$errors[] = "That email already exists";
 	}
@@ -34,10 +34,10 @@ function signup($data)
 		$arr['username'] = $data['username'];
 		$arr['email'] = $data['email'];
 		$arr['password'] = hash('sha256',$data['password']);
-		$arr['date'] = date("Y-m-d H:i:s");
+		// $arr['date'] = date("Y-m-d H:i:s");
 
-		$query = "insert into users (username,email,password,date) values 
-		(:username,:email,:password,:date)";
+		$query = "insert into pemain (username,email,password) values 
+		(:username,:email,:password)";
 
 		database_run($query,$arr);
 	}
@@ -63,7 +63,7 @@ function login($data)
 		$arr['email'] = $data['email'];
 		$password = hash('sha256', $data['password']);
 
-		$query = "select * from users where email = :email limit 1";
+		$query = "select * from pemain where email = :email limit 1";
 
 		$row = database_run($query,$arr);
 
@@ -87,8 +87,8 @@ function login($data)
 
 function database_run($query,$vars = array())
 {
-	$string = "mysql:host=localhost;dbname=verify";
-	$con = new PDO($string,'root','');
+	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=LaboseVirus69;";
+	$con = new PDO($string);
 
 	if(!$con){
 		return false;
@@ -125,10 +125,16 @@ function check_login($redirect = true){
 	
 }
 
+function update(){
+	if(isset($_SESSION['USER']) && isset($_SESSION['LOGGED_IN'])){
+	
+	}
+}
+
 function check_verified(){
 
 	$id = $_SESSION['USER']->id;
-	$query = "select * from users where id = '$id' limit 1";
+	$query = "select * from pemain where id = '$id' limit 1";
 	$row = database_run($query);
 
 	if(is_array($row)){

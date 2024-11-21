@@ -1,4 +1,6 @@
 <?php
+  require "../../Signup and Login/verify/functions.php";
+  check_login();
 
   $pemain= [
     [
@@ -17,8 +19,19 @@
       "achievement" => [true, true, true, true, true],
       "progress" => [false, false, false, false, false],
     ]
-  ]
+  ];
+
+
+
+  if(check_login(false)){
+    
+
+    $pemain["username"] = $_SESSION['USER']->username;
+    $pemain["bio"] = $_SESSION['USER']->bio;
+    $pemain["photo"] = $_SESSION['USER']->photo;
+  }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -108,10 +121,10 @@
         </div>
       </div>
       <section class="jumbotron text-center">
-        <img src=" <?= $pemain[0]["photo"]; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
-        <h1 id="name-profile" class="display-4"> <?= $pemain[0]["bio"]; ?> </h1>
+        <img src=" <?= $pemain["photo"]; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
+        <h1 id="name-profile" class="display-4"> <?= $pemain["username"]; ?> </h1>
         <div>
-          <p id="bio-profile" class="lead"> <?= $pemain[0]["bio"]; ?> </p>
+          <p id="bio-profile" class="lead"> <?= $pemain["bio"];  ?> </p>
         </div>
       </section>
 
