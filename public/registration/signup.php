@@ -1,10 +1,18 @@
 <?php
-require_once '../../Signup and Login/config_session.inc.php';
-require_once 'signup_view.inc.php'; 
+require "../../Signup and Login/verify/functions.php";
 
-if (isset($_SESSION['errors'])) {
-    SignupView::displayError($_SESSION['errors']); 
-    unset($_SESSION['errors']); 
+$errors = array();
+
+if($_SERVER['REQUEST_METHOD'] == "POST")
+{
+
+	$errors = signup($_POST);
+
+	if(count($errors) == 0)
+	{
+		header("Location: ../../public/index.php");
+		die;
+	}
 }
 ?>
 
@@ -22,44 +30,44 @@ if (isset($_SESSION['errors'])) {
 <body>
 
 <div class="email-container">
-<?php
-if (isset($_SESSION['error'])) {
-    SignupView::displayError($_SESSION['error']);
-    unset($_SESSION['error']); 
-}
-?>
-      <form action="signup.inc.php" method="post">
-            <a>
-            <a href="login.php">
-                    <i class="bi bi-arrow-left fs-3 text-dark"></i>
-            </a>
-            <div class="mb-3">
-                    <label for="Inputusername" class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" aria-label="Sizing input" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Your Username">
-            </div>
-            <div class="mb-3">
-                    <label for="InputEmail" class="form-label">Email address</label>
-                    <input type="email" name="email" class="form-control" id="InputEmail" aria-describedby="emailHelp" placeholder="xxx.@gmail.com">
-                    <div id="emailHelp" class="form-text"></div>
-            </div>
-            <div class="password-container mb-3">
-                    <label for="password" class="form-label">Password</label>
+        
+      <form method="post">
+              <a>
+                      <a href="login.php">
+                              <i class="bi bi-arrow-left fs-3 text-dark"></i>
+                        </a>
+                        <div class="mb-3">
+                                <label for="Inputusername" class="form-label">Username</label>
+                                <input type="text" name="username" class="form-control" aria-label="Sizing input" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Your Username">
+                        </div>
+                        <div class="mb-3">
+                                <label for="InputEmail" class="form-label">Email address</label>
+                                <input type="email" name="email" class="form-control" id="InputEmail" aria-describedby="emailHelp" placeholder="xxx.@gmail.com">
+                                <div id="emailHelp" class="form-text"></div>
+                        </div>
+                        <div class="password-container mb-3">
+                                <label for="password" class="form-label">Password</label>
                     <input type="password" name="password" class="form-control" id="password" placeholder="Enter Your Password">
                     <button id="show-password">
-                          <img src="../../assets/FrontPage/eye_open.svg" alt="show icon">
+                            <img src="../../assets/FrontPage/eye_open.svg" alt="show icon">
                     </button>
-            </div>
+                </div>
             <div class="password-container mb-3">
                     <label for="password-check" class="form-label">Password Check</label>
-                    <input type="password" name="repeat_password" class="form-control" id="password-check" placeholder="Enter Your Password">
+                    <input type="password" name="password2" class="form-control" id="password-check" placeholder="Enter Your Password">
                     <button id="show-password-check">
-                          <img src="../../assets/FrontPage/eye_open.svg" alt="show icon">
-                    </button>
-            </div>
-            <div type="button" class="text-end">
-                    <button type="submit" name="submit" id="btn_submit" class="btn btn-primary btn-sm">Submit</button>
-            </div>
-      </form>
+                            <img src="../../assets/FrontPage/eye_open.svg" alt="show icon">
+                         </button>
+                        </div>
+                        <?php if(count($errors) > 0):?>
+                                <?php foreach ($errors as $error):?>
+                                        <?= $error?> <br>	
+                                <?php endforeach;?>
+                        <?php endif;?>
+                <div type="button" class="text-end">
+                        <button type="submit" name="submit" id="btn_submit" class="btn btn btn-sm">Submit</button>
+                </div>
+        </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

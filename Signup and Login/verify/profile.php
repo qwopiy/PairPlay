@@ -20,11 +20,11 @@
 		Hi, <?=$_SESSION['USER']->username?>;
 
 		<br><br>
-		<?php if(!check_verified()):?>
+		<!-- <?php if(!check_verified()):?>
 			<a href="verify.php">
 				<button>Verify Profile</button>
 			</a>
-		<?php endif;?>
+		<?php endif;?> -->
 	<?php endif;?>
 
  
