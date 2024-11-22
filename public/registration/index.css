@@ -60,7 +60,21 @@ body{
 a {  
     text-decoration: none;   
     color: inherit;   
-}  
+}
+.advice{
+    color: #e0f0ea;
+}
+.btn-logout{
+    border: 1px solid black;
+    background-color: #95adbe;
+    transition: background-color 0.3s ease; 
+    box-shadow: 3px 3px 5px black;
+}
+.btn-logout:hover{
+    background-color: #728a9d; 
+    color: white; 
+}
+
 
 
 

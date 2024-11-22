@@ -29,14 +29,4 @@ show_pw_btn_check.addEventListener('click', (event) => {
 		? '../../assets/FrontPage/eye_closed.svg' 
 		: '../../assets/FrontPage/eye_open.svg'
 })
-btnSubmit.onclick = function() {
-    if (pw_input.value !== "") {
-        if (pw_input.value === pw_input_check.value) {
-            window.location.href = "../../profile.html"; 
-        } else {
-            alert("Password don't match");
-        }
-    } else {
-        alert("Password can't be empty!");
-    }
-};
+

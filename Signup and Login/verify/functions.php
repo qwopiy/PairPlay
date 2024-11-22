@@ -27,7 +27,11 @@ function signup($data)
 	if(is_array($check)){
 		$errors[] = "That email already exists";
 	}
-
+	
+	$check = database_run("select * from pemain where username = :username limit 1",['username'=>$data['username']]);
+    if(is_array($check)){
+        $errors[] = "That username already exists";
+    }
 	//save
 	if(count($errors) == 0){
 
@@ -87,7 +91,7 @@ function login($data)
 
 function database_run($query,$vars = array())
 {
-	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=LaboseVirus69;";
+	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=anantha06;";
 	$con = new PDO($string);
 
 	if(!$con){
