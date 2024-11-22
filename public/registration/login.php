@@ -1,5 +1,5 @@
 <?php
-require '../../Signup and Login/verify/functions.php';
+require 'Signup and Login/verify/functions.php';
 
 $errors = array();
 
@@ -32,7 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
             
             
             <form method="POST">
-                  <a href="../index.php">
+                  <a href="public/index.php">
                         <i class="bi bi-arrow-left fs-3 text-dark"></i>
                   </a>
                   <div class="mb-3">
