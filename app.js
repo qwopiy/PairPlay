@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
+import { exec } from 'node:child_process';
 
 const app = express();
 const server = createServer(app);
@@ -10,6 +11,7 @@ const io = new Server(server, { pingInterval: 2000, pingTimeout: 500 });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+app.get('/', function(req, res){exec("php ./public/index.php", function (error, stdout, stderr) {res.send(stdout);});});
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
