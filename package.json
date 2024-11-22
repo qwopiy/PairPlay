@@ -21,7 +21,7 @@
     "express": "^4.21.1",
     "kaboom": "^3000.1.17",
     "nodemon": "^3.1.7",
-    "socket.io": "^4.8.0"
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "esbuild": "0.24.0"
