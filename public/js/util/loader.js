@@ -69,6 +69,7 @@ export const load = {
                 muteMusic: 7,
             }
         })
+        loadSprite("easterEgg", "assets/FrontPage/easteregg.png")
         loadSprite("ghost", "assets/ghost.png")
         loadSprite("background", "assets/background.png")
         loadSprite("ground-tileset", "assets/ground-tileset.png", {

@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, "index.html"));
+  res.sendFile(join(__dirname, "/public/index.php"));
 });
 
 const maxPlayers = 2;

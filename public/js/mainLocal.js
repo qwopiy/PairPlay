@@ -313,8 +313,115 @@ const scenes = {
         })
         
         onKeyPress("escape", () => {
-            paused = !paused
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
 
+        // easter egg
+        const easterEgg = {
+            wall1: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                body({ isStatic: true}),
+                pos(16 * 26, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall2: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                body({ isStatic: true}),
+                pos(16 * 26, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall3: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 27, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall4: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 27, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall5: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                pos(16 * 28, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall6: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                pos(16 * 28, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall7: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 28, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall8: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 28, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall9: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 29, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall10: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 29, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+        }
+
+        player1.gameObj.onCollide("easterEgg", () => {
+            for (const obj in easterEgg) {
+                destroy(easterEgg[obj])
+            }
+        })
+
+        player2.gameObj.onCollide("easterEgg", () => {
+            for (const obj in easterEgg) {
+                destroy(easterEgg[obj])
+            }
         })
 
         let key = true
@@ -447,7 +554,7 @@ const scenes = {
             pos(10000, 10000),
             anchor("center"),
             opacity(0.5),
-            scale(Level1Config.Scale),
+            scale(Level2Config.Scale),
             "ghost"
         ])
 
@@ -560,6 +667,17 @@ const scenes = {
         onCollideEnd("player1", "player2", () => {
             player1.isPushing = false
             player2.isPushing = false
+        })
+
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
         })
 
         onUpdate(() => {
@@ -735,6 +853,20 @@ const scenes = {
         buttonPressed(player2.gameObj, "Level3Config", "button4", Level3Config.Scale)
         buttonUnpressed(player2.gameObj, "Level3Config", "button4", Level3Config.Scale)
 
+        player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
+            play("key")
+            destroy(key)
+            console.log("key Get")
+            Level3Config.hasKey = true
+        })
+
+        player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+            play("key")
+            destroy(key)
+            console.log("key Get")
+            Level3Config.hasKey = true
+        })
+
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
             play("dead")
             player1.gameObj.angle = -90
@@ -833,6 +965,17 @@ const scenes = {
         onCollide("player2", "box2", () => { player2.isPushing = true })
         onCollideEnd("player2", "box2", () => { player2.isPushing = false })
 
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+
         let key = true
         onUpdate(() => {
             if (player1.isRespawning || player2.isRespawning) {
@@ -847,7 +990,7 @@ const scenes = {
                 add([
                     sprite("items", {anim: "key"}), 
                     pos(16 * 12, 16 * 4),
-                    scale(Level1Config.Scale),
+                    scale(Level3Config.Scale),
                     area(),
                     "key"
                 ])
@@ -960,7 +1103,7 @@ const scenes = {
             pos(10000, 10000),
             anchor("center"),
             opacity(0.5),
-            scale(Level1Config.Scale),
+            scale(Level4Config.Scale),
             "ghost"
         ])
 
@@ -1166,6 +1309,17 @@ const scenes = {
 
         buttonPressed(player1.gameObj, "Level4Config", "button1", Level4Config.Scale)
         buttonPressed(player2.gameObj, "Level4Config", "button2", Level4Config.Scale)
+
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
 
         onUpdate(() => {
             if (player1.isRespawning || player2.isRespawning) {
