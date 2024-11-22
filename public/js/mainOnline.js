@@ -17,6 +17,10 @@ const socket = io();
 var respawning = false;
 
 kaboom({
+    height: 720,
+    width: 1280,
+    letterbox: true,
+    maxFPS: 1000,
     canvas: document.getElementById("game"),
 });
 
@@ -121,14 +125,51 @@ const scenes = {
             for (const id in frontEndPlayers) {
                 destroy(frontEndPlayers[id].gameObj)
                 delete frontEndPlayers[id]
-                frontEndPlayers[id].walk.stop()
+                // frontEndPlayers[id].walk.stop()
             }
             music.stop()
         })
 
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            socket.emit('keyPress', 'r')
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const frontEndPlayers = {}
@@ -234,6 +275,7 @@ const scenes = {
                         1,
                         false
                     )
+                    
                     ghost[id] = add([
                         sprite("ghost"),
                         pos(10000, 10000),
@@ -244,7 +286,6 @@ const scenes = {
                     ])
                     frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, `player${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
                     frontEndPlayers[id].update();
-                    if (frontEndPlayers[id].isTouchEnabled())frontEndPlayers[id].touchControls()
 
                     frontEndPlayers[id].gameObj.onCollide("spike", () => {
                         ghost[id].pos = frontEndPlayers[id].gameObj.pos
@@ -302,6 +343,12 @@ const scenes = {
                     buttonPressed(frontEndPlayers[id].gameObj, "Level1Config",`button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
                     buttonUnpressed(frontEndPlayers[id].gameObj, "Level1Config", `button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
 
+                    frontEndPlayers[id].gameObj.onCollide("easterEgg", () => {
+                        for (const obj in easterEgg) {
+                            destroy(easterEgg[obj])
+                        }
+                    })
+
                     console.log(frontEndPlayers[socket.id]);
                 } else {
                     frontEndPlayers[id].isMovingLeft = backEndPlayer.isMovingLeft;
@@ -310,6 +357,95 @@ const scenes = {
                 }
             }
         })
+
+        // easter egg
+        const easterEgg = {
+            wall1: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                body({ isStatic: true}),
+                pos(16 * 26, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall2: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                body({ isStatic: true}),
+                pos(16 * 26, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall3: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 27, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall4: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 27, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall5: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                pos(16 * 28, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall6: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                pos(16 * 28, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall7: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 28, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall8: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 28, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall9: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 29, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall10: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 29, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+        }
 
         socket.on('updateLocation', (pos, id) => {
             frontEndPlayers[id].gameObj.pos.x = pos.x;
@@ -320,6 +456,33 @@ const scenes = {
             destroy(frontEndPlayers[id].gameObj)
             delete frontEndPlayers[id]
         })
+
+        if (isTouchscreen()) {
+            onTouchStart((position) => {
+                if (position.x < width() / 10) {
+                    frontEndPlayers[socket.id].isMovingLeft = true
+                    socket.emit('keyPress', 'a')
+                } else if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+                    frontEndPlayers[socket.id].isMovingRight = true
+                    socket.emit('keyPress', 'd')
+                } else {
+                    frontEndPlayers[socket.id].jump()
+                    socket.emit('keyPress', 'w')
+                }
+            })
+        
+            onTouchEnd((position) => {
+                if (position.x < width() / 10) {
+                    frontEndPlayers[socket.id].isMovingLeft = false
+                    socket.emit('keyRelease', 'a')
+                } else if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+                    frontEndPlayers[socket.id].isMovingRight = false
+                    socket.emit('keyRelease', 'd')
+                } else {
+                    socket.emit('keyRelease', 'w')
+                }
+            })
+        }
 
         onKeyPress("w", () => {
             frontEndPlayers[socket.id].jump()
@@ -379,7 +542,7 @@ const scenes = {
             console.log(Level1Config.hasKey)
         })
 
-        var key = true;
+        let key = true;
 
         socket.on('nextLevel', () => {
             for (const id in frontEndPlayers) {
@@ -398,7 +561,7 @@ const scenes = {
                 const player = frontEndPlayers[id]
                 camX[id] = player.gameObj.pos.x
                 player.Move(player.speed)
-                // console.log(player.gameObj.pos)
+                console.log(player.isMovingLeft, player.isMovingRight)
                 if (player.isJumping) 
                     player.jump()
                 if (player.isRespawning) {
@@ -455,14 +618,52 @@ const scenes = {
             music.stop()
         })
 
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            socket.emit('keyPress', 'r')
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const frontEndPlayers = {}
         const ghost = {}
         
+        // update player tiap frame
         socket.on('updatePlayers', (backEndPlayers) => {
             for (const id in backEndPlayers) {
                 const backEndPlayer = backEndPlayers[id]
@@ -553,6 +754,7 @@ const scenes = {
             delete frontEndPlayers[id]
         })
 
+        // controls
         onKeyPress("w", () => {
             frontEndPlayers[socket.id].jump()
             socket.emit('keyPress', 'w')
@@ -583,6 +785,10 @@ const scenes = {
 
         onKeyPress("r", () => {
             socket.emit('keyPress', 'r')
+        })
+
+        onKeyPress("escape", () => {
+            
         })
 
         onCollide("player1", "player2", () => {
@@ -671,9 +877,46 @@ const scenes = {
             music.stop()
         })
 
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            socket.emit('keyPress', 'r')
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const frontEndPlayers = {}
@@ -869,7 +1112,7 @@ const scenes = {
             console.log(Level3Config.hasKey)
         })
 
-        var key = true;
+        let key = true;
 
         socket.on('nextLevel', () => {
             for (const id in frontEndPlayers) {
@@ -938,9 +1181,46 @@ const scenes = {
             music.stop()
         })
 
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            socket.emit('keyPress', 'r')
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const frontEndPlayers = {}
@@ -1298,4 +1578,4 @@ for (const key in scenes) {
 
 load.assets();
 load.sounds();
-go(3);
+go(1);

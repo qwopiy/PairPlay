@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
+import phpExpress from 'php-express';
 
 const app = express();
 const server = createServer(app);
@@ -10,11 +11,24 @@ const io = new Server(server, { pingInterval: 2000, pingTimeout: 500 });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-app.use(express.static(__dirname));
+// app.get('/', (req, res) => {
+//   res.sendFile(join(__dirname, "/public/index.php"));
+// });
+
+// set up php-express
+const php = phpExpress({
+  binPath: 'C:\\xampp\\php\\php.exe' // Replace with the path to your PHP binary
+});
+
+app.set('views', join(__dirname, 'public'));
+app.engine('php', php.engine);
+app.set('view engine', 'php');
 
 app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, "index.html"));
+  res.render('public/index.php');
 });
+
+app.use(express.static(__dirname));
 
 const maxPlayers = 2;
 var currentPlayers = 0;

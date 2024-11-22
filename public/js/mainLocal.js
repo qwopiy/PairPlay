@@ -14,6 +14,10 @@ import { Level3Config } from "./content/level3/config.js";
 import { Level4Config } from "./content/level4/config.js";
 
 kaboom({
+    height: 720,
+    width: 1280,
+    letterbox: true,
+    maxFPS: 1000,
     canvas: document.getElementById("game"),
 });
 
@@ -67,11 +71,6 @@ const scenes = {
         onSceneLeave(() => {
             music.stop()
         })
-        
-        UIManager.UIButton()
-        onClick("muteMusic", () => {
-            music.paused = !music.paused
-        })
 
         UIManager.displayLevel(progress)
             console.log(progress)
@@ -99,7 +98,7 @@ const scenes = {
         Level1Config.win1 = false
         Level1Config.win2 = false
         setGravity(Level1Config.gravity)
-
+        
         const level = new Level()
         level.drawBackground("background")
         level.drawMapLayout(level1Layout, level1Mappings, Level1Config.Scale)
@@ -114,9 +113,51 @@ const scenes = {
             music.stop()
         })
         
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const player1 = new Player(
@@ -177,6 +218,7 @@ const scenes = {
         })
 
         player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+            play("key")
             destroy(key)
             console.log("key Get")
             Level1Config.hasKey = true
@@ -270,15 +312,135 @@ const scenes = {
             player2.isPushing = false
         })
         
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+
+        // easter egg
+        const easterEgg = {
+            wall1: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                body({ isStatic: true}),
+                pos(16 * 26, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall2: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                body({ isStatic: true}),
+                pos(16 * 26, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall3: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 27, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall4: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 27, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall5: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                pos(16 * 28, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall6: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                pos(16 * 28, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall7: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 28, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall8: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 28, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall9: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 29, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall10: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 29, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+        }
+
+        player1.gameObj.onCollide("easterEgg", () => {
+            for (const obj in easterEgg) {
+                destroy(easterEgg[obj])
+            }
+        })
+
+        player2.gameObj.onCollide("easterEgg", () => {
+            for (const obj in easterEgg) {
+                destroy(easterEgg[obj])
+            }
+        })
+
+        let key = true
+
         onUpdate(() => {
             console.log(player1.isPushing, player2.isPushing)
             if (player1.isRespawning || player2.isRespawning) {
                 ghost.move(0, -80)
             }
 
-            if (Level1Config.button1 && Level1Config.button2) {
-                Level1Config.hasKey = true
-                console.log("key Get")
+            if (Level1Config.button1 && Level1Config.button2 & key) {
+                key = false
+                add([
+                    sprite("items", {anim: "key"}), 
+                    pos(16 * 30, 16 * 2),
+                    scale(Level1Config.Scale),
+                    area(),
+                    "key"
+                ])
             }
 
             player1.Move(player1.speed)
@@ -316,9 +478,51 @@ const scenes = {
             music.stop()
         })
         
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const player1 = new Player(
@@ -350,7 +554,7 @@ const scenes = {
             pos(10000, 10000),
             anchor("center"),
             opacity(0.5),
-            scale(Level1Config.Scale),
+            scale(Level2Config.Scale),
             "ghost"
         ])
 
@@ -361,12 +565,14 @@ const scenes = {
         player2.update()
 
         player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
+            play("key")
             destroy(key)
             console.log("key Get")
             Level2Config.hasKey = true
         })
 
         player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+            play("key")
             destroy(key)
             console.log("key Get")
             Level2Config.hasKey = true
@@ -463,6 +669,17 @@ const scenes = {
             player2.isPushing = false
         })
 
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+
         onUpdate(() => {
             if (player1.isRespawning || player2.isRespawning) {
                 ghost.move(0, -80)
@@ -501,9 +718,51 @@ const scenes = {
             music.stop()
         })
         
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const player1 = new Player(
@@ -593,6 +852,20 @@ const scenes = {
 
         buttonPressed(player2.gameObj, "Level3Config", "button4", Level3Config.Scale)
         buttonUnpressed(player2.gameObj, "Level3Config", "button4", Level3Config.Scale)
+
+        player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
+            play("key")
+            destroy(key)
+            console.log("key Get")
+            Level3Config.hasKey = true
+        })
+
+        player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+            play("key")
+            destroy(key)
+            console.log("key Get")
+            Level3Config.hasKey = true
+        })
 
         player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
             play("dead")
@@ -692,6 +965,18 @@ const scenes = {
         onCollide("player2", "box2", () => { player2.isPushing = true })
         onCollideEnd("player2", "box2", () => { player2.isPushing = false })
 
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+
+        let key = true
         onUpdate(() => {
             if (player1.isRespawning || player2.isRespawning) {
                 ghost.move(0, -100)
@@ -700,10 +985,17 @@ const scenes = {
             player1.Move(player1.speed)
             player2.Move(player2.speed)
 
-            if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4) {
-                Level3Config.hasKey = true
-                console.log("key Get")
+            if (Level3Config.button1 && Level3Config.button2 && Level3Config.button3 && Level3Config.button4 && key) {
+                key = false
+                add([
+                    sprite("items", {anim: "key"}), 
+                    pos(16 * 12, 16 * 4),
+                    scale(Level3Config.Scale),
+                    area(),
+                    "key"
+                ])
             }
+
 
             if (Level3Config.win1 && Level3Config.win2) {
                 if (progress < 3)
@@ -735,9 +1027,51 @@ const scenes = {
             music.stop()
         })
         
+        // pause menu
+        let paused = false
         UIManager.UIButton()
-        onClick("muteMusic", () => {
+        const pauseMenu = UIManager.pauseMenu()
+        onClick("pause", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", () => {
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", () => {
+            go("levelSelect")
+        })
+        onClick("restart", () => {
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+        })
+        onClick("SFX", (target) => {
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
             music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
         })
 
         const player1 = new Player(
@@ -769,7 +1103,7 @@ const scenes = {
             pos(10000, 10000),
             anchor("center"),
             opacity(0.5),
-            scale(Level1Config.Scale),
+            scale(Level4Config.Scale),
             "ghost"
         ])
 
@@ -975,6 +1309,17 @@ const scenes = {
 
         buttonPressed(player1.gameObj, "Level4Config", "button1", Level4Config.Scale)
         buttonPressed(player2.gameObj, "Level4Config", "button2", Level4Config.Scale)
+
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
 
         onUpdate(() => {
             if (player1.isRespawning || player2.isRespawning) {

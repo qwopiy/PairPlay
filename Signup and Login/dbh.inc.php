@@ -2,8 +2,10 @@
 class Dbh {
     private static $host = "localhost";
     private static $dbuser = "postgres";
-    private static $dbpass = "1Wak_Izul99";
-    private static $dbname = "Database_Pemain_PairPlay";
+    private static $dbpass = "anantha06";
+    private static $dbname = "pairplay";
+//     private static $dbpass = "1Wak_Izul99";              //punya paran
+//     private static $dbname = "Database_Pemain_PairPlay";
     private static $pdo;
 
     public static function connect() {

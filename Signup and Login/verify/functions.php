@@ -7,7 +7,7 @@ function signup($data)
 	$errors = array();
  
 	//validate 
-	if(!preg_match('/^[a-zA-Z]+$/', $data['username'])){
+	if(!preg_match('/^[a-zA-Z _]+$/', $data['username'])){
 		$errors[] = "Please enter a valid username";
 	}
 
@@ -23,9 +23,14 @@ function signup($data)
 		$errors[] = "Passwords must match";
 	}
 
-	$check = database_run("select * from users where email = :email limit 1",['email'=>$data['email']]);
+	$check = database_run("select * from pemain where email = :email limit 1",['email'=>$data['email']]);
 	if(is_array($check)){
 		$errors[] = "That email already exists";
+	}
+	
+	$check = database_run("select * from pemain where username = :username limit 1",['username'=>$data['username']]);
+	if(is_array($check)){
+		$errors[] = "That username already exists";
 	}
 
 	//save
@@ -34,10 +39,10 @@ function signup($data)
 		$arr['username'] = $data['username'];
 		$arr['email'] = $data['email'];
 		$arr['password'] = hash('sha256',$data['password']);
-		$arr['date'] = date("Y-m-d H:i:s");
+		// $arr['date'] = date("Y-m-d H:i:s");
 
-		$query = "insert into users (username,email,password,date) values 
-		(:username,:email,:password,:date)";
+		$query = "insert into pemain (username,email,password) values 
+		(:username,:email,:password)";
 
 		database_run($query,$arr);
 	}
@@ -63,7 +68,7 @@ function login($data)
 		$arr['email'] = $data['email'];
 		$password = hash('sha256', $data['password']);
 
-		$query = "select * from users where email = :email limit 1";
+		$query = "select * from pemain where email = :email limit 1";
 
 		$row = database_run($query,$arr);
 
@@ -85,10 +90,43 @@ function login($data)
 	return $errors;
 }
 
+function update($data){
+	$errors = array();
+
+	if(!preg_match('/^[a-zA-Z _]+$/', $data['username'])){
+		$errors[] = "Please enter a valid username";
+	}
+
+	$check = database_run("select * from pemain where username = :username limit 1",['username'=>$data['username']]);
+	if(is_array($check)){
+		$errors[] = "That username already exists";
+	}
+ 
+	//check
+	if(count($errors) == 0){
+
+		$arr['username'] = $data['username'];
+		$id = $_SESSION['USER']->id;
+		$arr['bio'] = $data['bio'];
+
+		$query = "update pemain set username = :username, bio = :bio where id ='$id'";
+		$row = database_run($query, $arr);
+
+		$query = "select * from pemain where id ='$id'";
+		$row = database_run($query);
+
+		if(is_array($row)){
+			$row = $row[0];
+			$_SESSION['USER'] = $row;
+		}
+	}
+	return $errors;
+}
+
 function database_run($query,$vars = array())
 {
-	$string = "mysql:host=localhost;dbname=verify";
-	$con = new PDO($string,'root','');
+	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=LaboseVirus69;";
+	$con = new PDO($string);
 
 	if(!$con){
 		return false;
@@ -128,7 +166,7 @@ function check_login($redirect = true){
 function check_verified(){
 
 	$id = $_SESSION['USER']->id;
-	$query = "select * from users where id = '$id' limit 1";
+	$query = "select * from pemain where id = '$id' limit 1";
 	$row = database_run($query);
 
 	if(is_array($row)){
@@ -142,5 +180,45 @@ function check_verified(){
  
 	return false;
  	
+}
+
+function death_count(){
+	$id = $_SESSION['USER']->id;
+	$query = "select SUM(death) from game where id_pemain = '$id'";
+	$row = database_run($query);
+
+	
+	if(is_array($row)){
+		$row = $row[0];
+		$_SESSION['DEATH'] = $row;
+
+		return;
+	}
+	return;
+}
+
+function achievement_count(){
+	$_SESSION['ACHIEVEMENT_COUNT'] = 0;
+	$id = $_SESSION['USER']->id;
+
+	$query = "select easter_egg from game where id_pemain = '$id' AND easter_egg = 1 LIMIT 1";
+	$row = database_run($query);
+
+	if(is_array($row)){
+		$row = $row[0];
+		$_SESSION['EASTER_EGG'] = $row;
+		$_SESSION['ACHIEVEMENT_COUNT'] ++;
+	}
+
+	if($_SESSION['USER']->progress == 4){
+		$_SESSION['ACHIEVEMENT_COUNT'] ++;
+	}
+
+	if(isset($_SESSION['DEATH'])){
+		if($_SESSION['DEATH']->sum >= 10) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->sum >= 50) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->sum >= 100) $_SESSION['ACHIEVEMENT_COUNT']++;
+	}
+	return;
 }
 
