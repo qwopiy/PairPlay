@@ -343,6 +343,12 @@ const scenes = {
                     buttonPressed(frontEndPlayers[id].gameObj, "Level1Config",`button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
                     buttonUnpressed(frontEndPlayers[id].gameObj, "Level1Config", `button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
 
+                    frontEndPlayers[id].gameObj.onCollide("easterEgg", () => {
+                        for (const obj in easterEgg) {
+                            destroy(easterEgg[obj])
+                        }
+                    })
+
                     console.log(frontEndPlayers[socket.id]);
                 } else {
                     frontEndPlayers[id].isMovingLeft = backEndPlayer.isMovingLeft;
@@ -351,6 +357,95 @@ const scenes = {
                 }
             }
         })
+
+        // easter egg
+        const easterEgg = {
+            wall1: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                body({ isStatic: true}),
+                pos(16 * 26, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall2: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                body({ isStatic: true}),
+                pos(16 * 26, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall3: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 27, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall4: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 27, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall5: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                pos(16 * 28, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall6: add([
+                sprite("ground-tileset", { anim: "ml" }),
+                area(),
+                pos(16 * 28, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall7: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 28, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall8: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 28, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall9: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 29, 16 * 7),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+
+            wall10: add([
+                sprite("ground-tileset", { anim: "mm" }),
+                pos(16 * 29, 16 * 8),
+                offscreen({ hide: true }),
+                z(50),
+                "easterEgg"
+            ]),
+        }
 
         socket.on('updateLocation', (pos, id) => {
             frontEndPlayers[id].gameObj.pos.x = pos.x;

@@ -236,5 +236,20 @@ export function generateMappings(tileType) {
             offscreen({ hide: true }),
             "spike"
         ],
+
+        E: () => [
+            sprite("easterEgg"),
+            offscreen({ hide: true }),
+            scale(0.04),
+            z(50)
+        ],
+
+        e: () => [
+            sprite("ground-tileset", { anim: 'mm' }),
+            offscreen({ hide: true }),
+            area(),
+            body({ isStatic: true}),
+            "ground"
+        ]
     }
 }
