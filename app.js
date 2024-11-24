@@ -49,34 +49,6 @@ app.get("/public/registration/login.php", function (req, res) {
     res.send(stdout);
   });
 });
-app.post('/public/registration/login.php', (req, res) => {
-  const postData = req.body;
-
-  const phpProcess = spawn('php', ['./public/registration/login.php'], {
-    env: {
-      ...process.env,
-      REQUEST_METHOD: 'POST',
-      CONTENT_TYPE: 'application/json'
-    }
-  });
-
-  let phpOutput = '';
-
-  phpProcess.stdout.on('data', (data) => {
-    phpOutput += data.toString();
-  });
-
-  phpProcess.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  phpProcess.on('close', (code) => {
-    res.send(phpOutput);
-  });
-
-  phpProcess.stdin.write(JSON.stringify(postData));
-  phpProcess.stdin.end();
-});
 
 app.get("/public/registration/logout.php", function (req, res) {
   exec(
@@ -103,19 +75,58 @@ app.get("/public/registration/signup.php", function (req, res) {
     }
   );
 });
-app.post('/public/registration/signup.php', (req, res) => {
-  const postData = req.body;
 
+app.post('/public/registration/login.php', (req, res) => {
+  
+  const phpProcess = spawn('php', ['./public/registration/login.php'], {
+    env: {
+      ...process.env,
+      REQUEST_METHOD: 'POST',
+      CONTENT_TYPE: 'application/json',
+      HTTP_HOST: req.headers.host,
+      HTTP_USER_AGENT: req.headers['user-agent'],
+      REMOTE_ADDR: req.ip,
+      REQUEST_URI: req.originalUrl,
+      QUERY_STRING: new URLSearchParams(req.query).toString()
+    }
+  });
+  
+  const postData = req.body;
+  let phpOutput = '';
+
+  phpProcess.stdout.on('data', (data) => {
+    phpOutput += data.toString();
+  });
+
+  phpProcess.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  phpProcess.on('close', (code) => {
+    res.send(phpOutput);
+  });
+
+  phpProcess.stdin.write(JSON.stringify(postData));
+  phpProcess.stdin.end();
+});
+app.post('/public/registration/signup.php', (req, res) => {
+  
   const phpProcess = spawn('php', ['./public/registration/signup.php'], {
     env: {
       ...process.env,
       REQUEST_METHOD: 'POST',
-      CONTENT_TYPE: 'application/json'
+      CONTENT_TYPE: 'application/json',
+      HTTP_HOST: req.headers.host,
+      HTTP_USER_AGENT: req.headers['user-agent'],
+      REMOTE_ADDR: req.ip,
+      REQUEST_URI: req.originalUrl,
+      QUERY_STRING: new URLSearchParams(req.query).toString()
     }
   });
-
+  
+  const postData = req.body;
   let phpOutput = '';
-
+  
   phpProcess.stdout.on('data', (data) => {
     phpOutput += data.toString();
   });

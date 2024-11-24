@@ -5,17 +5,18 @@ $errors = array();
 
 $input = file_get_contents('php://input');
 $_POST = json_decode($input, true);
+echo "abc";
+print_r($_POST);
 
-if($_SERVER['REQUEST_METHOD'] == "POST")
+if($_POST['REQUEST_METHOD'] =="POST")
 {
 
 	$errors = login($_POST);
 
-	if(count($errors) == 0)
-	{
-		header("Location: ../../public/index.php");
-		die;
-	}
+    if (count($errors) == 0) {
+        header("Location: ../../public/index.php");
+        die;
+    }
 }
 ?>
 
@@ -34,7 +35,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
       <div class="email-container">
             
             
-            <form method="POST">
+            <form method="POST" action="">
                   <a href="/">
                         <i class="bi bi-arrow-left fs-3 text-dark"></i>
                   </a>
@@ -56,7 +57,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                               <?php endforeach;?>
                         <?php endif;?>
                   <div type="button" class="text-end">
-                        <button type="submit" name="login" class="btn btn btn-sm">Submit</button>
+                        <button type="submit" name="submit" class="btn btn btn-sm">Submit</button>
                   </div>
                     <p>Don't have an account? create an account <a href="signup.php">here</a></p>
             </form>
