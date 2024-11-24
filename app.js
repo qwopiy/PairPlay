@@ -42,11 +42,6 @@ httpServer.listen(app.get('http_port'), function(){
 io.attach(httpServer);
 
 app.use(express.static(__dirname));
-app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, "/gameOnline.html"));
-});
-
-app.use(express.static(__dirname));
 
 const maxPlayers = 2;
 var currentPlayers = 0;
@@ -212,7 +207,12 @@ setInterval(() => {
   }
 }, 15);
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 server.listen(3000, () => {
-  console.log('server running at http://localhost:3000');
-  console.log( __dirname);
+console.log('server running at http://localhost:3000');
+console.log(__dirname);
 });
