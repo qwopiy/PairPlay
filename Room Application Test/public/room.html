@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div id="message"></div>
+
+    <script>
+        const socket = io();
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomCode = urlParams.get('code');
+
+        if (roomCode) {
+            socket.emit('join room', roomCode);
+        }
+
+        socket.on('room joined', (roomCode ) => {
+            document.getElementById('message').innerText = `You have joined room: ${roomCode}`;
+        });
+
+        socket.on('player joined', (message) => {
+            document.getElementById('message').innerText += `\n${message}`;
+        });
+
+        socket.on('error', (errorMessage) => {
+            alert(errorMessage);
+        });
+    </script>
+</body>
+</html>
