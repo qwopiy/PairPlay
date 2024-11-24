@@ -1,16 +1,32 @@
 import express from 'express';
-import phpExpress from 'php-express';
 import http from 'http';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
-import { exec } from 'node:child_process';
-import { spawn } from 'node:child_process';
+import pkg from 'pg';
+const { Pool, Client } = pkg;
 
-const php = phpExpress({
-  binPath: 'C:\\xampp\\php\\php.exe' 
+// ubah nanti karena /*unsafe*/
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'game',
+  password: 'eeklalat05',
+  port: 5432,
 });
+
+(async function query() { 
+  const client = await pool.connect()
+  try {
+    const res = await client.query('SELECT * FROM pemain');
+    console.log(res.rows);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    client.release();
+  }
+})();
 
 const app = express();
 const server = createServer(app);
@@ -24,139 +40,11 @@ httpServer.listen(app.get('http_port'), function(){
 });
 
 io.attach(httpServer);
-app.set('views', '/public');
-app.engine('php', php.engine);
-app.set('view engine', 'php');
-app.set(/.+\.php$/, php.router);
-
-// Body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.get("/", function (req, res) {
-  exec("php ./public/index.php", function (error, stdout, stderr) {
-    res.send(stdout);
-  });
-});
-app.get("/public/index.php", function (req, res) {
-  exec("php ./public/index.php", function (error, stdout, stderr) {
-    res.send(stdout);
-  });
-});
-
-app.get("/public/registration/login.php", function (req, res) {
-  exec("php ./public/registration/login.php", function (error, stdout, stderr) {
-    res.send(stdout);
-  });
-});
-
-app.get("/public/registration/logout.php", function (req, res) {
-  exec(
-    "php ./public/registration/logout.php",
-    function (error, stdout, stderr) {
-      res.send(stdout);
-    }
-  );
-});
-app.get("/public/profilePage/profile.php", function (req, res) {
-  exec(
-    "php ./public/profilePage/profile.php",
-    function (error, stdout, stderr) {
-      res.send(stdout);
-    }
-  );
-});
-
-app.get("/public/registration/signup.php", function (req, res) {
-  exec(
-    "php ./public/registration/signup.php",
-    function (error, stdout, stderr) {
-      res.send(stdout);
-    }
-  );
-});
-
-app.post('/public/registration/login.php', (req, res) => {
-  
-  const phpProcess = spawn('php', ['./public/registration/login.php'], {
-    env: {
-      ...process.env,
-      REQUEST_METHOD: 'POST',
-      CONTENT_TYPE: 'application/json',
-      HTTP_HOST: req.headers.host,
-      HTTP_USER_AGENT: req.headers['user-agent'],
-      REMOTE_ADDR: req.ip,
-      REQUEST_URI: req.originalUrl,
-      QUERY_STRING: new URLSearchParams(req.query).toString()
-    }
-  });
-  
-  const postData = req.body;
-  let phpOutput = '';
-
-  phpProcess.stdout.on('data', (data) => {
-    phpOutput += data.toString();
-  });
-
-  phpProcess.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  phpProcess.on('close', (code) => {
-    res.send(phpOutput);
-  });
-
-  phpProcess.stdin.write(JSON.stringify(postData));
-  phpProcess.stdin.end();
-});
-app.post('/public/registration/signup.php', (req, res) => {
-  
-  const phpProcess = spawn('php', ['./public/registration/signup.php'], {
-    env: {
-      ...process.env,
-      REQUEST_METHOD: 'POST',
-      CONTENT_TYPE: 'application/json',
-      HTTP_HOST: req.headers.host,
-      HTTP_USER_AGENT: req.headers['user-agent'],
-      REMOTE_ADDR: req.ip,
-      REQUEST_URI: req.originalUrl,
-      QUERY_STRING: new URLSearchParams(req.query).toString()
-    }
-  });
-  
-  const postData = req.body;
-  let phpOutput = '';
-  
-  phpProcess.stdout.on('data', (data) => {
-    phpOutput += data.toString();
-  });
-
-  phpProcess.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  phpProcess.on('close', (code) => {
-    res.send(phpOutput);
-  });
-
-  phpProcess.stdin.write(JSON.stringify(postData));
-  phpProcess.stdin.end();
-});
 
 app.use(express.static(__dirname));
-
-// app.get('/', (req, res) => {
-//   res.sendFile(join(__dirname, "/public/index.php"));
-// });
-
-// set up php-express
-
-
-// app.get('/', (req, res) => {
-//   res.render('public/index.php');
-// });
-
-// app.get('')
+app.get('/', (req, res) => {
+  res.sendFile(join(__dirname, "/gameOnline.html"));
+});
 
 app.use(express.static(__dirname));
 

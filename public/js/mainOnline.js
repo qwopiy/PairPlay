@@ -127,6 +127,7 @@ const scenes = {
                 delete frontEndPlayers[id]
                 // frontEndPlayers[id].walk.stop()
             }
+            socket.emit('inLevel', false)
             music.stop()
         })
 
@@ -1578,4 +1579,4 @@ for (const key in scenes) {
 
 load.assets();
 load.sounds();
-go(1);
+go("levelSelect");
