@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <button id="btn">Create Room</button>
+    <form id="joinForm">
+        <input type="text" name="room" placeholder="Enter Room Code" required>
+        <input type="submit" value="Join Room">
+    </form>
+    <div id="message"></div>
+
+    <script>
+        const socket = io();
+
+        function generateRoomCode() {
+            return Math.random().toString(36).substring(2, 7); 
+        }
+
+        document.getElementById('btn').addEventListener('click', () => {
+            const roomCode = generateRoomCode();
+            socket.emit('create room', roomCode);
+            window.location.href = `room.html?code=${roomCode}`; 
+        });
+
+        document.getElementById('joinForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const roomCode = e.target.room.value;
+            socket.emit('join room', roomCode);
+        });
+
+        socket.on('room created', (roomCode) => {
+            document.getElementById('message').innerText = `Room created: ${roomCode}`;
+        });
+
+        socket.on('room joined', (roomCode) => {
+            document.getElementById('message').innerText = `Joined room: ${roomCode}`;
+        });
+
+        socket.on('player joined', (message) => {
+            document.getElementById('message').innerText += `\n${message}`;
+        });
+
+        socket.on('error', (errorMessage) => {
+            alert(errorMessage);
+        });
+    </script>
+</body>
+</html>
