@@ -25,10 +25,10 @@ app.engine('php', php.engine);
 app.set('view engine', 'php');
 
 app.get('/', (req, res) => {
-  res.render('public/index.php');
+  res.render('index.php');
 });
 
-app.use(express.static(__dirname));
+app.use(express.static(join(__dirname, 'public')));
 
 const maxPlayers = 2;
 var currentPlayers = 0;
@@ -194,7 +194,12 @@ setInterval(() => {
   }
 }, 15);
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 server.listen(3000, () => {
-  console.log('server running at http://localhost:3000');
-  console.log( __dirname);
+console.log('server running at http://localhost:3000');
+console.log(__dirname);
 });
