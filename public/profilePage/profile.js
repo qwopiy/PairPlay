@@ -72,8 +72,8 @@ cancelBtn.addEventListener("click", () => {
 saveBtn.addEventListener("click", () => {
   body.classList.toggle("show-edit");
   imgProfile.src = imageEditPreview.src;
-  nameProfile.innerHTML = nameEdit.value;
-  bioProfile.innerHTML = bioEdit.value;
+  // nameProfile.innerHTML = nameEdit.value;
+  // bioProfile.innerHTML = bioEdit.value;
   for(var i=0; i<4; i++){
     achievmentProfile[i].src = achievmentSave[i].src;
   }

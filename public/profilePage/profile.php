@@ -1,6 +1,8 @@
 <?php
   require "../../Signup and Login/verify/functions.php";
   check_login();
+  death_count();
+  achievement_count();
 
   $pemain= [
     [
@@ -17,19 +19,19 @@
                         "../../assets/Frontpage/transparent.png"
                       ],
       "achievement" => [true, true, true, true, true],
-      "progress" => [false, false, false, false, false],
+      "progress" => 4,
     ]
   ];
 
+  $errors = array();
 
+  if($_SERVER['REQUEST_METHOD'] == "POST")
+  {
 
-  if(check_login(false)){
-    
-
-    $pemain["username"] = $_SESSION['USER']->username;
-    $pemain["bio"] = $_SESSION['USER']->bio;
-    $pemain["photo"] = $_SESSION['USER']->photo;
+  	$errors = update($_POST);
   }
+
+
 ?>
 
 
@@ -42,28 +44,34 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
     <link href="profile.css" rel="stylesheet" />
-    <title>Document</title>
+    <title>profile</title>
   </head>
   <body id="profile">
     <div class="container edit-profile">
-      <section class="jumbotron text-center">
-        <img src="../../assets/FrontPage/images.png" id="profile-edit" alt="profil" class="rounded-circle border border-1 border-black" width="160" height="160" />
-        <div class="mt-3">
-          <label for="image-edit" type="button" class="btn form-label text-dark btn-outline-dark" style="background-color: #95adbe">Edit Photo</label>
-          <input id="image-edit" class="form-control" type="file" accept="image/jpeg, image/png, image/jpg" />
+      <form method="post">
+        <section class="jumbotron text-center">
+          <img src="../../assets/FrontPage/images.png" id="profile-edit" alt="profil" class="rounded-circle border border-1 border-black" width="160" height="160" />
+          <div class="mt-3">
+            <label for="image-edit" type="button" class="btn form-label text-dark btn-outline-dark" style="background-color: #95adbe">Edit Photo</label>
+            <input id="image-edit" class="form-control" type="file" accept="image/jpeg, image/png, image/jpg" />
+          </div>
+        </section>
+
+        <div class="mb-2 ps-2 pe-2">
+          <label for="name-edit" class="form-label heading text-dark">Name</label>
+          <input id="name-edit" name="username" type="text" class="form-control" placeholder="Username" maxlength="20" aria-label="Username" aria-describedby="basic-addon1" />
+          <?php if(count($errors) > 0):?>
+				    <?php foreach ($errors as $error):?>
+					    <?= $error?> <br>	
+				    <?php endforeach;?>
+			    <?php endif;?>
         </div>
-      </section>
+        <div class="mb-1 ps-2 pe-2">
+          <label for="bio-edit" class="form-label heading text-dark">Bio</label>
+          <input id="bio-edit" name="bio" type="text" class="form-control" placeholder="Bio" maxlength="200" aria-label="bio" aria-describedby="basic-addon1" />
+        </div>
 
-      <div class="mb-2 ps-2 pe-2">
-        <label for="name-edit" class="form-label heading text-dark">Name</label>
-        <input id="name-edit" type="text" class="form-control" placeholder="Username" maxlength="20" aria-label="Username" aria-describedby="basic-addon1" />
-      </div>
-      <div class="mb-1 ps-2 pe-2">
-        <label for="bio-edit" class="form-label heading text-dark">Bio</label>
-        <input id="bio-edit" type="text" class="form-control" placeholder="Bio" maxlength="50" aria-label="Username" aria-describedby="basic-addon1" />
-      </div>
-
-      <div class="row justify-content-between ps-2 pe-2">
+        <div class="row justify-content-between ps-2 pe-2">
         <div class="col-md-4 mt-3 text-dark">
           <h6>Achievement</h6>
         </div>
@@ -103,8 +111,10 @@
 
       <div class="container d-flex justify-content-end mt-4 mb-2 ps-2 pe-2">
         <button type="button" id="btn-cancel" class="btn btn-outline-dark me-2" style="background-color: #95adbe">Cancel</button>
-        <button type="button" id="btn-save" class="btn btn-outline-dark" style="background-color: #95adbe">Save</button>
+        <button type="submit" id="btn-save" class="btn btn-outline-dark" style="background-color: #95adbe">Save</button>
       </div>
+
+      </form>
     </div>
 
     <div class="dark-background"></div>
@@ -112,7 +122,7 @@
     <div class="container all p-md-3">
       <div class="row justify-content-between pt-md-2">
         <div class="col-md-4">
-          <a class="Back" href="index.html">
+          <a class="Back" href="../index.php">
             <i class="bi bi-arrow-left fs-2 text-light ms-4"></i>
           </a>
         </div>
@@ -121,10 +131,10 @@
         </div>
       </div>
       <section class="jumbotron text-center">
-        <img src=" <?= $pemain["photo"]; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
-        <h1 id="name-profile" class="display-4"> <?= $pemain["username"]; ?> </h1>
+        <img src="../../<?= $_SESSION['USER']->photo; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
+        <h1 id="name-profile" class="display-4"> <?= $_SESSION['USER']->username; ?> </h1>
         <div>
-          <p id="bio-profile" class="lead"> <?= $pemain["bio"];  ?> </p>
+          <p id="bio-profile" class="lead"> <?= $_SESSION['USER']->bio;  ?> </p>
         </div>
       </section>
 
@@ -133,12 +143,12 @@
           <div class="col-md-4 text-center">
             <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="150" />
             <p class="mb-1 fs-3">Total Death</p>
-            <p class="fs-4"> <?= $pemain[0]["deathCount"]; ?> </p>
+            <p class="fs-4"> <?= isset($_SESSION['DEATH']->sum) ? $_SESSION['DEATH']->sum : 0; ?> </p>
           </div>
           <div class="col-md-4 text-center">
             <img src="../../assets/Frontpage/achievement.png" alt="profil" class="" width="150" />
             <p class="mb-1 fs-3">Achievement</p>
-            <p class="fs-4"> <?= $pemain[0]["achievementCount"]; ?> </p>
+            <p class="fs-4"> <?= $_SESSION['ACHIEVEMENT_COUNT']; ?> </p>
           </div>
         </div>
       </section>
@@ -171,18 +181,15 @@
         </div>
         <div class="container">
           <div class="row text-center">
-            <div class="col-md-3">
-              <img id="progress1" src="../../assets/Frontpage/Progress1.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
-            </div>
-            <div class="col-md-3">
-              <img id="progress2" src="../../assets/Frontpage/Progress2.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
-            </div>
-            <div class="col-md-3">
-              <img id="progress3" src="../../assets/Frontpage/Progress3.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
-            </div>
-            <div class="col-md-3">
-              <img id="progress4" src="../../assets/Frontpage/Progress4.png" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
-            </div>
+            <?php for($i = 1; $i<=4; $i++): ?>
+              <div class="col-md-3">
+                <?php if($_SESSION['USER']->progress >= $i):?>
+                  <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="border: 5px solid #00ff08" />
+                <?php else: ?>
+                  <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
+                <?php endif; ?>
+              </div>
+            <?php endfor; ?>
           </div>
         </div>
       </section>
