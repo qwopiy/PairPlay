@@ -1,7 +1,10 @@
 <?php
-require "../../Signup and Login/verify/functions.php";
+require "Signup and Login/verify/functions.php";
 
 $errors = array();
+
+$input = file_get_contents('php://input');
+$_POST = json_decode($input, true);
 
 if($_SERVER['REQUEST_METHOD'] == "POST")
 {

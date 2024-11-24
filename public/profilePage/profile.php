@@ -1,5 +1,5 @@
 <?php
-  require "../../Signup and Login/verify/functions.php";
+  require "Signup and Login/verify/functions.php";
   check_login();
 
   $pemain= [

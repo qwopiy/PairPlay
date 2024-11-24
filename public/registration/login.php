@@ -3,6 +3,9 @@ require 'Signup and Login/verify/functions.php';
 
 $errors = array();
 
+$input = file_get_contents('php://input');
+$_POST = json_decode($input, true);
+
 if($_SERVER['REQUEST_METHOD'] == "POST")
 {
 
@@ -32,7 +35,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
             
             
             <form method="POST">
-                  <a href="public/index.php">
+                  <a href="/">
                         <i class="bi bi-arrow-left fs-3 text-dark"></i>
                   </a>
                   <div class="mb-3">
