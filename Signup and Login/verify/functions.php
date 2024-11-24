@@ -54,13 +54,13 @@ function login($data)
 	$errors = array();
  
 	//validate 
-	if(!filter_var($data['email'],FILTER_VALIDATE_EMAIL)){
-		$errors[] = "Please enter a valid email";
-	}
+	if (!isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Please enter a valid email";
+    }
 
-	if(strlen(trim($data['password'])) < 4){
-		$errors[] = "Password must be atleast 4 chars long";
-	}
+    if (!isset($data['password']) || strlen(trim($data['password'])) < 4) {
+        $errors[] = "Password must be at least 4 chars long";
+    }
  
 	//check
 	if(count($errors) == 0){
@@ -125,7 +125,7 @@ function update($data){
 
 function database_run($query,$vars = array())
 {
-	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=LaboseVirus69;";
+	$string = "pgsql:host=localhost;port=5432;dbname=game;user=postgres;password=eeklalat05;";
 	$con = new PDO($string);
 
 	if(!$con){

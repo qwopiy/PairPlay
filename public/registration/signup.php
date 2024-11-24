@@ -1,18 +1,22 @@
 <?php
-require "../../Signup and Login/verify/functions.php";
+require 'Signup and Login/verify/functions.php';
 
 $errors = array();
 
-if($_SERVER['REQUEST_METHOD'] == "POST")
+$input = file_get_contents('php://stdin');
+$abc = json_decode($input, true);
+echo "abc";
+echo $abc;
+
+if($abc['REQUEST_METHOD'] == "POST")
 {
 
-	$errors = signup($_POST);
+	$errors = signup($abc);
 
-	if(count($errors) == 0)
-	{
-		header("Location: ../../public/index.php");
-		die;
-	}
+    if (count($errors) == 0) {
+        header("Location: ../../public/index.php");
+        die;
+    }
 }
 ?>
 
