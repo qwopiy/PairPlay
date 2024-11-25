@@ -24,6 +24,10 @@ kaboom({
     canvas: document.getElementById("game"),
 });
 
+function generateRoomCode() {
+    return Math.random().toString(36).substring(2, 7); 
+}
+
 function buttonPressed(object, config, Button, Scale) {
     object.onCollide("button_off", (button) => {
         add([
@@ -64,8 +68,15 @@ function buttonUnpressed(object, config, Button, Scale) {
 
 const scenes = {
     //bug player spawn setelah level select
+    createRoom: () => {
+
+    },
+    joinRoom: () => {
+
+    },
     levelSelect: () => {
         socket.on('progress', (level) => {
+            socket.emit('exit')
             socket.emit('inLevel', false)
             socket.on('level', (level) => {
                 go(level)
@@ -107,7 +118,13 @@ const scenes = {
     },
 
     1: () => {
-        // socket.emit('init')
+        socket.on('exit', () => {
+            for (const id in frontEndPlayers) {
+                destroy(frontEndPlayers[id].gameObj)
+                delete frontEndPlayers[id]
+                // frontEndPlayers[id].walk.stop()
+            }
+        })
         Level1Config.win1 = false
         Level1Config.win2 = false
         socket.emit('inLevel', true)
@@ -127,6 +144,8 @@ const scenes = {
                 delete frontEndPlayers[id]
                 // frontEndPlayers[id].walk.stop()
             }
+            socket.emit('exit')
+            socket.emit('inLevel', false)
             music.stop()
         })
 
@@ -151,6 +170,7 @@ const scenes = {
             }
         })
         onClick("exit", () => {
+            socket.emit('exit')
             go("levelSelect")
         })
         onClick("restart", () => {
@@ -174,183 +194,111 @@ const scenes = {
 
         const frontEndPlayers = {}
         const ghost = {}
-        
-        // socket.on('init', (backEndPlayer) => {
-        //     let id = socket.id
-        //     frontEndPlayers[id] = new Player(
-        //         Level1Config.playerSpeed,
-        //         Level1Config.jumpForce,
-        //         Level1Config.nbLives,
-        //         "",
-        //         "",
-        //         "",
-        //         backEndPlayer.playerNumber,
-        //         1,
-        //         false
-        //     )
-        //     ghost[id] = add([
-        //         sprite("ghost"),
-        //         pos(10000, 10000),
-        //         anchor("center"),
-        //         opacity(0.5),
-        //         scale(Level1Config.Scale),
-        //         "ghost"
-        //     ])
-        //     frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, `player${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
-        //     frontEndPlayers[id].update();
-        //     if (frontEndPlayers[id].isTouchEnabled()) frontEndPlayers[id].touchControls()
 
-        //     frontEndPlayers[id].gameObj.onCollide("spike", () => {
-        //         ghost[id].pos = frontEndPlayers[id].gameObj.pos
-        //         frontEndPlayers[id].gameObj.angle = -90
-        //         frontEndPlayers[id].isRespawning = true
-        //         ghost.pos = frontEndPlayers[id].gameObj.pos
-        //         if (!respawning) socket.emit('respawning')
-        //         respawning = true
-        //     })
+        let playerSpawned = false
+        onKeyPress("space", () => {
+            // create player
+            socket.emit('createPlayer')
+            playerSpawned = true    
+        })
 
-        //     frontEndPlayers[id].gameObj.onCollide("key", (key) => {
-        //         destroy(key)
-        //         Level1Config.hasKey = true
-        //         socket.emit('key')
-        //     })
+        socket.on('createPlayer', (backEndPlayers) => {
+            for (const id in backEndPlayers) {
+                const backEndPlayer = backEndPlayers[id]
+                frontEndPlayers[id] = new Player(
+                    Level1Config.playerSpeed,
+                    Level1Config.jumpForce,
+                    Level1Config.nbLives,
+                    "",
+                    "",
+                    "",
+                    backEndPlayer.playerNumber,
+                    1,
+                    false
+                )
+                
+                ghost[id] = add([
+                    sprite("ghost"),
+                    pos(10000, 10000),
+                    anchor("center"),
+                    opacity(0.5),
+                    scale(Level1Config.Scale),
+                    "ghost"
+                ])
+                frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, `player${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
+                frontEndPlayers[id].update();
 
-        //     frontEndPlayers[id].gameObj.onCollide("door", (door) => {
-        //         if (Level1Config.hasKey) {
-        //             play("door")
-        //             door.play("open")
-        //             setTimeout(() => {
-        //                 destroy(door)
-        //             }, 400);
-        //             Level1Config.hasKey = false
-        //             socket.emit('door')
-        //         }
-        //     })
+                frontEndPlayers[id].gameObj.onCollide("spike", () => {
+                    ghost[id].pos = frontEndPlayers[id].gameObj.pos
+                    frontEndPlayers[id].gameObj.angle = -90
+                    frontEndPlayers[id].isRespawning = true
+                    ghost.pos = frontEndPlayers[id].gameObj.pos
+                    if (!respawning) socket.emit('respawning')
+                    respawning = true
+                })
 
-        //     frontEndPlayers[id].gameObj.onCollide("ice", () => {
-        //         if (!frontEndPlayers[id].isTouchingIce) {
-        //             frontEndPlayers[id].isTouchingIce = true
-        //             frontEndPlayers[id].speed = 0
-        //         }
-        //     })
+                frontEndPlayers[id].gameObj.onCollide("key", (key) => {
+                    destroy(key)
+                    Level1Config.hasKey = true
+                    socket.emit('key')
+                })
 
-        //     frontEndPlayers[id].gameObj.onCollide("ground", () => {
-        //         if (frontEndPlayers[id].isTouchingIce) {
-        //             frontEndPlayers[id].isTouchingIce = false
-        //             frontEndPlayers[id].speed = 0
-        //         }
-        //     })
+                frontEndPlayers[id].gameObj.onCollide("door", (door) => {
+                    if (Level1Config.hasKey) {
+                        play("door")
+                        door.play("open")
+                        setTimeout(() => {
+                            destroy(door)
+                        }, 400);
+                        Level1Config.hasKey = false
+                        socket.emit('door')
+                    }
+                })
 
-        //     frontEndPlayers[id].gameObj.onCollide("finish", (finish) => {
-        //         Level1Config.win2 = true
-        //         frontEndPlayers[id].win = true
-        //         frontEndPlayers[id].gameObj.move(0, -16000)
-        //         frontEndPlayers[id].gameObj.use(body({gravityScale: 0}))
-        //         finish.play("finishOpen")
-        //         setTimeout(() => {
-        //             finish.play("finishClose")
-        //         }, 400);
-        //         socket.emit('win', (frontEndPlayers[id].playerNumber))
-        //     })
+                frontEndPlayers[id].gameObj.onCollide("ice", () => {
+                    if (!frontEndPlayers[id].isTouchingIce) {
+                        frontEndPlayers[id].isTouchingIce = true
+                        frontEndPlayers[id].speed = 0
+                    }
+                })
 
-        //     buttonPressed(frontEndPlayers[id].gameObj, "Level1Config",`button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
-        //     buttonUnpressed(frontEndPlayers[id].gameObj, "Level1Config", `button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
+                frontEndPlayers[id].gameObj.onCollide("ground", () => {
+                    if (frontEndPlayers[id].isTouchingIce) {
+                        frontEndPlayers[id].isTouchingIce = false
+                        frontEndPlayers[id].speed = 0
+                    }
+                })
 
-        //     console.log(frontEndPlayers[socket.id]);
-        // })
+                frontEndPlayers[id].gameObj.onCollide("finish", (finish) => {
+                    Level1Config.win2 = true
+                    frontEndPlayers[id].win = true
+                    frontEndPlayers[id].gameObj.move(0, -16000)
+                    frontEndPlayers[id].gameObj.use(body({gravityScale: 0}))
+                    finish.play("finishOpen")
+                    setTimeout(() => {
+                        finish.play("finishClose")
+                    }, 400);
+                    socket.emit('win', (frontEndPlayers[id].playerNumber))
+                })
+
+                buttonPressed(frontEndPlayers[id].gameObj, "Level1Config",`button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
+                buttonUnpressed(frontEndPlayers[id].gameObj, "Level1Config", `button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
+
+                frontEndPlayers[id].gameObj.onCollide("easterEgg", () => {
+                    for (const obj in easterEgg) {
+                        destroy(easterEgg[obj])
+                    }
+                })
+
+                console.log(frontEndPlayers[socket.id])
+            }
+        })
 
         socket.on('updatePlayers', (backEndPlayers) => {
             for (const id in backEndPlayers) {
                 const backEndPlayer = backEndPlayers[id]
                 
-                if (!frontEndPlayers[id]) {
-                    frontEndPlayers[id] = new Player(
-                        Level1Config.playerSpeed,
-                        Level1Config.jumpForce,
-                        Level1Config.nbLives,
-                        "",
-                        "",
-                        "",
-                        backEndPlayer.playerNumber,
-                        1,
-                        false
-                    )
-                    
-                    ghost[id] = add([
-                        sprite("ghost"),
-                        pos(10000, 10000),
-                        anchor("center"),
-                        opacity(0.5),
-                        scale(Level1Config.Scale),
-                        "ghost"
-                    ])
-                    frontEndPlayers[id].makePlayer(backEndPlayer.x + 16, backEndPlayer.y, `player${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
-                    frontEndPlayers[id].update();
-
-                    frontEndPlayers[id].gameObj.onCollide("spike", () => {
-                        ghost[id].pos = frontEndPlayers[id].gameObj.pos
-                        frontEndPlayers[id].gameObj.angle = -90
-                        frontEndPlayers[id].isRespawning = true
-                        ghost.pos = frontEndPlayers[id].gameObj.pos
-                        if (!respawning) socket.emit('respawning')
-                        respawning = true
-                    })
-
-                    frontEndPlayers[id].gameObj.onCollide("key", (key) => {
-                        destroy(key)
-                        Level1Config.hasKey = true
-                        socket.emit('key')
-                    })
-
-                    frontEndPlayers[id].gameObj.onCollide("door", (door) => {
-                        if (Level1Config.hasKey) {
-                            play("door")
-                            door.play("open")
-                            setTimeout(() => {
-                                destroy(door)
-                            }, 400);
-                            Level1Config.hasKey = false
-                            socket.emit('door')
-                        }
-                    })
-
-                    frontEndPlayers[id].gameObj.onCollide("ice", () => {
-                        if (!frontEndPlayers[id].isTouchingIce) {
-                            frontEndPlayers[id].isTouchingIce = true
-                            frontEndPlayers[id].speed = 0
-                        }
-                    })
-
-                    frontEndPlayers[id].gameObj.onCollide("ground", () => {
-                        if (frontEndPlayers[id].isTouchingIce) {
-                            frontEndPlayers[id].isTouchingIce = false
-                            frontEndPlayers[id].speed = 0
-                        }
-                    })
-
-                    frontEndPlayers[id].gameObj.onCollide("finish", (finish) => {
-                        Level1Config.win2 = true
-                        frontEndPlayers[id].win = true
-                        frontEndPlayers[id].gameObj.move(0, -16000)
-                        frontEndPlayers[id].gameObj.use(body({gravityScale: 0}))
-                        finish.play("finishOpen")
-                        setTimeout(() => {
-                            finish.play("finishClose")
-                        }, 400);
-                        socket.emit('win', (frontEndPlayers[id].playerNumber))
-                    })
-
-                    buttonPressed(frontEndPlayers[id].gameObj, "Level1Config",`button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
-                    buttonUnpressed(frontEndPlayers[id].gameObj, "Level1Config", `button${frontEndPlayers[id].playerNumber}`, Level1Config.Scale)
-
-                    frontEndPlayers[id].gameObj.onCollide("easterEgg", () => {
-                        for (const obj in easterEgg) {
-                            destroy(easterEgg[obj])
-                        }
-                    })
-
-                    console.log(frontEndPlayers[socket.id]);
-                } else {
+                if (frontEndPlayers[id] && playerSpawned) {
                     frontEndPlayers[id].isMovingLeft = backEndPlayer.isMovingLeft;
                     frontEndPlayers[id].isMovingRight = backEndPlayer.isMovingRight;
                     frontEndPlayers[id].isJumping = backEndPlayer.isJumping;
@@ -554,7 +502,6 @@ const scenes = {
             go("levelSelect")
         })
 
-
         const camX = {}
         onUpdate(() => {
             for (const id in frontEndPlayers){
@@ -613,7 +560,7 @@ const scenes = {
             for (const id in frontEndPlayers) {
                 destroy(frontEndPlayers[id].gameObj)
                 delete frontEndPlayers[id]
-                frontEndPlayers[id].walk.stop()
+                // frontEndPlayers[id].walk.stop()
             }
             music.stop()
         })
@@ -872,7 +819,7 @@ const scenes = {
             for (const id in frontEndPlayers) {
                 destroy(frontEndPlayers[id].gameObj)
                 delete frontEndPlayers[id]
-                frontEndPlayers[id].walk.stop()
+                // frontEndPlayers[id].walk.stop()
             }
             music.stop()
         })
@@ -1176,7 +1123,7 @@ const scenes = {
             for (const id in frontEndPlayers) {
                 destroy(frontEndPlayers[id].gameObj)
                 delete frontEndPlayers[id]
-                frontEndPlayers[id].walk.stop()
+                // frontEndPlayers[id].walk.stop()
             }
             music.stop()
         })
@@ -1578,4 +1525,4 @@ for (const key in scenes) {
 
 load.assets();
 load.sounds();
-go(1);
+go("levelSelect");

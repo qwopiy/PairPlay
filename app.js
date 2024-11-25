@@ -1,20 +1,59 @@
 import express from 'express';
-import phpExpress from 'php-express';
 import http from 'http';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
-import { exec } from 'node:child_process';
-import { spawn } from 'node:child_process';
+import pkg from 'pg';
+const { Pool, Client } = pkg;
 
-const php = phpExpress({
-  binPath: 'C:\\xampp\\php\\php.exe' 
+// ubah nanti karena /*unsafe*/
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'game',
+  password: 'eeklalat05',
+  port: 5432,
 });
+
+(async function query() { 
+  const client = await pool.connect()
+  try {
+    const res = await client.query('SELECT * FROM pemain');
+    // console.log(res.rows);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    client.release();
+  }
+})();
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, { pingInterval: 2000, pingTimeout: 500 });
+
+app.get('/public/game/createRoom.html', (req, res) => {
+  res.sendFile(join(__dirname, '/public/game/createRoom.html'));
+});
+
+app.get('/public/game/levelSelect', (req, res) => {
+  res.sendFile(join(__dirname, '/public/game/levelSelect.html'));
+});
+app.get('/public/game/gameLocal.html', (req, res) => {
+  res.sendFile(join(__dirname, '/public/game/gameLocal.html'));
+});
+app.get('/public/game/1.html', (req, res) => {
+  res.sendFile(join(__dirname, '/public/game/1.html'));
+});
+app.get('/public/game/2.html', (req, res) => {
+  res.sendFile(join(__dirname, 'public/game/2.html'));
+});
+app.get('/public/game/3.html', (req, res) => {
+  res.sendFile(join(__dirname, 'public/game/3.html'));
+});
+app.get('/public/game/4.html', (req, res) => {
+  res.sendFile(join(__dirname, 'public/game/4.html'));
+});
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -24,135 +63,8 @@ httpServer.listen(app.get('http_port'), function(){
 });
 
 io.attach(httpServer);
-app.set('views', '/public');
-app.engine('php', php.engine);
-app.set('view engine', 'php');
-app.set(/.+\.php$/, php.router);
-
-// Body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.get("/", function (req, res) {
-  exec("php ./public/index.php", function (error, stdout, stderr) {
-    res.send(stdout);
-  });
-});
-app.get("/public/index.php", function (req, res) {
-  exec("php ./public/index.php", function (error, stdout, stderr) {
-    res.send(stdout);
-  });
-});
-
-app.get("/public/registration/login.php", function (req, res) {
-  exec("php ./public/registration/login.php", function (error, stdout, stderr) {
-    res.send(stdout);
-  });
-});
-
-app.get("/public/registration/logout.php", function (req, res) {
-  exec(
-    "php ./public/registration/logout.php",
-    function (error, stdout, stderr) {
-      res.send(stdout);
-    }
-  );
-});
-app.get("/public/profilePage/profile.php", function (req, res) {
-  exec(
-    "php ./public/profilePage/profile.php",
-    function (error, stdout, stderr) {
-      res.send(stdout);
-    }
-  );
-});
-
-app.get("/public/registration/signup.php", function (req, res) {
-  exec(
-    "php ./public/registration/signup.php",
-    function (error, stdout, stderr) {
-      res.send(stdout);
-    }
-  );
-});
-
-app.post('/public/registration/login.php', (req, res) => {
-  
-  const phpProcess = spawn('php', ['./public/registration/login.php'], {
-    env: {
-      ...process.env,
-      REQUEST_METHOD: 'POST',
-      CONTENT_TYPE: 'application/json',
-      HTTP_HOST: req.headers.host,
-      HTTP_USER_AGENT: req.headers['user-agent'],
-      REMOTE_ADDR: req.ip,
-      REQUEST_URI: req.originalUrl,
-      QUERY_STRING: new URLSearchParams(req.query).toString()
-    }
-  });
-  
-  const postData = req.body;
-  let phpOutput = '';
-
-  phpProcess.stdout.on('data', (data) => {
-    phpOutput += data.toString();
-  });
-
-  phpProcess.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  phpProcess.on('close', (code) => {
-    res.send(phpOutput);
-  });
-
-  phpProcess.stdin.write(JSON.stringify(postData));
-  phpProcess.stdin.end();
-});
-app.post('/public/registration/signup.php', (req, res) => {
-  
-  const phpProcess = spawn('php', ['./public/registration/signup.php'], {
-    env: {
-      ...process.env,
-      REQUEST_METHOD: 'POST',
-      CONTENT_TYPE: 'application/json',
-      HTTP_HOST: req.headers.host,
-      HTTP_USER_AGENT: req.headers['user-agent'],
-      REMOTE_ADDR: req.ip,
-      REQUEST_URI: req.originalUrl,
-      QUERY_STRING: new URLSearchParams(req.query).toString()
-    }
-  });
-  
-  const postData = req.body;
-  let phpOutput = '';
-  
-  phpProcess.stdout.on('data', (data) => {
-    phpOutput += data.toString();
-  });
-
-  phpProcess.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  phpProcess.on('close', (code) => {
-    res.send(phpOutput);
-  });
-
-  phpProcess.stdin.write(JSON.stringify(postData));
-  phpProcess.stdin.end();
-});
 
 app.use(express.static(__dirname));
-
-// app.get('/', (req, res) => {
-//   res.sendFile(join(__dirname, "/public/index.php"));
-// });
-
-// set up php-express
-
-
-app.use(express.static(join(__dirname, 'public')));
 
 const maxPlayers = 2;
 var currentPlayers = 0;
@@ -165,34 +77,35 @@ var inLevel = false;
 var progress = 4;
 
 io.on('connection', (socket) => {
-  // socket.emit('init', backEndPlayers[socket.id]);
+  console.log('A user connected:', socket.id);
+
+  socket.on('create room', (roomCode) => {
+      socket.join(roomCode);
+      socket.emit('room created', roomCode);
+      console.log(`Room created: ${roomCode}`);
+  });
+
+  socket.on('join room', (roomCode) => {
+      const rooms = Object.keys(socket.rooms);
+      if (!rooms.includes(roomCode)) {
+          socket.join(roomCode);
+          socket.emit('room joined', roomCode);
+          console.log(`User  joined room: ${roomCode}`);
+          socket.to(roomCode).emit('player joined', `A new player has joined room ${roomCode}`);
+      } else {
+          socket.emit('error', 'You are already in this room');
+      }
+  });
+
   io.emit('progress', progress);
   socket.on('inLevel', (bool) => {
     inLevel = bool;
   })
 
-  socket.on('level', (num) => {
-    io.emit('level', num);
+  socket.on('level', (num, code) => {
+    io.emit('level', num, code);
   })
-  
-  console.log('a user connected');
 
-  // socket.on('init', () => {
-  //   if (currentPlayers < maxPlayers) {
-  //     backEndPlayers[socket.id] = {
-  //       x: config.x + (currentPlayers * 16),
-  //       y: config.y, 
-  //       isMovingLeft: false, 
-  //       isMovingRight: false,
-  //       isJumping: false,
-  //       death: 0,
-  //       playerNumber: currentPlayers + 1
-  //     };
-  //     currentPlayers++;
-  //   }
-  //   console.log(backEndPlayers);
-  //   socket.emit('init', backEndPlayers[socket.id]);
-  // })
   if (currentPlayers < maxPlayers) {
     backEndPlayers[socket.id] = {
       x: config.x + (currentPlayers * 16),
@@ -209,7 +122,13 @@ io.on('connection', (socket) => {
   if (!inLevel) 
     io.emit('updatePlayers', backEndPlayers)
 
-  console.log(backEndPlayers);
+  socket.on('createPlayer', () => {
+    io.emit('createPlayer', backEndPlayers);
+  })
+
+  socket.on('exit', () => {
+    io.emit('exit');
+  })
 
   socket.on('disconnect', (reason) => {
     console.log(reason)
@@ -299,7 +218,6 @@ io.on('connection', (socket) => {
 
   socket.on('win', (num) => {
     eval('win' + num + ' = true');
-    // issue: currentplayer gak konsisten kalau server open sebelum client close window sebelumnya
   })
 });
 
