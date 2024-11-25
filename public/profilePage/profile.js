@@ -24,6 +24,8 @@ let achievmentSaveBoolean = ["false", "false", "false", "false"];
 let achievmentSave = [document.getElementById("achievment-edit1"), document.getElementById("achievment-edit2"), document.getElementById("achievment-edit3"), document.getElementById("achievment-edit4")];
 let achievmentProfile = [document.getElementById("achievment-profile1"), document.getElementById("achievment-profile2"), document.getElementById("achievment-profile3"), document.getElementById("achievment-profile4")];
 
+let imageSrc;
+
 let darkBackground = document.createElement('div');
 darkBackground.classList.add("dark-background");
 
@@ -71,10 +73,27 @@ cancelBtn.addEventListener("click", () => {
 });
 saveBtn.addEventListener("click", () => {
   body.classList.toggle("show-edit");
-  imgProfile.src = imageEditPreview.src;
-  // nameProfile.innerHTML = nameEdit.value;
-  // bioProfile.innerHTML = bioEdit.value;
-  for(var i=0; i<4; i++){
-    achievmentProfile[i].src = achievmentSave[i].src;
+  
+  let imageSrc = [""];
+  for(var i=1; i<=4; i++){
+    imageSrc.push(achievmentSave[i-1].src);
   }
+
+  fetch("../../Signup and Login/verify/profileFunction.php" ,{
+    "method" : "POST",
+    "headers" : {
+        "Content-type" : "application/json; charset=utf-8"
+    },
+    "body" : JSON.stringify(imageSrc)
+  }).then(function(response){
+    return response.json();
+  }).then(function(data){
+    console.log(data);
+  })
+
+
 });
+
+
+
+

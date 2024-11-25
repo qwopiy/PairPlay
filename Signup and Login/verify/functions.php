@@ -101,16 +101,22 @@ function update($data){
 	if(is_array($check)){
 		$errors[] = "That username already exists";
 	}
+
+	if($_FILES['image-edit']['error'] === 4){
+		$photo = $_SESSION['USER']->photo;
+	}else{
+		$photo = upload();
+	}
  
 	//check
 	if(count($errors) == 0){
 
-		$arr['username'] = $data['username'];
+		$username = $data['username'];
+		$bio = $data['bio'];
 		$id = $_SESSION['USER']->id;
-		$arr['bio'] = $data['bio'];
 
-		$query = "update pemain set username = :username, bio = :bio where id ='$id'";
-		$row = database_run($query, $arr);
+		$query = "update pemain set username = '$username', bio = '$bio', photo ='$photo' where id ='$id'";
+		$row = database_run($query);
 
 		$query = "select * from pemain where id ='$id'";
 		$row = database_run($query);
@@ -121,6 +127,40 @@ function update($data){
 		}
 	}
 	return $errors;
+}
+
+function upload(){
+	$errors = array();
+	$imageName = $_FILES['image-edit']['name'];
+	$imageSize = $_FILES['image-edit']['size'];
+	$imageErrors = $_FILES['image-edit']['error'];
+	$imageTmpName = $_FILES['image-edit']['tmp_name'];
+
+	if($imageErrors === 4){
+
+	}
+
+	$imageValid = ["jpg", "jpeg", "png"];
+	$imageType = explode('.', $imageName);
+	$imageType = strtolower(end($imageType));
+	if(!in_array($imageType, $imageValid)){
+		$errors[] = "caught you";
+		return $errors;
+	}
+
+	if($imageSize > 10000000){
+		$errors[] = "image size is too big";
+		return $errors;
+	}
+
+	$imageNewName = 'assets/upload/';
+	$imageNewName .= uniqid();
+	$imageNewName .= '.';
+	$imageNewName .= $imageType;
+
+	move_uploaded_file($imageTmpName, '../../'. $imageNewName);
+	return $imageNewName;
+
 }
 
 function database_run($query,$vars = array())
@@ -184,10 +224,9 @@ function check_verified(){
 
 function death_count(){
 	$id = $_SESSION['USER']->id;
-	$query = "select SUM(death) from game where id_pemain = '$id'";
+	$query = "select SUM(death1+death2) from game where id_pemain1 = '$id' OR id_pemain2 = '$id'";
 	$row = database_run($query);
 
-	
 	if(is_array($row)){
 		$row = $row[0];
 		$_SESSION['DEATH'] = $row;
@@ -201,7 +240,7 @@ function achievement_count(){
 	$_SESSION['ACHIEVEMENT_COUNT'] = 0;
 	$id = $_SESSION['USER']->id;
 
-	$query = "select easter_egg from game where id_pemain = '$id' AND easter_egg = 1 LIMIT 1";
+	$query = "select easter_egg1, easter_egg2 from game where id_pemain1 = '$id' AND easter_egg1 = 1 OR id_pemain2 = '$id' AND easter_egg2 = 1 LIMIT 1";
 	$row = database_run($query);
 
 	if(is_array($row)){
@@ -210,7 +249,7 @@ function achievement_count(){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
-	if($_SESSION['USER']->progress == 4){
+	if($_SESSION['USER']->progress >= 4){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
