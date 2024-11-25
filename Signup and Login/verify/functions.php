@@ -7,7 +7,7 @@ function signup($data)
 	$errors = array();
  
 	//validate 
-	if(!preg_match('/^[a-zA-Z]+$/', $data['username'])){
+	if(!preg_match('/^[a-zA-Z _]+$/', $data['username'])){
 		$errors[] = "Please enter a valid username";
 	}
 
@@ -29,9 +29,10 @@ function signup($data)
 	}
 	
 	$check = database_run("select * from pemain where username = :username limit 1",['username'=>$data['username']]);
-    if(is_array($check)){
-        $errors[] = "That username already exists";
-    }
+	if(is_array($check)){
+		$errors[] = "That username already exists";
+	}
+
 	//save
 	if(count($errors) == 0){
 
@@ -53,13 +54,13 @@ function login($data)
 	$errors = array();
  
 	//validate 
-	if(!filter_var($data['email'],FILTER_VALIDATE_EMAIL)){
-		$errors[] = "Please enter a valid email";
-	}
+	if (!isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Please enter a valid email";
+    }
 
-	if(strlen(trim($data['password'])) < 4){
-		$errors[] = "Password must be atleast 4 chars long";
-	}
+    if (!isset($data['password']) || strlen(trim($data['password'])) < 4) {
+        $errors[] = "Password must be at least 4 chars long";
+    }
  
 	//check
 	if(count($errors) == 0){
@@ -89,9 +90,42 @@ function login($data)
 	return $errors;
 }
 
+function update($data){
+	$errors = array();
+
+	if(!preg_match('/^[a-zA-Z _]+$/', $data['username'])){
+		$errors[] = "Please enter a valid username";
+	}
+
+	$check = database_run("select * from pemain where username = :username limit 1",['username'=>$data['username']]);
+	if(is_array($check)){
+		$errors[] = "That username already exists";
+	}
+ 
+	//check
+	if(count($errors) == 0){
+
+		$arr['username'] = $data['username'];
+		$id = $_SESSION['USER']->id;
+		$arr['bio'] = $data['bio'];
+
+		$query = "update pemain set username = :username, bio = :bio where id ='$id'";
+		$row = database_run($query, $arr);
+
+		$query = "select * from pemain where id ='$id'";
+		$row = database_run($query);
+
+		if(is_array($row)){
+			$row = $row[0];
+			$_SESSION['USER'] = $row;
+		}
+	}
+	return $errors;
+}
+
 function database_run($query,$vars = array())
 {
-	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=anantha06;";
+	$string = "pgsql:host=localhost;port=5432;dbname=game;user=postgres;password=eeklalat05;";
 	$con = new PDO($string);
 
 	if(!$con){
@@ -129,12 +163,6 @@ function check_login($redirect = true){
 	
 }
 
-function update(){
-	if(isset($_SESSION['USER']) && isset($_SESSION['LOGGED_IN'])){
-	
-	}
-}
-
 function check_verified(){
 
 	$id = $_SESSION['USER']->id;
@@ -152,5 +180,45 @@ function check_verified(){
  
 	return false;
  	
+}
+
+function death_count(){
+	$id = $_SESSION['USER']->id;
+	$query = "select SUM(death) from game where id_pemain = '$id'";
+	$row = database_run($query);
+
+	
+	if(is_array($row)){
+		$row = $row[0];
+		$_SESSION['DEATH'] = $row;
+
+		return;
+	}
+	return;
+}
+
+function achievement_count(){
+	$_SESSION['ACHIEVEMENT_COUNT'] = 0;
+	$id = $_SESSION['USER']->id;
+
+	$query = "select easter_egg from game where id_pemain = '$id' AND easter_egg = 1 LIMIT 1";
+	$row = database_run($query);
+
+	if(is_array($row)){
+		$row = $row[0];
+		$_SESSION['EASTER_EGG'] = $row;
+		$_SESSION['ACHIEVEMENT_COUNT'] ++;
+	}
+
+	if($_SESSION['USER']->progress == 4){
+		$_SESSION['ACHIEVEMENT_COUNT'] ++;
+	}
+
+	if(isset($_SESSION['DEATH'])){
+		if($_SESSION['DEATH']->sum >= 10) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->sum >= 50) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->sum >= 100) $_SESSION['ACHIEVEMENT_COUNT']++;
+	}
+	return;
 }
 
