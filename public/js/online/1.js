@@ -7,6 +7,8 @@ import { Player } from "../entity/player.js";
 import { Level1Config } from "../content/level1/config.js";
 
 const socket = io();
+const urlParams = new URLSearchParams(window.location.search);
+const roomCode = urlParams.get('code');
 let respawning = false;
 
 kaboom({
@@ -95,8 +97,8 @@ const scenes = {
             }
         })
         onClick("exit", () => {
-            socket.emit('exit')
-            go("levelSelect")
+            socket.emit('exit', roomCode)
+            window.location.href = `levelSelect.html?code=${roomCode}`; 
         })
         onClick("restart", () => {
             socket.emit('keyPress', 'r')

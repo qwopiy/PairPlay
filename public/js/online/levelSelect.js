@@ -21,7 +21,7 @@ const scenes = {
 
             if (roomCode) {
             socket.emit('join room', roomCode);
-        }
+            }
             socket.on('level', (level, code) => {
                 if (roomCode)
                     window.location.href = `${level}.html?code=${code}`

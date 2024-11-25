@@ -126,8 +126,8 @@ io.on('connection', (socket) => {
     io.emit('createPlayer', backEndPlayers);
   })
 
-  socket.on('exit', () => {
-    io.emit('exit');
+  socket.on('exit', (roomCode) => {
+    io.emit('exit', roomCode);
   })
 
   socket.on('disconnect', (reason) => {
@@ -186,19 +186,23 @@ io.on('connection', (socket) => {
   })  
 
   socket.on('respawning', () => {
-    setTimeout(() => {
-      for (const id in backEndPlayers) {
-        backEndPlayers[id].x = config.x;
-        backEndPlayers[id].y = config.y;
-      };
-  
-      backEndPlayers[socket.id].death++;
-      io.emit('respawn');
-  
-      for (const id in backEndPlayers) {
-        console.log(id + '.death : ' + backEndPlayers[id].death);
-      }
-    }, 3000);
+    try { 
+        setTimeout(() => {
+        for (const id in backEndPlayers) {
+          backEndPlayers[id].x = config.x;
+          backEndPlayers[id].y = config.y;
+        };
+    
+        backEndPlayers[socket.id].death++;
+        io.emit('respawn');
+    
+        for (const id in backEndPlayers) {
+          console.log(id + '.death : ' + backEndPlayers[id].death);
+        }
+      }, 3000);
+    } catch (error) {
+      console.log(error);
+    }
   })
 
   socket.on('key', () => {
