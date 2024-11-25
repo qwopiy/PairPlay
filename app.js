@@ -3,7 +3,33 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
+<<<<<<< Updated upstream
 import phpExpress from 'php-express';
+=======
+import pkg from 'pg';
+const { Pool, Client } = pkg;
+
+// ubah nanti karena /*unsafe*/
+// const pool = new Pool({
+//   user: 'postgres',
+//   host: 'localhost',
+//   database: 'game',
+//   password: 'eeklalat05',
+//   port: 5432,
+// });
+
+// (async function query() { 
+//   const client = await pool.connect()
+//   try {
+//     const res = await client.query('SELECT * FROM pemain');
+//     // node .log(res.rows);
+//   } catch (err) {
+//     console.log(err);
+//   } finally {
+//     client.release();
+//   }
+// })();
+>>>>>>> Stashed changes
 
 const app = express();
 const server = createServer(app);

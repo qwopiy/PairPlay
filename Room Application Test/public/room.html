@@ -2,32 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Room</title>
-    <script src="/socket.io/socket.io.js"></script>
+    <title>Game Room</title>
 </head>
 <body>
-    <div id="message"></div>
+    <h1>Room Code: <span id="roomCodeDisplay"></span></h1>
+    <div id="status">Connecting...</div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomCode = urlParams.get('code');
+        const roomCode = window.location.pathname.split('/').pop();
+        document.getElementById('roomCodeDisplay').textContent = roomCode;
 
-        if (roomCode) {
-            socket.emit('join room', roomCode);
-        }
+        socket.emit('joinRoom', roomCode);
 
-        socket.on('room joined', (roomCode ) => {
-            document.getElementById('message').innerText = `You have joined room: ${roomCode}`;
+        socket.on('waitingForPlayer', () => {
+            document.getElementById('status').textContent = 'Waiting for another player...';
         });
 
-        socket.on('player joined', (message) => {
-            document.getElementById('message').innerText += `\n${message}`;
+        socket.on('playerJoined', () => {
+            document.getElementById('status').textContent = 'A player has joined!';
         });
 
-        socket.on('error', (errorMessage) => {
-            alert(errorMessage);
+        socket.on('youJoinedRoom', () => {
+            document.getElementById('status').textContent = 'You joined the room';
+        });
+
+        socket.on('startGame', () => {
+            document.getElementById('status').textContent = 'Game started!';
+        });
+
+        socket.on('error', msg => {
+            alert(msg);
+            window.location.href = '/';
         });
     </script>
 </body>
