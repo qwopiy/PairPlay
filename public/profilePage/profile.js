@@ -21,7 +21,7 @@ const achievmentDropdown = [
   document.getElementById("achievment-dropdown4"),
   document.getElementById("achievment-dropdown5"),
 ];
-let achievmentSaveBoolean = [false, false, false, false];
+let achievmentSaveBoolean = ['false', 'false', 'false', 'false'];
 let achievmentSave = [document.getElementById("achievment-edit1"), document.getElementById("achievment-edit2"), document.getElementById("achievment-edit3"), document.getElementById("achievment-edit4")];
 let achievmentProfile = [document.getElementById("achievment-profile1"), document.getElementById("achievment-profile2"), document.getElementById("achievment-profile3"), document.getElementById("achievment-profile4")];
 
@@ -30,11 +30,11 @@ let imageSrc;
 let darkBackground = document.createElement('div');
 darkBackground.classList.add("dark-background");
 
-// for(var i=0; i<4; i++){
-//   if(achievmentSave[i].src != "http://localhost/PairPlay/assets/FrontPage/transparent.png"){
-//     achievmentSaveBoolean[i] = true; 
-//   }   
-// }
+for(var i=0; i<4; i++){
+  if(achievmentSave[i].src != "http://localhost/PairPlay/assets/FrontPage/transparent.png"){
+    achievmentSaveBoolean[i] = true; 
+  }   
+}
 
 minusBtn.addEventListener("click", () =>{
   for(var i=3; i>=0; i--){
@@ -45,6 +45,35 @@ minusBtn.addEventListener("click", () =>{
     }   
   }
 })
+
+function AchievmentEdit(a, indeks) {
+  if (achievmentSaveBoolean[a] == true) {
+    AchievmentEdit(a + 1, indeks);
+  } else {
+    achievmentSave[a].src = achievmentDropdown[indeks].src;
+    achievmentSaveBoolean[a] = true;
+    if (a == 3) {
+      achievmentSaveBoolean = ['false', 'false', 'false', 'false'];
+    }
+  }
+}
+
+achievmentDropdown[0].onclick = function () {
+  AchievmentEdit(0, 0);
+};
+achievmentDropdown[1].onclick = function () {
+  AchievmentEdit(0, 1);
+};
+achievmentDropdown[2].onclick = function () {
+  AchievmentEdit(0, 2);
+};
+achievmentDropdown[3].onclick = function () {
+  AchievmentEdit(0, 3);
+};
+achievmentDropdown[4].onclick = function () {
+  AchievmentEdit(0, 4);
+};
+
 editProfileBtn.addEventListener("click", () => {
 
   imageEditPreview.src = imgProfile.src;
@@ -55,38 +84,12 @@ editProfileBtn.addEventListener("click", () => {
   imageEdit.onchange = function () {
     imageEditPreview.src = URL.createObjectURL(imageEdit.files[0]);
   };
-
-  function AchievmentEdit(a, indeks) {
-    if (achievmentSaveBoolean[a] == true) {
-      AchievmentEdit(a + 1, indeks);
-    } else {
-      achievmentSave[a].src = achievmentDropdown[indeks].src;
-      achievmentSaveBoolean[a] = true;
-      if (a == 3) {
-        achievmentSaveBoolean = [false, false, false, false];
-      }
-    }
-  }
-
-  achievmentDropdown[0].onclick = function () {
-    AchievmentEdit(0, 0);
-  };
-  achievmentDropdown[1].onclick = function () {
-    AchievmentEdit(0, 1);
-  };
-  achievmentDropdown[2].onclick = function () {
-    AchievmentEdit(0, 2);
-  };
-  achievmentDropdown[3].onclick = function () {
-    AchievmentEdit(0, 3);
-  };
-  achievmentDropdown[4].onclick = function () {
-    AchievmentEdit(0, 4);
-  };
 });
+
 cancelBtn.addEventListener("click", () => {
   body.classList.toggle("show-edit");
 });
+
 saveBtn.addEventListener("click", () => {
   body.classList.toggle("show-edit");
   
