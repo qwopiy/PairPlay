@@ -3,6 +3,8 @@ import { load } from "../util/loader.js"
 import { UIManager } from "../util/UIManager.js";
 
 const socket = io();
+const urlParams = new URLSearchParams(window.location.search);
+const roomCode = urlParams.get('code');
 kaboom({
     height: 720,
     width: 1280,
@@ -13,6 +15,7 @@ kaboom({
 
 const scenes = {
     levelSelect: () => {
+        socket.emit('progressTrigger', roomCode)
         socket.on('progress', (level) => {
             socket.emit('exit')
             socket.emit('inLevel', false)

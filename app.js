@@ -27,25 +27,6 @@ const { Pool, Client } = pkg;
 //     client.release();
 //   }
 // })();
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'game',
-  password: 'eeklalat05',
-  port: 5432,
-});
-
-(async function query() { 
-  const client = await pool.connect()
-  try {
-    const res = await client.query('SELECT * FROM pemain');
-    // console.log(res.rows);
-  } catch (err) {
-    console.log(err);
-  } finally {
-    client.release();
-  }
-})();
 
 const app = express();
 const server = createServer(app);
@@ -55,7 +36,7 @@ app.get('/public/game/createRoom.html', (req, res) => {
   res.sendFile(join(__dirname, '/public/game/createRoom.html'));
 });
 
-app.get('/public/game/levelSelect', (req, res) => {
+app.get('/public/game/levelSelect.html', (req, res) => {
   res.sendFile(join(__dirname, '/public/game/levelSelect.html'));
 });
 app.get('/public/game/gameLocal.html', (req, res) => {
@@ -85,6 +66,8 @@ io.attach(httpServer);
 
 app.use(express.static(__dirname));
 
+const rooms = {};
+
 const maxPlayers = 2;
 var currentPlayers = 0;
 const backEndPlayers = {};
@@ -99,26 +82,55 @@ io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
   socket.on('create room', (roomCode) => {
+      rooms[roomCode] = { host: socket.id, players: [socket.id] };
       socket.join(roomCode);
       socket.emit('room created', roomCode);
       console.log(`Room created: ${roomCode}`);
   });
 
   socket.on('join room', (roomCode) => {
-      const rooms = Object.keys(socket.rooms);
-      if (!rooms.includes(roomCode)) {
+      if (rooms[roomCode] && rooms[roomCode].players.length < 2) {
+          rooms[roomCode].players.push(socket.id);
           socket.join(roomCode);
           socket.emit('room joined', roomCode);
-          console.log(`User  joined room: ${roomCode}`);
+          console.log(`Joined room: ${roomCode}`);
           socket.to(roomCode).emit('player joined', `A new player has joined room ${roomCode}`);
       } else {
-          socket.emit('error', 'You are already in this room');
+          socket.emit('error', 'Room not available');
       }
   });
 
+  // socket.on('join room', (roomCode) => {
+  //     const rooms = Object.keys(socket.rooms);
+  //     if (!rooms.includes(roomCode)) {
+  //         socket.join(roomCode);
+  //         socket.emit('room joined', roomCode);
+  //         console.log(`User  joined room: ${roomCode}`);
+  //         socket.to(roomCode).emit('player joined', `A new player has joined room ${roomCode}`);
+  //     } else {
+  //         socket.emit('error', 'You are already in this room');
+  //     }
+  // });
+
+  for (const roomCode in rooms) {
+    console.log(roomCode);
+  }
+
+  socket.on('progressTrigger', (roomCode) => {
+    io.to(roomCode).emit('progress', progress);
+  })
   io.emit('progress', progress);
   socket.on('inLevel', (bool) => {
     inLevel = bool;
+  })
+
+  socket.on('testRoom', (text, code) => {
+    // for (const roomCode in rooms) {
+    //   console.log(roomCode);
+    //   if (code == roomCode)
+    //     io.in(rooms[roomCode]).emit('testRoom', text);
+    // }
+    console.log('testRoom');
   })
 
   socket.on('level', (num, code) => {

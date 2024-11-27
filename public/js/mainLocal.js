@@ -60,10 +60,15 @@ function teleport(object, portalIn, portalOut) {
     })
 }
 
-var progress = 3;
+let timeSinceDead = time()
+let progress = 3;
+let activeLevel = 0;
+let death = 0;
 
 const scenes = {
     levelSelect: () => {
+        death = 0
+        activeLevel = 0
         const music = play("music", {
             volume: 0.2,
             loop: true,
@@ -73,8 +78,6 @@ const scenes = {
         })
 
         UIManager.displayLevel(progress)
-            console.log(progress)
-            
             if (progress >= 0)
             onClick("1", () => {
                 go(1)
@@ -95,6 +98,8 @@ const scenes = {
     },
 
     1: () => {
+        activeLevel = 1
+        timeSinceDead = time()
         Level1Config.win1 = false
         Level1Config.win2 = false
         setGravity(Level1Config.gravity)
@@ -117,7 +122,8 @@ const scenes = {
         let paused = false
         UIManager.UIButton()
         const pauseMenu = UIManager.pauseMenu()
-        onClick("pause", () => {
+        onClick("pause", (pause) => {
+            if (pause.hidden) return
             if (!paused) {
                 paused = true
                 player1.gameObj.paused = true
@@ -127,7 +133,8 @@ const scenes = {
                 pauseMenu[obj].hidden = false;
             }
         })
-        onClick("resume", () => {
+        onClick("resume", (resume) => {
+            if (resume.hidden) return
             if (paused) {
                 paused = false
                 player1.gameObj.paused = false
@@ -137,14 +144,20 @@ const scenes = {
                 pauseMenu[obj].hidden = true;
             }
         })
-        onClick("exit", () => {
+        onClick("exit", (exit) => {
+            if (exit.hidden) return
             go("levelSelect")
         })
-        onClick("restart", () => {
+        onClick("restart", (restart) => {
+            if (restart.hidden) return
+            timeSinceDead = time()
             player1.respawnPlayers()
             player2.respawnPlayers()
+
+            go(1)
         })
         onClick("SFX", (target) => {
+            if (target.hidden) return
             if (target.curAnim() !== "muteSFX") {
                 target.play("muteSFX") 
                 volume(0)
@@ -154,6 +167,7 @@ const scenes = {
             }
         })
         onClick("music", (target) => {
+            if (target.hidden) return
             music.paused = !music.paused
             target.curAnim() !== "muteMusic" 
             ? target.play("muteMusic") 
@@ -184,13 +198,21 @@ const scenes = {
             false
         )
 
-        const ghost = add([
+        const ghost1 = add([
             sprite("ghost"),
             pos(10000, 10000),
             anchor("center"),
             opacity(0.5),
             scale(Level1Config.Scale),
-            "ghost"
+            "ghost1"
+        ])
+        const ghost2 = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level1Config.Scale),
+            "ghost2"
         ])
 
         player1.makePlayer(Level1Config.playerStartPosX + 16, Level1Config.playerStartPosY, "player1", Level1Config.Scale)
@@ -272,15 +294,18 @@ const scenes = {
             play("dead")
             player1.gameObj.angle = -90
             player1.isRespawning = true
-            ghost.pos = player1.gameObj.pos
+            ghost1.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
-            setTimeout(() => {
-                player1.isRespawning = false
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                Level1Config.win1 = false
-                Level1Config.win2 = false
-                player1.death++
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 1) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level1Config.win1 = false
+                    Level1Config.win2 = false
+                    timeSinceDead = time()
+                    go(1)
                 }, 3000)
             }
         })
@@ -289,15 +314,18 @@ const scenes = {
             play("dead")
             player2.gameObj.angle = -90
             player2.isRespawning = true
-            ghost.pos = player2.gameObj.pos
+            ghost2.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
-            setTimeout(() => {
-                player2.isRespawning = false
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                Level1Config.win1 = false
-                Level1Config.win2 = false
-                player2.death++
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 1) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level1Config.win1 = false
+                    Level1Config.win2 = false
+                    timeSinceDead = time()
+                    go(1)
                 }, 3000)
             }
         })
@@ -322,6 +350,15 @@ const scenes = {
                 pauseMenu[obj].hidden = false;
             }
         })
+
+        onKeyPress("r", () => {
+            timeSinceDead = time()
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+
+            go(1)
+        })
+
 
         // easter egg
         const easterEgg = {
@@ -425,11 +462,23 @@ const scenes = {
         })
 
         let key = true
+        const timer = add([
+            text(""),
+            pos(16 * 30, 16 * 1),
+            scale(2),
+            fixed(),
+            "timer"
+        ])
 
         onUpdate(() => {
+            if (!paused)
+                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
             console.log(player1.isPushing, player2.isPushing)
-            if (player1.isRespawning || player2.isRespawning) {
-                ghost.move(0, -80)
+            if (player1.isRespawning) {
+                ghost1.move(0, -80)
+            }
+            if (player2.isRespawning) {
+                ghost2.move(0, -80)
             }
 
             if (Level1Config.button1 && Level1Config.button2 & key) {
@@ -449,6 +498,8 @@ const scenes = {
             if (Level1Config.win1 && Level1Config.win2) {
                 if (progress < 1)
                     progress++
+                console.log((time() - timeSinceDead).toFixed(2))
+                console.log(death)
                 go("levelSelect")
             }
             // console.log(player1.death, player2.death)
@@ -460,6 +511,8 @@ const scenes = {
     },
     
     2: () => {
+        activeLevel = 2
+        timeSinceDead = time()
         Level2Config.win1 = false
         Level2Config.win2 = false
         setGravity(Level2Config.gravity)
@@ -482,34 +535,39 @@ const scenes = {
         let paused = false
         UIManager.UIButton()
         const pauseMenu = UIManager.pauseMenu()
-        onClick("pause", () => {
+        onClick("pause", (pause) => {
+            if (pause.hidden) return
             if (!paused) {
                 paused = true
                 player1.gameObj.paused = true
-                player2.gameObj.paused = true
             }
             for (const obj in pauseMenu) {
                 pauseMenu[obj].hidden = false;
             }
         })
-        onClick("resume", () => {
+        onClick("resume", (resume) => {
+            if (resume.hidden) return
             if (paused) {
                 paused = false
                 player1.gameObj.paused = false
-                player2.gameObj.paused = false
             }
             for (const obj in pauseMenu) {
                 pauseMenu[obj].hidden = true;
             }
         })
-        onClick("exit", () => {
+        onClick("exit", (exit) => {
+            if (exit.hidden) return
             go("levelSelect")
         })
-        onClick("restart", () => {
+        onClick("restart", (restart) => {
+            if (restart.hidden) return
+            timeSinceDead = time()
             player1.respawnPlayers()
-            player2.respawnPlayers()
+
+            go(2)
         })
         onClick("SFX", (target) => {
+            if (target.hidden) return
             if (target.curAnim() !== "muteSFX") {
                 target.play("muteSFX") 
                 volume(0)
@@ -519,6 +577,7 @@ const scenes = {
             }
         })
         onClick("music", (target) => {
+            if (target.hidden) return
             music.paused = !music.paused
             target.curAnim() !== "muteMusic" 
             ? target.play("muteMusic") 
@@ -533,7 +592,7 @@ const scenes = {
             "d",
             "w",
             1,
-            1,
+            2,
             false
         )
         
@@ -545,11 +604,19 @@ const scenes = {
             "right",
             "up",
             2,
-            1,
+            2,
             false
         )
 
-        const ghost = add([
+        const ghost1 = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level2Config.Scale),
+            "ghost"
+        ])
+        const ghost2 = add([
             sprite("ghost"),
             pos(10000, 10000),
             anchor("center"),
@@ -604,15 +671,18 @@ const scenes = {
             play("dead")
             player1.gameObj.angle = -90
             player1.isRespawning = true
-            ghost.pos = player1.gameObj.pos
+            ghost1.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
-            setTimeout(() => {
-                player1.isRespawning = false
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                Level2Config.win1 = false
-                Level2Config.win2 = false
-                player1.death++
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 2) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level2Config.win1 = false
+                    Level2Config.win2 = false
+                    timeSinceDead = time()
+                    go(2)
                 }, 3000)
             }
         })
@@ -621,15 +691,18 @@ const scenes = {
             play("dead")
             player2.gameObj.angle = -90
             player2.isRespawning = true
-            ghost.pos = player2.gameObj.pos
+            ghost2.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
-            setTimeout(() => {
-                player2.isRespawning = false
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                Level2Config.win1 = false
-                Level2Config.win2 = false
-                player2.death++
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 2) return
+                    player2.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level2Config.win1 = false
+                    Level2Config.win2 = false
+                    timeSinceDead = time()
+                    go(2)
                 }, 3000)
             }
         })
@@ -680,9 +753,29 @@ const scenes = {
             }
         })
 
+        onKeyPress("r", () => {
+            timeSinceDead = time()
+            player1.respawnPlayers()
+
+            go(2)
+        })
+
+        const timer = add([
+            text(""),
+            pos(16 * 30, 16 * 1),
+            scale(2),
+            fixed(),
+            "timer"
+        ])
+
         onUpdate(() => {
-            if (player1.isRespawning || player2.isRespawning) {
-                ghost.move(0, -80)
+            if (!paused)
+                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+            if (player1.isRespawning) {
+                ghost1.move(0, -80)
+            }
+            if (player2.isRespawning) {
+                ghost2.move(0, -80)
             }
 
             player1.Move(player1.speed)
@@ -691,15 +784,18 @@ const scenes = {
             if (Level2Config.win1 && Level2Config.win2) {
                 if (progress < 2)
                     progress++
+                console.log((time() - timeSinceDead).toFixed(2))
+                console.log(death)
                 go("levelSelect")
             }
         })
 
         attachCamera(player1.gameObj, player2.gameObj, 0, 84, Level2Config.levelZoom)
-        // level.drawLava()
         },
 
     3: () => {
+        activeLevel = 3
+        timeSinceDead = time()
         Level3Config.win1 = false
         Level3Config.win2 = false
         setGravity(Level3Config.gravity)
@@ -722,34 +818,39 @@ const scenes = {
         let paused = false
         UIManager.UIButton()
         const pauseMenu = UIManager.pauseMenu()
-        onClick("pause", () => {
+        onClick("pause", (pause) => {
+            if (pause.hidden) return
             if (!paused) {
                 paused = true
                 player1.gameObj.paused = true
-                player2.gameObj.paused = true
             }
             for (const obj in pauseMenu) {
                 pauseMenu[obj].hidden = false;
             }
         })
-        onClick("resume", () => {
+        onClick("resume", (resume) => {
+            if (resume.hidden) return
             if (paused) {
                 paused = false
                 player1.gameObj.paused = false
-                player2.gameObj.paused = false
             }
             for (const obj in pauseMenu) {
                 pauseMenu[obj].hidden = true;
             }
         })
-        onClick("exit", () => {
+        onClick("exit", (exit) => {
+            if (exit.hidden) return
             go("levelSelect")
         })
-        onClick("restart", () => {
+        onClick("restart", (restart) => {
+            if (restart.hidden) return
+            timeSinceDead = time()
             player1.respawnPlayers()
-            player2.respawnPlayers()
+
+            go(3)
         })
         onClick("SFX", (target) => {
+            if (target.hidden) return
             if (target.curAnim() !== "muteSFX") {
                 target.play("muteSFX") 
                 volume(0)
@@ -759,6 +860,7 @@ const scenes = {
             }
         })
         onClick("music", (target) => {
+            if (target.hidden) return
             music.paused = !music.paused
             target.curAnim() !== "muteMusic" 
             ? target.play("muteMusic") 
@@ -773,7 +875,7 @@ const scenes = {
             "d",
             "w",
             1,
-            1,
+            3,
             false
         )
         
@@ -785,7 +887,7 @@ const scenes = {
             "right",
             "up",
             2,
-            1,
+            3,
             false
         )
 
@@ -811,7 +913,15 @@ const scenes = {
                 "box2", 
         ])
 
-        const ghost = add([
+        const ghost1 = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level3Config.Scale),
+            "ghost"
+        ])
+        const ghost2 = add([
             sprite("ghost"),
             pos(10000, 10000),
             anchor("center"),
@@ -871,15 +981,18 @@ const scenes = {
             play("dead")
             player1.gameObj.angle = -90
             player1.isRespawning = true
-            ghost.pos = player1.gameObj.pos
+            ghost1.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
-            setTimeout(() => {
-                player1.isRespawning = false
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                Level3Config.win1 = false
-                Level3Config.win2 = false
-                player1.death++
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 3) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level3Config.win1 = false
+                    Level3Config.win2 = false
+                    timeSinceDead = time()
+                    go(3)
                 }, 3000)
             }
         })
@@ -888,15 +1001,18 @@ const scenes = {
             play("dead")
             player2.gameObj.angle = -90
             player2.isRespawning = true
-            ghost.pos = player2.gameObj.pos
+            ghost2.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
-            setTimeout(() => {
-                player2.isRespawning = false
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                Level3Config.win1 = false
-                Level3Config.win2 = false
-                player2.death++
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 3) return
+                    player2.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level3Config.win1 = false
+                    Level3Config.win2 = false
+                    timeSinceDead = time()
+                    go(3)
                 }, 3000)
             }
         })
@@ -976,10 +1092,29 @@ const scenes = {
             }
         })
 
+        onKeyPress("r", () => {
+            timeSinceDead = time()
+            player1.respawnPlayers()
+
+            go(3)
+        })
+
         let key = true
+        const timer = add([
+            text(""),
+            pos(16 * 30, 16 * 1),
+            scale(2),
+            fixed(),
+            "timer"
+        ])
         onUpdate(() => {
-            if (player1.isRespawning || player2.isRespawning) {
-                ghost.move(0, -100)
+            if (!paused)
+                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+            if (player1.isRespawning) {
+                ghost1.move(0, -100)
+            }
+            if (player2.isRespawning) {
+                ghost2.move(0, -100)
             }
 
             player1.Move(player1.speed)
@@ -1000,6 +1135,8 @@ const scenes = {
             if (Level3Config.win1 && Level3Config.win2) {
                 if (progress < 3)
                     progress++
+                console.log((time() - timeSinceDead).toFixed(2))
+                console.log(death)
                 go("levelSelect")
             }
             // console.log(box2.vel)
@@ -1009,6 +1146,8 @@ const scenes = {
     },
 
     4: () => {
+        activeLevel = 4
+        timeSinceDead = time()
         Level4Config.win1 = false
         Level4Config.win2 = false
         setGravity(Level4Config.gravity)
@@ -1031,34 +1170,39 @@ const scenes = {
         let paused = false
         UIManager.UIButton()
         const pauseMenu = UIManager.pauseMenu()
-        onClick("pause", () => {
+        onClick("pause", (pause) => {
+            if (pause.hidden) return
             if (!paused) {
                 paused = true
                 player1.gameObj.paused = true
-                player2.gameObj.paused = true
             }
             for (const obj in pauseMenu) {
                 pauseMenu[obj].hidden = false;
             }
         })
-        onClick("resume", () => {
+        onClick("resume", (resume) => {
+            if (resume.hidden) return
             if (paused) {
                 paused = false
                 player1.gameObj.paused = false
-                player2.gameObj.paused = false
             }
             for (const obj in pauseMenu) {
                 pauseMenu[obj].hidden = true;
             }
         })
-        onClick("exit", () => {
+        onClick("exit", (exit) => {
+            if (exit.hidden) return
             go("levelSelect")
         })
-        onClick("restart", () => {
+        onClick("restart", (restart) => {
+            if (restart.hidden) return
+            timeSinceDead = time()
             player1.respawnPlayers()
-            player2.respawnPlayers()
+
+            go(4)
         })
         onClick("SFX", (target) => {
+            if (target.hidden) return
             if (target.curAnim() !== "muteSFX") {
                 target.play("muteSFX") 
                 volume(0)
@@ -1068,6 +1212,7 @@ const scenes = {
             }
         })
         onClick("music", (target) => {
+            if (target.hidden) return
             music.paused = !music.paused
             target.curAnim() !== "muteMusic" 
             ? target.play("muteMusic") 
@@ -1082,7 +1227,7 @@ const scenes = {
             "d",
             "w",
             1,
-            1,
+            4,
             false
         )
         
@@ -1094,11 +1239,19 @@ const scenes = {
             "right",
             "up",
             2,
-            1,
+            4,
             false
         )
 
-        const ghost = add([
+        const ghost1 = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level4Config.Scale),
+            "ghost"
+        ])
+        const ghost2 = add([
             sprite("ghost"),
             pos(10000, 10000),
             anchor("center"),
@@ -1269,13 +1422,16 @@ const scenes = {
             player1.isRespawning = true
             ghost.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
-            setTimeout(() => {
-                player1.isRespawning = false
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                Level4Config.win1 = false
-                Level4Config.win2 = false
-                player1.death++
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 4) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level4Config.win1 = false
+                    Level4Config.win2 = false
+                    timeSinceDead = time()
+                    go(4)
                 }, 3000)
             }
         })
@@ -1286,13 +1442,16 @@ const scenes = {
             player2.isRespawning = true
             ghost.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
-            setTimeout(() => {
-                player2.isRespawning = false
-                player1.respawnPlayers()
-                player2.respawnPlayers()
-                Level4Config.win1 = false
-                Level4Config.win2 = false
-                player2.death++
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 4) return
+                    player2.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level4Config.win1 = false
+                    Level4Config.win2 = false
+                    timeSinceDead = time()
+                    go(4)   
                 }, 3000)
             }
         })
@@ -1321,7 +1480,23 @@ const scenes = {
             }
         })
 
+        onKeyPress("r", () => {
+            timeSinceDead = time()
+            player1.respawnPlayers()
+
+            go(4)
+        })
+
+        const timer = add([
+            text(""),
+            pos(16 * 30, 16 * 1),
+            scale(2),
+            fixed(),
+            "timer"
+        ])
         onUpdate(() => {
+            if (!paused)
+                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
             if (player1.isRespawning || player2.isRespawning) {
                 ghost.move(0, -80)
             }
@@ -1337,6 +1512,8 @@ const scenes = {
             if (Level4Config.win1 && Level4Config.win2) {
                 if (progress < 4)
                     progress++
+                console.log((time() - timeSinceDead).toFixed(2))
+                console.log(death)
                 go("levelSelect")
             }
         })

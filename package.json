@@ -26,7 +26,8 @@
     "php": "^1.1.0",
     "php-express": "^0.0.3",
     "socket.io": "^4.8.1",
-    "sphp": "^0.6.3"
+    "sphp": "^0.6.3",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "esbuild": "0.24.0"
