@@ -99,7 +99,12 @@ function update($data){
 
 	$check = database_run("select * from pemain where username = :username limit 1",['username'=>$data['username']]);
 	if(is_array($check)){
-		$errors[] = "That username already exists";
+		$check = $check[0];
+		if($check->username == $_SESSION['USER']->username){
+
+		}else{
+			$errors[] = "That username already exists";
+		}	
 	}
 
 	if($_FILES['image-edit']['error'] === 4){
