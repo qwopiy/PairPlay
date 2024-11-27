@@ -222,8 +222,7 @@ function check_verified(){
  	
 }
 
-function death_count(){
-	$id = $_SESSION['USER']->id;
+function death_count($id){
 	$query = "select SUM(death1+death2) from game where id_pemain1 = '$id' OR id_pemain2 = '$id'";
 	$row = database_run($query);
 
@@ -236,9 +235,8 @@ function death_count(){
 	return;
 }
 
-function achievement_count(){
+function achievement_count($id){
 	$_SESSION['ACHIEVEMENT_COUNT'] = 0;
-	$id = $_SESSION['USER']->id;
 
 	$query = "select easter_egg1, easter_egg2 from game where id_pemain1 = '$id' AND easter_egg1 = 1 OR id_pemain2 = '$id' AND easter_egg2 = 1 LIMIT 1";
 	$row = database_run($query);

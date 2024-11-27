@@ -10,7 +10,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
 
 	if(count($errors) == 0)
 	{
-		header("Location: ../../public/index.php");
+		header("Location: ../profilePage/profile.php");
 		die;
 	}
 }
@@ -36,7 +36,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                         <i class="bi bi-arrow-left fs-3 text-dark"></i>
                   </a>
                   <div class="mb-3">
-                        <label for="Email Address" class="form-label">Username</label>
+                        <label for="Email Address" class="form-label">Email</label>
                         <input type="email" class="form-control" id="username" name="email"placeholder="Enter Your Username">
                         <div id="emailHelp" class="form-text"></div>
                   </div>

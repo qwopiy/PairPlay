@@ -1,6 +1,7 @@
 let editProfileBtn = document.getElementById("edit-profile-btn");
 let cancelBtn = document.getElementById("btn-cancel");
 let saveBtn = document.getElementById("btn-save");
+let minusBtn = document.getElementById("minus-btn");
 
 let imageEdit = document.getElementById("image-edit");
 let imageEditPreview = document.getElementById("profile-edit");
@@ -29,6 +30,14 @@ let imageSrc;
 let darkBackground = document.createElement('div');
 darkBackground.classList.add("dark-background");
 
+minusBtn.addEventListener("click", () =>{
+  for(var i=3; i>=0; i--){
+    if(achievmentSave[i].src != "http://localhost/PairPlay/assets/FrontPage/transparent.png"){
+      achievmentSave[i].src = "http://localhost/PairPlay/assets/FrontPage/transparent.png"; 
+      break;
+    }   
+  }
+})
 editProfileBtn.addEventListener("click", () => {
 
   imageEditPreview.src = imgProfile.src;
@@ -90,8 +99,6 @@ saveBtn.addEventListener("click", () => {
   }).then(function(data){
     console.log(data);
   })
-
-
 });
 
 
