@@ -3,12 +3,7 @@ require 'Signup and Login/verify/functions.php';
 
 $errors = array();
 
-$input = file_get_contents('php://input');
-$_POST = json_decode($input, true);
-echo "abc";
-print_r($_POST);
-
-if($_POST['REQUEST_METHOD'] =="POST")
+if($_SERVER['REQUEST_METHOD'] =="POST")
 {
 
 	$errors = login($_POST);
