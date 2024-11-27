@@ -223,7 +223,7 @@ function check_verified(){
 }
 
 function death_count($id){
-	$query = "select SUM(death1+death2) from game where id_pemain1 = '$id' OR id_pemain2 = '$id'";
+	$query = "SELECT SUM(death) as death FROM game WHERE id_pemain = '$id'";
 	$row = database_run($query);
 
 	if(is_array($row)){
@@ -238,23 +238,34 @@ function death_count($id){
 function achievement_count($id){
 	$_SESSION['ACHIEVEMENT_COUNT'] = 0;
 
-	$query = "select easter_egg1, easter_egg2 from game where id_pemain1 = '$id' AND easter_egg1 = 1 OR id_pemain2 = '$id' AND easter_egg2 = 1 LIMIT 1";
+	$query = "SELECT easter_egg FROM game WHERE id_pemain = '$id' AND easter_egg = 1 LIMIT 1";
 	$row = database_run($query);
 
 	if(is_array($row)){
-		$row = $row[0];
-		$_SESSION['EASTER_EGG'] = $row;
+		$_SESSION['EASTER_EGG'] = 1;
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
-	if($_SESSION['USER']->progress >= 4){
+	if(sizeof($_SESSION['progress']) == 4){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
 	if(isset($_SESSION['DEATH'])){
-		if($_SESSION['DEATH']->sum >= 10) $_SESSION['ACHIEVEMENT_COUNT']++;
-		if($_SESSION['DEATH']->sum >= 50) $_SESSION['ACHIEVEMENT_COUNT']++;
-		if($_SESSION['DEATH']->sum >= 100) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->death >= 10) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->death >= 50) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->death >= 100) $_SESSION['ACHIEVEMENT_COUNT']++;
+	}
+	return;
+}
+
+function progress($id){
+	$query = "SELECT id_level, min(win_time) as win_time, min(death) as death FROM game WHERE id_pemain = '$id' GROUP BY id_level";
+	$row = database_run($query);
+
+	if(is_array($row)){
+		$_SESSION['progress'] = $row;
+	}else{
+		$_SESSION['progress'] = [];
 	}
 	return;
 }

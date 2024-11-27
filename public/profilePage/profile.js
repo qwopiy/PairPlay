@@ -21,7 +21,7 @@ const achievmentDropdown = [
   document.getElementById("achievment-dropdown4"),
   document.getElementById("achievment-dropdown5"),
 ];
-let achievmentSaveBoolean = ["false", "false", "false", "false"];
+let achievmentSaveBoolean = [false, false, false, false];
 let achievmentSave = [document.getElementById("achievment-edit1"), document.getElementById("achievment-edit2"), document.getElementById("achievment-edit3"), document.getElementById("achievment-edit4")];
 let achievmentProfile = [document.getElementById("achievment-profile1"), document.getElementById("achievment-profile2"), document.getElementById("achievment-profile3"), document.getElementById("achievment-profile4")];
 
@@ -30,10 +30,17 @@ let imageSrc;
 let darkBackground = document.createElement('div');
 darkBackground.classList.add("dark-background");
 
+// for(var i=0; i<4; i++){
+//   if(achievmentSave[i].src != "http://localhost/PairPlay/assets/FrontPage/transparent.png"){
+//     achievmentSaveBoolean[i] = true; 
+//   }   
+// }
+
 minusBtn.addEventListener("click", () =>{
   for(var i=3; i>=0; i--){
     if(achievmentSave[i].src != "http://localhost/PairPlay/assets/FrontPage/transparent.png"){
-      achievmentSave[i].src = "http://localhost/PairPlay/assets/FrontPage/transparent.png"; 
+      achievmentSave[i].src = "http://localhost/PairPlay/assets/FrontPage/transparent.png";
+      achievmentSaveBoolean[i] = false; 
       break;
     }   
   }
@@ -56,7 +63,7 @@ editProfileBtn.addEventListener("click", () => {
       achievmentSave[a].src = achievmentDropdown[indeks].src;
       achievmentSaveBoolean[a] = true;
       if (a == 3) {
-        achievmentSaveBoolean = ["false", "false", "false", "false"];
+        achievmentSaveBoolean = [false, false, false, false];
       }
     }
   }

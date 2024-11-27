@@ -1,9 +1,9 @@
 <?php
   require "../../Signup and Login/verify/functions.php";
 
-  $username = 'Maudy Sukaiga';
+  // $username = 'Maudy Sukaiga';
 
-  $query = "select * from pemain where username ='$username'";
+  $query = "select * from pemain where id = 5 ";
 	$row = database_run($query);
 
 	if(is_array($row)){
@@ -12,6 +12,7 @@
 	}
 
   death_count($_SESSION['GUEST']->id);
+  progress($_SESSION['GUEST']->id);
   achievement_count($_SESSION['GUEST']->id);
 
   $achievement = json_decode($_SESSION['GUEST']->achievement);
@@ -37,10 +38,10 @@
         </div>
       </div>
       <section class="jumbotron text-center">
-        <img src="../../<?= $_SESSION['USER']->photo; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
-        <h1 id="name-profile" class="display-4"><?= $_SESSION['USER']->username; ?></h1>
+        <img src="../../<?= $_SESSION['GUEST']->photo; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
+        <h1 id="name-profile" class="display-4"><?= $_SESSION['GUEST']->username; ?></h1>
         <div>
-          <p id="bio-profile" class="lead"><?= $_SESSION['USER']->bio;  ?></p>
+          <p id="bio-profile" class="lead"><?= $_SESSION['GUEST']->bio;  ?></p>
         </div>
       </section>
 
@@ -49,7 +50,7 @@
           <div class="col-md-4 text-center">
             <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="150" />
             <p class="mb-1 fs-3">Total Death</p>
-            <p class="fs-4"> <?= isset($_SESSION['DEATH']->sum) ? $_SESSION['DEATH']->sum : 0; ?> </p>
+            <p class="fs-4"> <?= isset($_SESSION['DEATH']->death) ? $_SESSION['DEATH']->death : 0; ?> </p>
           </div>
           <div class="col-md-4 text-center">
             <img src="../../assets/Frontpage/achievement.png" alt="profil" class="" width="150" />
@@ -82,11 +83,32 @@
           <div class="row text-center">
             <?php for($i = 1; $i<=4; $i++): ?>
               <div class="col-md-3">
-                <?php if($_SESSION['USER']->progress >= $i):?>
+                <?php if(sizeof($_SESSION['progress']) >= $i):?>
                   <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="border: 5px solid #00ff08" />
                 <?php else: ?>
                   <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
                 <?php endif; ?>
+                <div class="d-flex flex-row mb-3 justify-content-evenly">
+                  <div>
+                    <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="50" />
+                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->death) ? $_SESSION['progress'][$i-1]->death : 0?></p>
+                  </div>
+                  <div>
+                    <?php
+                      if(isset($_SESSION['progress'][$i-1]->win_time)){
+                        $arr = $_SESSION['progress'][$i-1]->win_time;
+                        $arr = explode(':', $arr);
+                        if($arr[0]='00'){
+                          $time = $arr[1]. ':'. $arr[2];
+                        }else{
+                          $time = implode(':', $arr);
+                        }
+                      }
+                    ?>
+                    <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="50" />
+                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->win_time) ? $time : '00:00'?></p>
+                  </div>
+                </div>
               </div>
             <?php endfor; ?>
           </div>
