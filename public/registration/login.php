@@ -3,20 +3,16 @@ require 'Signup and Login/verify/functions.php';
 
 $errors = array();
 
-$input = file_get_contents('php://input');
-$_POST = json_decode($input, true);
-echo "abc";
-print_r($_POST);
-
-if($_POST['REQUEST_METHOD'] =="POST")
+if($_SERVER['REQUEST_METHOD'] =="POST")
 {
 
 	$errors = login($_POST);
 
-    if (count($errors) == 0) {
-        header("Location: ../../public/index.php");
-        die;
-    }
+	if(count($errors) == 0)
+	{
+		header("Location: ../../public/index.php");
+		die;
+	}
 }
 ?>
 
@@ -35,12 +31,12 @@ if($_POST['REQUEST_METHOD'] =="POST")
       <div class="email-container">
             
             
-            <form method="POST" action="">
-                  <a href="/">
+            <form method="POST">
+                  <a href="../index.php">
                         <i class="bi bi-arrow-left fs-3 text-dark"></i>
                   </a>
                   <div class="mb-3">
-                        <label for="Email Address" class="form-label">Username</label>
+                        <label for="Email Address" class="form-label">Email</label>
                         <input type="email" class="form-control" id="username" name="email"placeholder="Enter Your Username">
                         <div id="emailHelp" class="form-text"></div>
                   </div>

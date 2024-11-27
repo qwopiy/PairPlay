@@ -3,20 +3,15 @@ require 'Signup and Login/verify/functions.php';
 
 $errors = array();
 
-$input = file_get_contents('php://stdin');
-$abc = json_decode($input, true);
-echo "abc";
-echo $abc;
-
-if($abc['REQUEST_METHOD'] == "POST")
+if($_SERVER['REQUEST_METHOD'] == "POST")
 {
 
-	$errors = signup($abc);
-
-    if (count($errors) == 0) {
-        header("Location: ../../public/index.php");
-        die;
-    }
+	$errors = signup($_POST);
+	if(count($errors) == 0)
+	{
+		header("Location: login.php");
+		die;
+	}
 }
 ?>
 
