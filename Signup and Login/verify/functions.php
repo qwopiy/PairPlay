@@ -170,7 +170,7 @@ function upload(){
 
 function database_run($query,$vars = array())
 {
-	$string = "pgsql:host=localhost;port=5432;dbname=game;user=postgres;password=eeklalat05;";
+	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=eeklalat05;";
 	$con = new PDO($string);
 
 	if(!$con){
@@ -264,7 +264,7 @@ function achievement_count($id){
 }
 
 function progress($id){
-	$query = "SELECT id_level, min(win_time) as win_time, min(death) as death FROM game WHERE id_pemain = '$id' GROUP BY id_level";
+	$query = "SELECT id_level, min(time_spent) as time_spent, min(death) as death FROM game WHERE id_pemain = '$id' GROUP BY id_level";
 	$row = database_run($query);
 
 	if(is_array($row)){

@@ -1,5 +1,5 @@
-import kaboom from "/public/js/libs/kaboom.mjs";
-import { load } from "./util/loader.js"
+import kaboom from "../../public/js/libs/kaboom.mjs";
+import { load } from "./util/loader.js";
 import { UIManager } from "./util/UIManager.js";
 import { Level } from "./util/levelManager.js";
 import { level1Layout, level1Mappings } from "./content/level1/level1Layout.js";
@@ -14,12 +14,41 @@ import { Level3Config } from "./content/level3/config.js";
 import { Level4Config } from "./content/level4/config.js";
 
 kaboom({
-    height: 720,
-    width: 1280,
-    letterbox: true,
-    maxFPS: 1000,
+    // height: 720,
+    // width: 1280,
+    // letterbox: true,
+    maxFPS: 60,
     canvas: document.getElementById("game"),
 });
+
+// nanti mikirin kirim data 2 player
+function sendClearData(data) {
+    fetch("../../Signup and Login/verify/clearFunction.php" ,{
+        "method" : "POST",
+        "headers" : {
+            "Content-type" : "application/json; charset=utf-8"
+        },
+        "body" : JSON.stringify(data)
+      }).then(function(response){
+        return response.json();
+      }).then(function(data){
+        console.log(data);
+      });
+}
+
+function sendDeathData(data) {
+    fetch("../../Signup and Login/verify/deathFunction.php" ,{
+        "method" : "POST",
+        "headers" : {
+            "Content-type" : "application/json; charset=utf-8"
+        },
+        "body" : JSON.stringify(data)
+      }).then(function(response){
+        return response.json();
+      }).then(function(data){
+        console.log(data);
+      });
+}
 
 function buttonPressed(object, config, Button, Scale) {
     object.onCollide("button_off", (button) => {
@@ -464,15 +493,27 @@ const scenes = {
         let key = true
         const timer = add([
             text(""),
-            pos(16 * 30, 16 * 1),
-            scale(2),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
             fixed(),
+            z(2),
             "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
         ])
 
         onUpdate(() => {
             if (!paused)
-                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+                timer.text = (time() - timeSinceDead).toFixed(2)
             console.log(player1.isPushing, player2.isPushing)
             if (player1.isRespawning) {
                 ghost1.move(0, -80)
@@ -762,15 +803,27 @@ const scenes = {
 
         const timer = add([
             text(""),
-            pos(16 * 30, 16 * 1),
-            scale(2),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
             fixed(),
+            z(2),
             "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
         ])
 
         onUpdate(() => {
             if (!paused)
-                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+                timer.text = (time() - timeSinceDead).toFixed(2)
             if (player1.isRespawning) {
                 ghost1.move(0, -80)
             }
@@ -1102,14 +1155,26 @@ const scenes = {
         let key = true
         const timer = add([
             text(""),
-            pos(16 * 30, 16 * 1),
-            scale(2),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
             fixed(),
+            z(2),
             "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
         ])
         onUpdate(() => {
             if (!paused)
-                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+                timer.text = (time() - timeSinceDead).toFixed(2)
             if (player1.isRespawning) {
                 ghost1.move(0, -100)
             }
@@ -1489,14 +1554,26 @@ const scenes = {
 
         const timer = add([
             text(""),
-            pos(16 * 30, 16 * 1),
-            scale(2),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
             fixed(),
+            z(2),
             "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
         ])
         onUpdate(() => {
             if (!paused)
-                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+                timer.text = (time() - timeSinceDead).toFixed(2)
             if (player1.isRespawning || player2.isRespawning) {
                 ghost.move(0, -80)
             }

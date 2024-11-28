@@ -1,5 +1,5 @@
-import kaboom from "/public/js/libs/kaboom.mjs";
-import { load } from "./util/loader.js"
+import kaboom from "../../public/js/libs/kaboom.mjs";
+import { load } from "./util/loader.js";
 import { UIManager } from "./util/UIManager.js";
 import { Level } from "./util/levelManager.js";
 import { level1Layout, level1Mappings } from "./contentSP/level1/level1Layout.js";
@@ -14,26 +14,41 @@ import { Level3Config } from "./contentSP/level3/config.js";
 import { Level4Config } from "./contentSP/level4/config.js";
 
 kaboom({
-    height: 720,
-    width: 1280,
-    letterbox: true,
-    maxFPS: 1000,
+    // height: 720,
+    // width: 1280,
+    // letterbox: true,
+    maxFPS: 60,
     canvas: document.getElementById("game"),
 });
 
-// function sendData(data) {
-//     fetch("../../Signup and Login/verify/profileFunction.php" ,{
-//         "method" : "POST",
-//         "headers" : {
-//             "Content-type" : "application/json; charset=utf-8"
-//         },
-//         "body" : JSON.stringify(data)
-//       }).then(function(response){
-//         return response.json();
-//       }).then(function(data){
-//         console.log(data);
-//       });
-// }
+function sendClearData(data) {
+    fetch("../../Signup and Login/verify/clearFunction.php" ,{
+        "method" : "POST",
+        "headers" : {
+            "Content-type" : "application/json; charset=utf-8"
+        },
+        "body" : JSON.stringify(data)
+      }).then(function(response){
+        return response.json();
+      }).then(function(data){
+        console.log(data);
+      });
+}
+
+function sendDeathData(data) {
+    fetch("../../Signup and Login/verify/deathFunction.php" ,{
+        "method" : "POST",
+        "headers" : {
+            "Content-type" : "application/json; charset=utf-8"
+        },
+        "body" : JSON.stringify(data)
+      }).then(function(response){
+        return response.json();
+      }).then(function(data){
+        console.log(data);
+      });
+}
+
 
 function buttonPressed(object, config, Button, Scale) {
     object.onCollide("button_off", (button) => {
@@ -81,10 +96,6 @@ let death = 0;
 
 const scenes = {
     levelSelect: () => {
-        // onKeyPress("space", () => {
-        //     sendData({huruf: "a", angka: 1})
-        // })
-        
         death = 0
         activeLevel = 0
         const music = play("music", {
@@ -116,6 +127,7 @@ const scenes = {
     },
 
     1: () => {
+        Level1Config.hasKey = false
         activeLevel = 1
         timeSinceDead = time()
         Level1Config.win1 = false
@@ -160,6 +172,12 @@ const scenes = {
         })
         onClick("exit", (exit) => {
             if (exit.hidden) return
+            let data = {
+                "level": 1,
+                "death": death,
+                "easter_egg": 0
+            }
+            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -375,15 +393,33 @@ const scenes = {
             for (const obj in easterEgg) {
                 destroy(easterEgg[obj])
             }
+            let data = {
+                "level": 1,
+                "death": 0,
+                "easter_egg": 1
+            }
+            sendDeathData(data)
         })
 
         let key = true
         const timer = add([
             text(""),
-            pos(16 * 30, 16 * 1),
-            scale(2),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
             fixed(),
+            z(2),
             "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
         ])
 
         onUpdate(() => {
@@ -406,7 +442,7 @@ const scenes = {
             })
 
             if (!paused)
-                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+                timer.text = (time() - timeSinceDead).toFixed(2)
             if (player1.isRespawning) {
                 ghost.move(0, -80)
             }
@@ -429,15 +465,26 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 1,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
             // console.log(player1.death, player2.death)
             // console.log(ghost.pos)
         })
+        if (isTouchscreen()) {
+            Level1Config.levelZoom = 1.7
+        }
         attachCamera(player1.gameObj, player1.gameObj, 0, 84, Level1Config.levelZoom)
     },
     
     2: () => {
+        Level2Config.hasKey = false
         activeLevel = 2
         timeSinceDead = time()
         Level2Config.win1 = false
@@ -482,6 +529,12 @@ const scenes = {
         })
         onClick("exit", (exit) => {
             if (exit.hidden) return
+            let data = {
+                "level": 2,
+                "death": death,
+                "easter_egg": 0
+            }
+            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -601,10 +654,22 @@ const scenes = {
 
         const timer = add([
             text(""),
-            pos(16 * 30, 16 * 1),
-            scale(2),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
             fixed(),
+            z(2),
             "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
         ])
 
         onUpdate(() => {
@@ -626,7 +691,7 @@ const scenes = {
                 }
             })
             if (!paused)
-                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+                timer.text = (time() - timeSinceDead).toFixed(2)
             if (player1.isRespawning) {
                 ghost.move(0, -80)
             }
@@ -638,14 +703,25 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 2,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
         })
 
+        if (isTouchscreen()) {
+            Level2Config.levelZoom = 1.7
+        }
         attachCamera(player1.gameObj, player1.gameObj, 0, 84, Level2Config.levelZoom)
         },
 
     3: () => {
+        Level3Config.hasKey = false
         activeLevel = 3
         timeSinceDead = time()
         Level3Config.win1 = false
@@ -690,6 +766,12 @@ const scenes = {
         })
         onClick("exit", (exit) => {
             if (exit.hidden) return
+            let data = {
+                "level": 3,
+                "death": death,
+                "easter_egg": 0
+            }
+            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -859,10 +941,22 @@ const scenes = {
         let key = true
         const timer = add([
             text(""),
-            pos(16 * 30, 16 * 1),
-            scale(2),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
             fixed(),
+            z(2),
             "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
         ])
         onUpdate(() => {
             onTouchStart((position) => {
@@ -883,7 +977,7 @@ const scenes = {
                 }
             })
             if (!paused)
-                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+                timer.text = (time() - timeSinceDead).toFixed(2)
             if (player1.isRespawning) {
                 ghost.move(0, -100)
             }
@@ -907,15 +1001,24 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 3,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
             // console.log(box2.vel)
         })
         camPos((16 * 24), 100)
-        camScale(2, 2)
+        if (!isTouchscreen()) camScale(2, 2)
+        else camScale(1, 1)
     },
 
     4: () => {
+        Level4Config.hasKey = false
         activeLevel = 4
         timeSinceDead = time()
         Level4Config.win1 = false
@@ -961,6 +1064,12 @@ const scenes = {
         })
         onClick("exit", (exit) => {
             if (exit.hidden) return
+            let data = {
+                "level": 4,
+                "death": death,
+                "easter_egg": 0
+            }
+            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -1154,10 +1263,22 @@ const scenes = {
 
         const timer = add([
             text(""),
-            pos(16 * 30, 16 * 1),
-            scale(2),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
             fixed(),
+            z(2),
             "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
         ])
         onUpdate(() => {
             onTouchStart((position) => {
@@ -1178,7 +1299,7 @@ const scenes = {
                 }
             })
             if (!paused)
-                timer.text = `Time: ${(time() - timeSinceDead).toFixed(2)}`
+                timer.text = (time() - timeSinceDead).toFixed(2)
             if (player1.isRespawning) {
                 ghost.move(0, -80)
             }
@@ -1195,9 +1316,19 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 4,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
         })
+        if (isTouchscreen()) {
+            Level4Config.levelZoom = 1.7
+        }
         attachCamera(player1.gameObj, player1.gameObj, 0, 116, Level4Config.levelZoom)
     }
 };

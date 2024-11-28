@@ -181,7 +181,7 @@ constructor(
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "leftButton"
       ]);
       const rightButton = add([
@@ -190,7 +190,7 @@ constructor(
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "rightButton"
       ]);
       const jumpButton = add([
@@ -199,7 +199,7 @@ constructor(
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "jumpButton"
       ]);
     }

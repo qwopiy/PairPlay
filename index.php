@@ -1,5 +1,5 @@
 <?php
-require '../Signup and Login/verify/functions.php'; 
+require 'Signup and Login\verify\functions.php'; 
 ?>
 
 <!DOCTYPE html>
@@ -9,7 +9,7 @@ require '../Signup and Login/verify/functions.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>Pair Play - Login</title>
-    <link rel="stylesheet" href="registration/index.css">
+    <link rel="stylesheet" href="public/registration/index.css">
     <style>
         .advice{
             color: #e0f0ea;
@@ -33,19 +33,19 @@ require '../Signup and Login/verify/functions.php';
         <!-- User is logged in -->
             <div class="logged-in-container"> 
                 <div class="guest-container">
-                    <a href="../public/profilePage/profile.php">
-                        <img src="../<?php echo $_SESSION['USER']->photo;?>" alt="User Avatar" class="gambar">
+                    <a href="public/profilePage/profile.php">
+                        <img src="<?php echo $_SESSION['USER']->photo;?>" alt="User Avatar" class="gambar">
                         <button class="btn btn-guest"><?php echo $_SESSION['USER']->username;?>!</button>
                     </a>
                 </div>
             </div>
             <div class="fixed-bottom mb-3 ms-3"> 
-                    <a href="registration/logout.php" class="btn btn-logout">Logout</a> 
+                    <a href="public/registration/logout.php" class="btn btn-logout">Logout</a> 
             </div>
             <?php else: ?>
                 <div class="guest-container">
-                    <a href="registration/login.php">
-                        <img src="../assets/FrontPage/guest image.svg" alt="User Avatar" class="gambar">
+                    <a href="public/registration/login.php">
+                        <img src="assets/FrontPage/guest image.svg" alt="User Avatar" class="gambar">
                         <button class="btn btn-guest">Guest</button>
                     </a>
                 </div>
@@ -64,7 +64,7 @@ require '../Signup and Login/verify/functions.php';
             <form action="" method="post">
                 
                 <div class="d-grid gap-2 col-5 mx-auto mt-2">
-                    <a href="selection/selection.html" class="btn btn-login">Play</a>
+                    <a href="public/selection/selection.html" class="btn btn-login">Play</a>
                 </div>
             </form>
         </div>
@@ -76,8 +76,8 @@ require '../Signup and Login/verify/functions.php';
                     <input type="text" name="username" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="Username" minlength="10" value="<?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?>">
                 </div>
                 <div class="d-grid gap-2 col-5 mx-auto mt-2">
-                    <a href="selection/selection.html" class="btn btn-login">Play</a>
-                    <a href="registration/login.php" class="btn btn-login">Login</a>
+                    <a href="public/selection/selection.html" class="btn btn-login">Play</a>
+                    <a href="public/registration/login.php" class="btn btn-login">Login</a>
                     <p class="advice">Save your progress easily by logging in to your account!</p>
                 </div>
             </form>
