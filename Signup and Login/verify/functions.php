@@ -110,14 +110,16 @@ function update($data){
 	if($_FILES['image-edit']['error'] === 4){
 		$photo = $_SESSION['USER']->photo;
 	}else{
+		$photo = $_SESSION['USER']->photo;
+		unlink('../../'.$photo);
 		$photo = upload();
 	}
  
 	//check
 	if(count($errors) == 0){
 
-		$username = $data['username'];
-		$bio = $data['bio'];
+		$username = htmlspecialchars($data['username']);
+		$bio = htmlspecialchars($data['bio']);
 		$id = $_SESSION['USER']->id;
 
 		$query = "update pemain set username = '$username', bio = '$bio', photo ='$photo' where id ='$id'";
@@ -251,7 +253,7 @@ function achievement_count($id){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
-	if(sizeof($_SESSION['progress']) == 4){
+	if(sizeof($_SESSION['progress']) == 6){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 

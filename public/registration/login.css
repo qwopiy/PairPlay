@@ -60,6 +60,7 @@ body {
 }
 .btn:hover{
     background-color: #503a65; 
+    color: white;
 }
 .back{
     color: white;
