@@ -1,5 +1,5 @@
 <?php
-require 'Signup and Login/verify/functions.php';
+require '../../Signup and Login/verify/functions.php';
 
 $errors = array();
 
@@ -10,7 +10,7 @@ if($_SERVER['REQUEST_METHOD'] =="POST")
 
 	if(count($errors) == 0)
 	{
-		header("Location: ../../public/index.php");
+		header("Location: ../../index.php");
 		die;
 	}
 }
