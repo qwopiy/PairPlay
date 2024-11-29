@@ -27,9 +27,6 @@ let achievmentProfile = [document.getElementById("achievment-profile1"), documen
 
 let imageSrc;
 
-let darkBackground = document.createElement('div');
-darkBackground.classList.add("dark-background");
-
 for(var i=0; i<4; i++){
   if(achievmentSave[i].src != "http://localhost/PairPlay/assets/FrontPage/transparent.png"){
     achievmentSaveBoolean[i] = true; 

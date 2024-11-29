@@ -1,21 +1,28 @@
 <?php
   require "../../Signup and Login/verify/functions.php";
 
-  // $username = 'Maudy Sukaiga';
+  if (isset($_GET["username"])){
+    $username = htmlspecialchars($_GET["username"]);
+    $query = "select * from pemain where username = '$username'";
+    $row = database_run($query);
 
-  $query = "select * from pemain where id = 5 ";
-	$row = database_run($query);
+    if(is_array($row)){
+      $row = $row[0];
+      $_SESSION['GUEST'] = $row;
 
-	if(is_array($row)){
-		$row = $row[0];
-		$_SESSION['GUEST'] = $row;
-	}
+      death_count($_SESSION['GUEST']->id);
+      progress($_SESSION['GUEST']->id);
+      achievement_count($_SESSION['GUEST']->id);
 
-  death_count($_SESSION['GUEST']->id);
-  progress($_SESSION['GUEST']->id);
-  achievement_count($_SESSION['GUEST']->id);
+      $achievement = json_decode($_SESSION['GUEST']->achievement);
+    }else{
+      header("Location: ../../index.php");
+    }
+  }else{
+    header("Location: ../../index.php");
+  }
 
-  $achievement = json_decode($_SESSION['GUEST']->achievement);
+
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +39,7 @@
     <div class="container all p-md-3">
       <div class="row justify-content-between pt-md-2">
         <div class="col-md-4">
-          <a class="Back" href="../index.php">
+          <a class="Back" href="../../index.php">
             <i class="bi bi-arrow-left fs-2 text-light ms-4"></i>
           </a>
         </div>
@@ -81,7 +88,7 @@
         </div>
         <div class="container">
           <div class="row text-center">
-            <?php for($i = 1; $i<=4; $i++): ?>
+            <?php for($i = 1; $i<=6; $i++): ?>
               <div class="col-md-3">
                 <?php if(sizeof($_SESSION['progress']) >= $i):?>
                   <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="border: 5px solid #00ff08" />

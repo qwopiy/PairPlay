@@ -1,5 +1,5 @@
 <?php
-require_once '../../Signup and Login/config_session.inc.php'; 
+require_once '../../Signup and Login/verify/functions.php'; 
 
 session_destroy();
 
