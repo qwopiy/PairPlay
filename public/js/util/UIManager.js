@@ -185,6 +185,24 @@ class UI {
       }
       return pauseMenu;
     }
+
+    achievement() {
+      const easteregg = add([
+        sprite("easterEgg"),
+        area(),
+        scale(2),
+        anchor("center"),
+        pos(center().x, center().y),
+        fixed(),
+        scale(1),
+        z(1000)
+      ])
+      play("boom")
+
+      onClick(() => {
+        destroy(easteregg)
+      })
+    }
 }
 
 export const UIManager = new UI();

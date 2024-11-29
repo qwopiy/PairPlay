@@ -203,8 +203,8 @@
                   <div>
                     <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="50" />
                     <?php
-                      if(isset($_SESSION['progress'][$i-1]->win_time)){
-                        $arr = $_SESSION['progress'][$i-1]->win_time;
+                      if(isset($_SESSION['progress'][$i-1]->time_spent)){
+                        $arr = $_SESSION['progress'][$i-1]->time_spent;
                         $arr = explode(':', $arr);
                         if($arr[0]='00'){
                           $time = $arr[1]. ':'. $arr[2];
@@ -213,7 +213,7 @@
                         }
                       }
                     ?>
-                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->win_time) ? $time : '00:00'?></p>
+                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->time_spent) ? $time : '00:00'?></p>
                   </div>
                 </div>
               </div>

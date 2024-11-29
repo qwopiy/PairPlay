@@ -106,6 +106,7 @@ const scenes = {
             music.stop()
         })
 
+        UIManager.achievement()
         UIManager.displayLevel(progress)            
             if (progress >= 0)
             onClick("1", () => {
