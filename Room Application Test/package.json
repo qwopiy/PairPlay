@@ -1,0 +1,16 @@
+{
+  "name": "tes1",
+  "version": "1.0.0",
+  "description": "ngetes",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "paran",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.0.3"
+  }
+}

@@ -3,14 +3,14 @@ require '../../Signup and Login/verify/functions.php';
 
 $errors = array();
 
-if($_SERVER['REQUEST_METHOD'] == "POST")
+if($_SERVER['REQUEST_METHOD'] =="POST")
 {
 
 	$errors = login($_POST);
 
 	if(count($errors) == 0)
 	{
-		header("Location: ../profilePage/profile.php");
+		header("Location: ../../index.php");
 		die;
 	}
 }
@@ -32,7 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
             
             
             <form method="POST">
-                  <a href="../../index.php">
+                  <a href="../index.php">
                         <i class="bi bi-arrow-left fs-3 text-dark"></i>
                   </a>
                   <div class="mb-3">
@@ -53,7 +53,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                               <?php endforeach;?>
                         <?php endif;?>
                   <div type="button" class="text-end">
-                        <button type="submit" name="login" class="btn btn btn-sm">Submit</button>
+                        <button type="submit" name="submit" class="btn btn btn-sm">Submit</button>
                   </div>
                     <p>Don't have an account? create an account <a href="signup.php">here</a></p>
             </form>

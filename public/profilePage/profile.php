@@ -1,6 +1,5 @@
 <?php
   require "../../Signup and Login/verify/functions.php";
-
   $id = $_SESSION['USER']->id;
   $errors = array();
   check_login();

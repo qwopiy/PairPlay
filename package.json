@@ -18,10 +18,15 @@
   },
   "homepage": "https://qwopiy.github.io/PairPlay/",
   "dependencies": {
+    "axios": "^1.7.7",
     "express": "^4.21.1",
     "kaboom": "^3000.1.17",
     "nodemon": "^3.1.7",
-    "socket.io": "^4.8.0"
+    "pg": "^8.13.1",
+    "php": "^1.1.0",
+    "php-express": "^0.0.3",
+    "socket.io": "^4.8.1",
+    "sphp": "^0.6.3"
   },
   "devDependencies": {
     "esbuild": "0.24.0"

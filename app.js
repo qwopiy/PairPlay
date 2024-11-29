@@ -1,20 +1,89 @@
 import express from 'express';
+import http from 'http';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
+import pkg from 'pg';
+const { Pool, Client } = pkg;
+
+// ubah nanti karena /*unsafe*/
+// const pool = new Pool({
+//   user: 'postgres',
+//   host: 'localhost',
+//   database: 'game',
+//   password: 'eeklalat05',
+//   port: 5432,
+// });
+
+// (async function query() { 
+//   const client = await pool.connect()
+//   try {
+//     const res = await client.query('SELECT * FROM pemain');
+//     // node .log(res.rows);
+//   } catch (err) {
+//     console.log(err);
+//   } finally {
+//     client.release();
+//   }
+// })();
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'game',
+  password: 'eeklalat05',
+  port: 5432,
+});
+
+(async function query() { 
+  const client = await pool.connect()
+  try {
+    const res = await client.query('SELECT * FROM pemain');
+    // console.log(res.rows);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    client.release();
+  }
+})();
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, { pingInterval: 2000, pingTimeout: 500 });
 
+app.get('/public/game/createRoom.html', (req, res) => {
+  res.sendFile(join(__dirname, '/public/game/createRoom.html'));
+});
+
+app.get('/public/game/levelSelect', (req, res) => {
+  res.sendFile(join(__dirname, '/public/game/levelSelect.html'));
+});
+app.get('/public/game/gameLocal.html', (req, res) => {
+  res.sendFile(join(__dirname, '/public/game/gameLocal.html'));
+});
+app.get('/public/game/1.html', (req, res) => {
+  res.sendFile(join(__dirname, '/public/game/1.html'));
+});
+app.get('/public/game/2.html', (req, res) => {
+  res.sendFile(join(__dirname, 'public/game/2.html'));
+});
+app.get('/public/game/3.html', (req, res) => {
+  res.sendFile(join(__dirname, 'public/game/3.html'));
+});
+app.get('/public/game/4.html', (req, res) => {
+  res.sendFile(join(__dirname, 'public/game/4.html'));
+});
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-app.use(express.static(__dirname));
-
-app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, "index.html"));
+const httpServer = http.createServer(app);
+httpServer.listen(app.get('http_port'), function(){
+  console.log('httpServer listening on port %d', app.get('http_port'));
 });
+
+io.attach(httpServer);
+
+app.use(express.static(__dirname));
 
 const maxPlayers = 2;
 var currentPlayers = 0;
@@ -27,34 +96,35 @@ var inLevel = false;
 var progress = 4;
 
 io.on('connection', (socket) => {
-  // socket.emit('init', backEndPlayers[socket.id]);
+  console.log('A user connected:', socket.id);
+
+  socket.on('create room', (roomCode) => {
+      socket.join(roomCode);
+      socket.emit('room created', roomCode);
+      console.log(`Room created: ${roomCode}`);
+  });
+
+  socket.on('join room', (roomCode) => {
+      const rooms = Object.keys(socket.rooms);
+      if (!rooms.includes(roomCode)) {
+          socket.join(roomCode);
+          socket.emit('room joined', roomCode);
+          console.log(`User  joined room: ${roomCode}`);
+          socket.to(roomCode).emit('player joined', `A new player has joined room ${roomCode}`);
+      } else {
+          socket.emit('error', 'You are already in this room');
+      }
+  });
+
   io.emit('progress', progress);
   socket.on('inLevel', (bool) => {
     inLevel = bool;
   })
 
-  socket.on('level', (num) => {
-    io.emit('level', num);
+  socket.on('level', (num, code) => {
+    io.emit('level', num, code);
   })
-  
-  console.log('a user connected');
 
-  // socket.on('init', () => {
-  //   if (currentPlayers < maxPlayers) {
-  //     backEndPlayers[socket.id] = {
-  //       x: config.x + (currentPlayers * 16),
-  //       y: config.y, 
-  //       isMovingLeft: false, 
-  //       isMovingRight: false,
-  //       isJumping: false,
-  //       death: 0,
-  //       playerNumber: currentPlayers + 1
-  //     };
-  //     currentPlayers++;
-  //   }
-  //   console.log(backEndPlayers);
-  //   socket.emit('init', backEndPlayers[socket.id]);
-  // })
   if (currentPlayers < maxPlayers) {
     backEndPlayers[socket.id] = {
       x: config.x + (currentPlayers * 16),
@@ -71,7 +141,13 @@ io.on('connection', (socket) => {
   if (!inLevel) 
     io.emit('updatePlayers', backEndPlayers)
 
-  console.log(backEndPlayers);
+  socket.on('createPlayer', () => {
+    io.emit('createPlayer', backEndPlayers);
+  })
+
+  socket.on('exit', () => {
+    io.emit('exit');
+  })
 
   socket.on('disconnect', (reason) => {
     console.log(reason)
@@ -161,7 +237,6 @@ io.on('connection', (socket) => {
 
   socket.on('win', (num) => {
     eval('win' + num + ' = true');
-    // issue: currentplayer gak konsisten kalau server open sebelum client close window sebelumnya
   })
 });
 
@@ -180,7 +255,12 @@ setInterval(() => {
   }
 }, 15);
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
 server.listen(3000, () => {
-  console.log('server running at http://localhost:3000');
-  console.log( __dirname);
+console.log('server running at http://localhost:3000');
+console.log(__dirname);
 });
