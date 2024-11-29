@@ -1,4 +1,5 @@
 <?php
+
     require 'Signup and Login/verify/functions.php'; 
 
     $row=[];
@@ -43,7 +44,6 @@
             <div class="result-container"></div>
             <button class="back pe-3 ps-3 pt-1 pb-1">close</button>
         </div>
-
         <div class="dark-background"></div>
         <div class="account-container">
             <div class="d-flex justify-content-end">

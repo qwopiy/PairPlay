@@ -143,6 +143,7 @@ export const load = {
                 finishOpen: 7,
             }
         })
+        loadSprite("win", "../../assets/FrontPage/end.png")
 
         loadSprite("1", "../../assets/FrontPage/Progress1.png")
         loadSprite("2", "../../assets/FrontPage/Progress2.png")
@@ -160,5 +161,6 @@ export const load = {
         loadSound("key", "../../assets/Sounds/key.wav")
         loadSound("portal", "../../assets/Sounds/portal.wav")
         loadSound("bounce", "../../assets/Sounds/bounce.wav")
+        loadSound("boom", "../../assets/Sounds/boom.mp3")
     }
 }
