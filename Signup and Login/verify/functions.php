@@ -110,14 +110,16 @@ function update($data){
 	if($_FILES['image-edit']['error'] === 4){
 		$photo = $_SESSION['USER']->photo;
 	}else{
+		$photo = $_SESSION['USER']->photo;
+		unlink('../../'.$photo);
 		$photo = upload();
 	}
  
 	//check
 	if(count($errors) == 0){
 
-		$username = $data['username'];
-		$bio = $data['bio'];
+		$username = htmlspecialchars($data['username']);
+		$bio = htmlspecialchars($data['bio']);
 		$id = $_SESSION['USER']->id;
 
 		$query = "update pemain set username = '$username', bio = '$bio', photo ='$photo' where id ='$id'";
@@ -264,7 +266,7 @@ function achievement_count($id){
 }
 
 function progress($id){
-	$query = "SELECT id_level, min(win_time) as win_time, min(death) as death FROM game WHERE id_pemain = '$id' GROUP BY id_level";
+	$query = "SELECT id_level, min(time_spent) as time_spent, SUM(death) as death FROM game WHERE id_pemain = '$id' GROUP BY id_level";
 	$row = database_run($query);
 
 	if(is_array($row)){
@@ -274,4 +276,6 @@ function progress($id){
 	}
 	return;
 }
+
+
 
