@@ -6,6 +6,35 @@ body{
     height: 100vh;
     margin: 0;
 }
+.pencarian{
+    cursor: pointer;
+}
+body.show-search .sidebar-content{
+    inset: 0 0 0 auto;
+}
+.sidebar-content{
+    background-color: #e0f0ea;
+    position: fixed;
+    width: 40%;
+    inset: 0 -40% 0 auto;
+    transition: 0.5s;
+    z-index: 2;
+    height: 100%;
+    overflow: auto;
+  }
+.dark-background{
+    background-color: #000;
+    height: 100vh;
+    inset: 0 0 0 0;
+    opacity: 0%;
+    position: fixed;
+    transition: 0.5s ;
+    z-index: -1;
+  }
+body.show-search .dark-background {
+    opacity: 50%;
+    z-index: 1;
+  }
 .login-container {   
     width: 100%;
     max-width: 50%; 
@@ -72,9 +101,60 @@ a {
 }
 .btn-logout:hover{
     background-color: #728a9d; 
-    color: white; 
+    color: white;   
 }
 
+
+.search-container {
+    width: 100%;
+    max-width: 600px;
+    background-color: white;
+    margin-left: 7px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #728a9d;
+}
+.search-form{
+    border-radius: 30px;
+    width: 80%;
+}
+.result-container {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+    margin-left: 7px;
+    padding: 15px;
+    background-color: #728a9d;
+    border-radius: 8px;
+}
+.result-content {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.result-content img {
+    max-width: 50px;
+    max-height: 50px;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+.btn-search{
+    background-color: #574f7d;
+    color: white;
+    transition: background-color 0.3s ease;    
+}
+.btn-search:hover, .back:hover{
+    background-color:  #503a65;
+    color:white;
+}
+.back{
+    margin-top: 10px;
+    margin-left: 90%;
+    background-color: #574f7d;
+    color: white;
+    border-radius: 6px;
+    transition: background-color 0.3s ease
+}
 
 
 

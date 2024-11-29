@@ -99,18 +99,29 @@ function update($data){
 
 	$check = database_run("select * from pemain where username = :username limit 1",['username'=>$data['username']]);
 	if(is_array($check)){
-		$errors[] = "That username already exists";
+		$check = $check[0];
+		if($check->username == $_SESSION['USER']->username){
+
+		}else{
+			$errors[] = "That username already exists";
+		}	
+	}
+
+	if($_FILES['image-edit']['error'] === 4){
+		$photo = $_SESSION['USER']->photo;
+	}else{
+		$photo = upload();
 	}
  
 	//check
 	if(count($errors) == 0){
 
-		$arr['username'] = $data['username'];
+		$username = $data['username'];
+		$bio = $data['bio'];
 		$id = $_SESSION['USER']->id;
-		$arr['bio'] = $data['bio'];
 
-		$query = "update pemain set username = :username, bio = :bio where id ='$id'";
-		$row = database_run($query, $arr);
+		$query = "update pemain set username = '$username', bio = '$bio', photo ='$photo' where id ='$id'";
+		$row = database_run($query);
 
 		$query = "select * from pemain where id ='$id'";
 		$row = database_run($query);
@@ -123,9 +134,43 @@ function update($data){
 	return $errors;
 }
 
+function upload(){
+	$errors = array();
+	$imageName = $_FILES['image-edit']['name'];
+	$imageSize = $_FILES['image-edit']['size'];
+	$imageErrors = $_FILES['image-edit']['error'];
+	$imageTmpName = $_FILES['image-edit']['tmp_name'];
+
+	if($imageErrors === 4){
+
+	}
+
+	$imageValid = ["jpg", "jpeg", "png"];
+	$imageType = explode('.', $imageName);
+	$imageType = strtolower(end($imageType));
+	if(!in_array($imageType, $imageValid)){
+		$errors[] = "caught you";
+		return $errors;
+	}
+
+	if($imageSize > 10000000){
+		$errors[] = "image size is too big";
+		return $errors;
+	}
+
+	$imageNewName = 'assets/upload/';
+	$imageNewName .= uniqid();
+	$imageNewName .= '.';
+	$imageNewName .= $imageType;
+
+	move_uploaded_file($imageTmpName, '../../'. $imageNewName);
+	return $imageNewName;
+
+}
+
 function database_run($query,$vars = array())
 {
-	$string = "pgsql:host=localhost;port=5432;dbname=game;user=postgres;password=eeklalat05;";
+	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=anantha06;";
 	$con = new PDO($string);
 
 	if(!$con){
@@ -182,12 +227,10 @@ function check_verified(){
  	
 }
 
-function death_count(){
-	$id = $_SESSION['USER']->id;
-	$query = "select SUM(death) from game where id_pemain = '$id'";
+function death_count($id){
+	$query = "SELECT SUM(death) as death FROM game WHERE id_pemain = '$id'";
 	$row = database_run($query);
 
-	
 	if(is_array($row)){
 		$row = $row[0];
 		$_SESSION['DEATH'] = $row;
@@ -197,28 +240,106 @@ function death_count(){
 	return;
 }
 
-function achievement_count(){
+function achievement_count($id){
 	$_SESSION['ACHIEVEMENT_COUNT'] = 0;
-	$id = $_SESSION['USER']->id;
 
-	$query = "select easter_egg from game where id_pemain = '$id' AND easter_egg = 1 LIMIT 1";
+	$query = "SELECT easter_egg FROM game WHERE id_pemain = '$id' AND easter_egg = 1 LIMIT 1";
 	$row = database_run($query);
 
 	if(is_array($row)){
-		$row = $row[0];
-		$_SESSION['EASTER_EGG'] = $row;
+		$_SESSION['EASTER_EGG'] = 1;
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
-	if($_SESSION['USER']->progress == 4){
+	if(sizeof($_SESSION['progress']) == 4){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
 	if(isset($_SESSION['DEATH'])){
-		if($_SESSION['DEATH']->sum >= 10) $_SESSION['ACHIEVEMENT_COUNT']++;
-		if($_SESSION['DEATH']->sum >= 50) $_SESSION['ACHIEVEMENT_COUNT']++;
-		if($_SESSION['DEATH']->sum >= 100) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->death >= 10) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->death >= 50) $_SESSION['ACHIEVEMENT_COUNT']++;
+		if($_SESSION['DEATH']->death >= 100) $_SESSION['ACHIEVEMENT_COUNT']++;
 	}
 	return;
 }
+
+function progress($id){
+	$query = "SELECT id_level, min(win_time) as win_time, min(death) as death FROM game WHERE id_pemain = '$id' GROUP BY id_level";
+	$row = database_run($query);
+
+	if(is_array($row)){
+		$_SESSION['progress'] = $row;
+	}else{
+		$_SESSION['progress'] = [];
+	}
+	return;
+}
+
+function completeGame($id_pemain, $id_level, $death, $time_spent) {
+    global $conn;
+
+    $stmt = $conn->prepare("INSERT INTO game (id_pemain, id_level, death, time_spent) VALUES (:id_pemain, :id_level, :death, :time_spent)");
+    $stmt->execute([
+        ':id_pemain' => $id_pemain,
+        ':id_level' => $id_level,
+        ':death' => $death,
+        ':time_spent' => $time_spent
+    ]);
+
+    $stmt = $conn->prepare("SELECT * FROM leaderboard WHERE id_pemain = :id_pemain AND id_level = :id_level");
+    $stmt->execute([
+        ':id_pemain' => $id_pemain,
+        ':id_level' => $id_level
+    ]);
+    
+    $leaderboardEntry = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($leaderboardEntry) {
+        if ($death < $leaderboardEntry['least_death'] || ($leaderboardEntry['least_death'] == 0 && $death > 0)) {
+            $stmt = $conn->prepare("UPDATE leaderboard SET least_death = :least_death, least_time = :least_time WHERE id_pemain = :id_pemain AND id_level = :id_level");
+            $stmt->execute([
+                ':least_death' => $death,
+                ':least_time' => $time_spent,
+                ':id_pemain' => $id_pemain,
+                ':id_level' => $id_level
+            ]);
+        }
+    } else {
+        $stmt = $conn->prepare("INSERT INTO leaderboard (id_pemain, id_level, least_death, least_time) VALUES (:id_pemain, :id_level, :least_death, :least_time)");
+        $stmt->execute([
+            ':id_pemain' => $id_pemain,
+            ':id_level' => $id_level,
+            ':least_death' => $death,
+            ':least_time' => $time_spent
+        ]);
+    }
+}
+
+function displayLeaderboard($id_level, $orderBy) {
+    global $conn;
+
+    $orderColumn = $orderBy === 'death' ? 'least_death' : 'least_time';
+    $stmt = $conn->prepare("SELECT p.username, l.least_death, l.least_time 
+                             FROM leaderboard l 
+                             JOIN pemain p ON l.id_pemain = p.id 
+                             WHERE l.id_level = :id_level 
+                             ORDER BY l.$orderColumn ASC");
+    $stmt->execute([':id_level' => $id_level]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function populateLeaderboardFromGame() {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT id_pemain, id_level, death, time_spent FROM game");
+    $stmt->execute();
+    $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($games as $game) {
+        completeGame($game['id_pemain'], $game['id_level'], $game['death'], $game['time_spent']);
+    }
+}
+
+populateLeaderboardFromGame();
 
