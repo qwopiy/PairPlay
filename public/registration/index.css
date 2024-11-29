@@ -116,16 +116,22 @@ a {
   margin-left: 7px;
   padding: 20px;
   border-radius: 8px;
-  background-color: #728a9d;
+  background-color: #503a65;
 }
 .search-form {
+  background-color: #503a65;
   /* border-radius: 30px; */
   /* background-color: #574f7d; */
-  width: 98%;
+  width: 90%;
 }
+
+.input-group ::placeholder {
+  color: white;
+}
+
 .result-container {
   width: 98%;
-  height: 72%;
+  height: 75%;
   overflow: auto;
   /* max-width: 600px; */
   margin-top: 20px;
@@ -135,6 +141,7 @@ a {
   border-radius: 8px;
 }
 .result-content {
+  overflow: hidden;
   background-color: #503a65;
   display: flex;
   margin : 2px;

@@ -253,7 +253,7 @@ function achievement_count($id){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
-	if(sizeof($_SESSION['progress']) == 4){
+	if(sizeof($_SESSION['progress']) == 6){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 

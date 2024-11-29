@@ -93,7 +93,7 @@
                 <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown3" src="../../assets/FrontPage/death100.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
               <?php endif; ?>
 
-              <?php if(sizeof($_SESSION['progress']) >= 4) : ?>
+              <?php if(sizeof($_SESSION['progress']) >= 6) : ?>
                 <div class="p-2 achievment-dropdown"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2" width="100"/></div>
               <?php else: ?>
                 <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
@@ -184,7 +184,7 @@
         </div>
         <div class="container">
           <div class="row text-center">
-            <?php for($i = 1; $i<=5; $i++): ?>
+            <?php for($i = 1; $i<=6; $i++): ?>
               <div class="col-md-3">
                 <?php if(sizeof($_SESSION['progress']) >= $i):?>
                   <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="border: 5px solid #00ff08" />

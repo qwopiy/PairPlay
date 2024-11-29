@@ -16,10 +16,10 @@
 
       $achievement = json_decode($_SESSION['GUEST']->achievement);
     }else{
-      header("Location: search.php");
+      header("Location: ../../index.php");
     }
   }else{
-    header("Location: search.php");
+    header("Location: ../../index.php");
   }
 
 
@@ -88,7 +88,7 @@
         </div>
         <div class="container">
           <div class="row text-center">
-            <?php for($i = 1; $i<=4; $i++): ?>
+            <?php for($i = 1; $i<=6; $i++): ?>
               <div class="col-md-3">
                 <?php if(sizeof($_SESSION['progress']) >= $i):?>
                   <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="border: 5px solid #00ff08" />
