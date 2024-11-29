@@ -6,12 +6,16 @@ import { level1Layout, level1Mappings } from "./content/level1/level1Layout.js";
 import { level2Layout, level2Mappings } from "./content/level2/level2Layout.js";
 import { level3Layout, level3Mappings } from "./content/level3/level3Layout.js";
 import { level4Layout, level4Mappings } from "./content/level4/level4Layout.js";
+import { level5Layout, level5Mappings } from "./content/level5/level5Layout.js";
+import { level6Layout, level6Mappings } from "./content/level6/level6Layout.js";
 import { attachCamera } from "./util/camera.js";
 import { Player } from "./entity/player.js";
 import { Level1Config } from "./content/level1/config.js";
 import { Level2Config } from "./content/level2/config.js";
 import { Level3Config } from "./content/level3/config.js";
 import { Level4Config } from "./content/level4/config.js";
+import { Level5Config } from "./content/level5/config.js";
+import { Level6Config } from "./content/level6/config.js";
 
 kaboom({
     // height: 720,
@@ -90,12 +94,14 @@ function teleport(object, portalIn, portalOut) {
 }
 
 let timeSinceDead = time()
-let progress = 3;
+let progress = 5;
 let activeLevel = 0;
 let death = 0;
 
 const scenes = {
     levelSelect: () => {
+        if (progress == 6) 
+            UIManager.win()
         death = 0
         activeLevel = 0
         const music = play("music", {
@@ -105,7 +111,18 @@ const scenes = {
         onSceneLeave(() => {
             music.stop()
         })
-
+        const exitGame = add([
+            sprite("pauseButtons", { anim: "exit" }),
+            area(),
+            scale(2),
+            pos(32, 32),
+            fixed(),
+            z(102),
+            "exit",
+        ])
+        onClick("exit", () => {
+            window.location.href = "../../index.php"
+        })
         UIManager.displayLevel(progress)
             if (progress >= 0)
             onClick("1", () => {
@@ -123,12 +140,21 @@ const scenes = {
             onClick("4", () => {
                 go(4)
             })
+            if (progress >= 4)
+            onClick("5", () => {
+                go(5)
+            })
+            if (progress >= 5)
+            onClick("6", () => {
+                go(6)
+            })
 
     },
 
     1: () => {
         activeLevel = 1
         timeSinceDead = time()
+        Level1Config.hasKey = false
         Level1Config.win1 = false
         Level1Config.win2 = false
         setGravity(Level1Config.gravity)
@@ -151,6 +177,7 @@ const scenes = {
         let paused = false
         UIManager.UIButton()
         const pauseMenu = UIManager.pauseMenu()
+        pauseMenu.text.text = "Level 1"
         onClick("pause", (pause) => {
             if (pause.hidden) return
             if (!paused) {
@@ -482,12 +509,14 @@ const scenes = {
             for (const obj in easterEgg) {
                 destroy(easterEgg[obj])
             }
+            UIManager.easteregg()
         })
 
         player2.gameObj.onCollide("easterEgg", () => {
             for (const obj in easterEgg) {
                 destroy(easterEgg[obj])
             }
+            UIManager.easteregg()
         })
 
         let key = true
@@ -554,6 +583,7 @@ const scenes = {
     2: () => {
         activeLevel = 2
         timeSinceDead = time()
+        Level2Config.hasKey = false
         Level2Config.win1 = false
         Level2Config.win2 = false
         setGravity(Level2Config.gravity)
@@ -576,6 +606,7 @@ const scenes = {
         let paused = false
         UIManager.UIButton()
         const pauseMenu = UIManager.pauseMenu()
+        pauseMenu.text.text = "Level 2"
         onClick("pause", (pause) => {
             if (pause.hidden) return
             if (!paused) {
@@ -849,6 +880,7 @@ const scenes = {
     3: () => {
         activeLevel = 3
         timeSinceDead = time()
+        Level3Config.hasKey = false
         Level3Config.win1 = false
         Level3Config.win2 = false
         setGravity(Level3Config.gravity)
@@ -871,6 +903,7 @@ const scenes = {
         let paused = false
         UIManager.UIButton()
         const pauseMenu = UIManager.pauseMenu()
+        pauseMenu.text.text = "Level 3"
         onClick("pause", (pause) => {
             if (pause.hidden) return
             if (!paused) {
@@ -1213,6 +1246,7 @@ const scenes = {
     4: () => {
         activeLevel = 4
         timeSinceDead = time()
+        Level4Config.hasKey = false
         Level4Config.win1 = false
         Level4Config.win2 = false
         setGravity(Level4Config.gravity)
@@ -1235,6 +1269,7 @@ const scenes = {
         let paused = false
         UIManager.UIButton()
         const pauseMenu = UIManager.pauseMenu()
+        pauseMenu.text.text = "Level 4"
         onClick("pause", (pause) => {
             if (pause.hidden) return
             if (!paused) {
@@ -1595,7 +1630,733 @@ const scenes = {
             }
         })
         attachCamera(player1.gameObj, player2.gameObj, 0, 116, Level4Config.levelZoom)
-    }
+    },
+
+    5: () => {
+        activeLevel = 5
+        timeSinceDead = time()
+        Level5Config.hasKey = false
+        Level5Config.win1 = false
+        Level5Config.win2 = false
+        setGravity(Level5Config.gravity)
+        
+        const level = new Level()
+        level.drawBackground("background")
+        level.drawMapLayout(level5Layout, level5Mappings, Level5Config.Scale)
+        
+        const music = play("music", {
+            volume: 0.2,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            player1.walk.stop()
+            player2.walk.stop()
+            music.stop()
+        })
+        
+        // pause menu
+        let paused = false
+        UIManager.UIButton()
+        const pauseMenu = UIManager.pauseMenu()
+        pauseMenu.text.text = "Level 5"
+        onClick("pause", (pause) => {
+            if (pause.hidden) return
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", (resume) => {
+            if (resume.hidden) return
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+                player2.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", (exit) => {
+            if (exit.hidden) return
+            go("levelSelect")
+        })
+        onClick("restart", (restart) => {
+            if (restart.hidden) return
+            timeSinceDead = time()
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+
+            go(5)
+        })
+        onClick("SFX", (target) => {
+            if (target.hidden) return
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
+            if (target.hidden) return
+            music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
+        })
+
+        const player1 = new Player(
+            Level5Config.playerSpeed,
+            Level5Config.jumpForce,
+            Level5Config.nbLives,
+            "a",
+            "d",
+            "w",
+            1,
+            5,
+            false
+        )
+        
+        const player2 = new Player(
+            Level5Config.playerSpeed,
+            Level5Config.jumpForce,
+            Level5Config.nbLives,
+            "left",
+            "right",
+            "up",
+            2,
+            5,
+            false
+        )
+
+        const ghost1 = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level5Config.Scale),
+            "ghost1"
+        ])
+        const ghost2 = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level5Config.Scale),
+            "ghost2"
+        ])
+
+        player1.makePlayer(Level5Config.playerStartPosX + 16, Level5Config.playerStartPosY, "player1", Level5Config.Scale)
+        player2.makePlayer(Level5Config.playerStartPosX, Level5Config.playerStartPosY, "player2", Level5Config.Scale)
+
+        player1.update()
+        player2.update()
+
+        onCollide("player1", "ice", () => {!player1.isTouchingIce ? (player1.isTouchingIce = true, player1.speed = 0) : null})
+        onCollide("player1", "ground", () => {player1.isTouchingIce ? (player1.isTouchingIce = false, player1.speed = 0) : null})
+        onCollide("player2", "ice", () => {!player2.isTouchingIce ? (player2.isTouchingIce = true, player2.speed = 0) : null})
+        onCollide("player2", "ground", () => {player2.isTouchingIce ? (player2.isTouchingIce = false, player2.speed = 0) : null})
+
+        onCollide("player1", "bouncy", () => {player1.bounce()})
+        onCollide("player2", "bouncy", () => {player2.bounce()})
+
+        player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
+            play("key")
+            destroy(key)
+            console.log("key Get")
+            Level5Config.hasKey = true
+        })
+
+        player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+            play("key")
+            destroy(key)
+            console.log("key Get")
+            Level5Config.hasKey = true
+        })
+
+        player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
+            if (Level5Config.hasKey) {
+                play("door")
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
+                Level5Config.hasKey = false
+            }
+            player1.speed = 0
+        })
+
+        player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
+            if (Level5Config.hasKey) {
+                play("door")
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
+                Level5Config.hasKey = false
+            }
+            player2.speed = 0
+        })
+
+        player1.gameObj.onCollide("finish", (finish) => {   //player1 collision with finish
+            Level5Config.win1 = true
+            player1.win = true
+            player1.gameObj.move(0, -16000)
+            player1.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
+        })
+
+        player2.gameObj.onCollide("finish", (finish) => {   //player2 collision with finish
+            Level5Config.win2 = true
+            player2.win = true
+            player2.gameObj.move(0, -16000)
+            player2.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
+        })
+        
+        player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+            play("dead")
+            player1.gameObj.angle = -90
+            player1.isRespawning = true
+            ghost1.pos = player1.gameObj.pos
+            if (!player2.isRespawning) {
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 5) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level5Config.win1 = false
+                    Level5Config.win2 = false
+                    timeSinceDead = time()
+                    go(5)
+                }, 3000)
+            }
+        })
+        
+        player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+            play("dead")
+            player2.gameObj.angle = -90
+            player2.isRespawning = true
+            ghost2.pos = player2.gameObj.pos
+            if (!player1.isRespawning) {
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 5) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level5Config.win1 = false
+                    Level5Config.win2 = false
+                    timeSinceDead = time()
+                    go(5)
+                }, 3000)
+            }
+        })
+
+        onCollide("player1", "player2", () => {
+            player1.isPushing = true
+            player2.isPushing = true
+        })
+        
+        onCollideEnd("player1", "player2", () => {
+            player1.isPushing = false
+            player2.isPushing = false
+        })
+        
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+
+        onKeyPress("r", () => {
+            timeSinceDead = time()
+            player1.respawnPlayers()
+            player2.respawnPlayers()
+
+            go(5)
+        })
+
+        let key = true
+        const timer = add([
+            text(""),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
+            fixed(),
+            z(2),
+            "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
+        ])
+
+        onUpdate(() => {
+            if (!paused)
+                timer.text = (time() - timeSinceDead).toFixed(2)
+            console.log(player1.isPushing, player2.isPushing)
+            if (player1.isRespawning) {
+                ghost1.move(0, -80)
+            }
+            if (player2.isRespawning) {
+                ghost2.move(0, -80)
+            }
+
+            player1.Move(player1.speed)
+            player2.Move(player2.speed)
+            
+            if (Level5Config.win1 && Level5Config.win2) {
+                if (progress < 5)
+                    progress++
+                console.log((time() - timeSinceDead).toFixed(2))
+                console.log(death)
+                go("levelSelect")
+            }
+            // console.log(player1.death, player2.death)
+            // console.log(ghost.pos)
+        })
+        attachCamera(player1.gameObj, player2.gameObj, 0, 84, Level5Config.levelZoom)
+        
+        // level.drawLava()
+    },
+
+    6: () => {
+        Level6Config.hasKey = false
+        activeLevel = 6
+        timeSinceDead = time()
+        Level6Config.win1 = false
+        Level6Config.win2 = false
+        setGravity(Level6Config.gravity)
+
+        const level = new Level()
+        level.drawBackground("background")
+        level.drawMapLayout(level6Layout, level6Mappings, Level6Config.Scale)
+
+        const music = play("music", {
+            volume: 0.2,
+            loop: true,
+        })
+        onSceneLeave(() => {
+            player1.walk.stop()
+            music.stop()
+        })
+        
+        // pause menu
+        let paused = false
+        UIManager.UIButton()
+        const pauseMenu = UIManager.pauseMenu()
+        pauseMenu.text.text = "Level 6"
+        onClick("pause", (pause) => {
+            if (pause.hidden) return
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+        onClick("resume", (resume) => {
+            if (resume.hidden) return
+            if (paused) {
+                paused = false
+                player1.gameObj.paused = false
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = true;
+            }
+        })
+        onClick("exit", (exit) => {
+            if (exit.hidden) return
+            go("levelSelect")
+        })
+        onClick("restart", (restart) => {
+            if (restart.hidden) return
+            timeSinceDead = time()
+            player1.respawnPlayers()
+
+            go(6)
+        })
+        onClick("SFX", (target) => {
+            if (target.hidden) return
+            if (target.curAnim() !== "muteSFX") {
+                target.play("muteSFX") 
+                volume(0)
+            } else {
+                target.play("SFX")
+                volume(1)
+            }
+        })
+        onClick("music", (target) => {
+            if (target.hidden) return
+            music.paused = !music.paused
+            target.curAnim() !== "muteMusic" 
+            ? target.play("muteMusic") 
+            : target.play("music")
+        })
+
+        const player1 = new Player(
+            Level6Config.playerSpeed,
+            Level6Config.jumpForce,
+            Level6Config.nbLives,
+            "a",
+            "d",
+            "w",
+            1,
+            6,
+            false
+        )
+        const player2 = new Player(
+            Level5Config.playerSpeed,
+            Level5Config.jumpForce,
+            Level5Config.nbLives,
+            "left",
+            "right",
+            "up",
+            2,
+            6,
+            false
+        )
+        
+        const box1 = add([
+                sprite("items", {anim: "box"}),
+                pos(16 * 15, 188),
+                area(),
+                body(),
+                anchor("center"),
+                offscreen(),
+                scale(Level6Config.Scale),
+                "box1", 
+        ])
+
+        const box2 = add([
+                sprite("items", {anim: "box"}),
+                pos(16 * 21, 100),
+                area(),
+                body(),
+                anchor("center"),
+                offscreen(),
+                scale(Level6Config.Scale),
+                "box2", 
+        ])
+
+        const box3 = add([
+            sprite("items", {anim: "box"}),
+            pos(16 * 23, 0),
+            area(),
+            body(),
+            anchor("center"),
+            offscreen(),
+            scale(Level6Config.Scale),
+            "box3", 
+        ])
+
+        const box4 = add([
+            sprite("items", {anim: "box"}),
+            pos(16 * 15, 0),
+            area(),
+            body(),
+            anchor("center"),
+            offscreen(),
+            scale(Level6Config.Scale),
+            "box4", 
+        ])
+
+        const portalIn1 = add([
+            sprite("items", { anim: "portal_in" }),
+            anchor("center"),
+            pos(16 * 10 - 8, 148),
+            scale(Level6Config.Scale),
+            area( { shape: new Rect(vec2(0), 16, 14) }),
+            offscreen(),
+            "portalIn1"
+
+        ])
+
+        const portalOut1 = add([
+            sprite("items", { anim: "portal_out" }),
+            pos(16 * 27, 0),
+            scale(Level6Config.Scale),
+            area(),
+            offscreen(),
+            "portalOut1"
+        ])
+
+        onCollide("player1","portalIn1", () => {
+            play("portal")
+            player1.gameObj.pos = portalOut1.pos
+        })
+        onCollide("player2","portalIn1", () => {
+            play("portal")
+            player2.gameObj.pos = portalOut1.pos
+        })
+
+        const ghost1 = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level6Config.Scale),
+            "ghost"
+        ])
+        const ghost2 = add([
+            sprite("ghost"),
+            pos(10000, 10000),
+            anchor("center"),
+            opacity(0.5),
+            scale(Level6Config.Scale),
+            "ghost2"
+        ])
+
+        player1.makePlayer(Level6Config.playerStartPosX + 16, Level6Config.playerStartPosY, "player1", Level6Config.Scale)
+        player2.makePlayer(Level6Config.playerStartPosX, Level6Config.playerStartPosY, "player2", Level6Config.Scale)
+
+        player1.update()
+        player2.update()
+
+        onCollide("box1", "button_off", (source, target) => {
+            target.play("button_on")
+            setTimeout(() => {
+                source.pos.x = target.pos.x + 8
+                source.pos.y = target.pos.y + 8
+                source.use(body({ isStatic: true }))
+                Level6Config.button1 = true
+            }, 250);
+        })
+
+        onCollide("box2", "button_off", (source, target) => {
+            target.play("button_on")
+            setTimeout(() => {
+                source.pos.x = target.pos.x + 8
+                source.pos.y = target.pos.y + 8
+                source.use(body({ isStatic: true }))
+                Level6Config.button2 = true
+            }, 250);
+        })
+
+        buttonPressed(player1.gameObj, "Level6Config", "button3", Level6Config.Scale)
+        buttonUnpressed(player1.gameObj, "Level6Config", "button3", Level6Config.Scale)
+        buttonPressed(player2.gameObj, "Level6Config", "button4", Level6Config.Scale)
+        buttonUnpressed(player2.gameObj, "Level6Config", "button4", Level6Config.Scale)
+
+        player1.gameObj.onCollide("key", (key) => {     //player1 collision with key
+            play("key")
+            destroy(key)
+            console.log("key Get")
+            Level6Config.hasKey = true
+        })
+
+        player2.gameObj.onCollide("key", (key) => {     //player2 collision with key
+            play("key")
+            destroy(key)
+            console.log("key Get")
+            Level6Config.hasKey = true
+        })
+
+        player1.gameObj.onCollide("spike", () => {   //player1 collision with spike
+            play("dead")
+            player1.gameObj.angle = -90
+            player1.isRespawning = true
+            ghost1.pos = player1.gameObj.pos
+            if (!player2.isRespawning) {
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 6) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level6Config.win1 = false
+                    Level6Config.win2 = false
+                    timeSinceDead = time()
+                    go(6)
+                }, 3000)
+            }
+        })
+
+        player2.gameObj.onCollide("spike", () => {   //player2 collision with spike
+            play("dead")
+            player2.gameObj.angle = -90
+            player2.isRespawning = true
+            ghost2.pos = player2.gameObj.pos
+            if (!player1.isRespawning) {
+                death++
+                setTimeout(() => {
+                    if (activeLevel !== 6) return
+                    player1.isRespawning = false
+                    player1.respawnPlayers()
+                    player2.respawnPlayers()
+                    Level6Config.win1 = false
+                    Level6Config.win2 = false
+                    timeSinceDead = time()
+                    go(6)
+                }, 3000)
+            }
+        })
+
+        player1.gameObj.onCollide("door", (door) => {   //player1 collision with door
+            if (Level6Config.hasKey) {
+                play("door")
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
+                Level6Config.hasKey = false
+            }
+        })
+
+        player2.gameObj.onCollide("door", (door) => {   //player2 collision with door
+            if (Level6Config.hasKey) {
+                play("door")
+                door.play("open")
+                setTimeout(() => {
+                    destroy(door)
+                }, 400);
+                Level5Config.hasKey = false
+            }
+            player2.speed = 0
+        })
+
+        player1.gameObj.onCollide("finish", (finish) => {   //player1 collision with finish
+            Level6Config.win1 = true
+            player1.win = true
+            player1.gameObj.move(0, -16000)
+            player1.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
+        })
+
+        player2.gameObj.onCollide("finish", (finish) => {   //player2 collision with finish
+            Level6Config.win2 = true
+            player2.win = true
+            player2.gameObj.move(0, -16000)
+            player2.gameObj.use(body({gravityScale: 0}))
+            finish.play("finishOpen")
+            setTimeout(() => {
+                finish.play("finishClose")
+            }, 400);
+        })
+
+        onCollide("player1", "box1", () => { player1.isPushing = true })
+        onCollideEnd("player1", "box1", () => { player1.isPushing = false })
+        onCollide("player1", "box2", () => { player1.isPushing = true })
+        onCollideEnd("player1", "box2", () => { player1.isPushing = false })
+        onCollide("player2", "box1", () => { player2.isPushing = true })
+        onCollideEnd("player2", "box1", () => { player2.isPushing = false })
+        onCollide("player2", "box2", () => { player2.isPushing = true })
+        onCollideEnd("player2", "box2", () => { player2.isPushing = false })
+
+        onCollide("player1", "player2", () => {
+            player1.isPushing = true
+            player2.isPushing = true
+        })
+        
+        onCollideEnd("player1", "player2", () => {
+            player1.isPushing = false
+            player2.isPushing = false
+        })
+
+        onKeyPress("escape", () => {
+            if (!paused) {
+                paused = true
+                player1.gameObj.paused = true
+                player2.gameObj.paused = true
+            }
+            for (const obj in pauseMenu) {
+                pauseMenu[obj].hidden = false;
+            }
+        })
+
+        onKeyPress("r", () => {
+            timeSinceDead = time()
+            player1.respawnPlayers()
+
+            go(6)
+        })
+
+        let key = true
+        const timer = add([
+            text(""),
+            color("e0f0ea"),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            scale(1),
+            fixed(),
+            z(2),
+            "timer"
+        ])
+        const timerbg = add([
+            rect(120, 48),
+            anchor("center"),
+            pos(width()/2, 16 * 2),
+            color("3c2a4d"),
+            fixed(),
+            z(1),
+            "timerbg"
+        ])
+        onUpdate(() => {
+            if (!paused)
+                timer.text = (time() - timeSinceDead).toFixed(2)
+            if (player1.isRespawning) {
+                ghost1.move(0, -100)
+            }
+            if (player2.isRespawning) {
+                ghost2.move(0, -80)
+            }
+
+            player1.Move(player1.speed)
+            player2.Move(player2.speed)
+
+            if (Level6Config.button1 && Level6Config.button2 && Level6Config.button3 && Level6Config.button4 && key) {
+                key = false
+                add([
+                    sprite("items", {anim: "key"}), 
+                    pos(464, 98),
+                    scale(Level6Config.Scale),
+                    area(),
+                    "key"
+                ])
+            }
+
+
+            if (Level6Config.win1 && Level6Config.win2) {
+                if (progress < 6)
+                    progress++
+                console.log((time() - timeSinceDead).toFixed(2))
+                console.log(death)
+                go("levelSelect")
+            }
+        })
+        camPos((16 * 24), 100)
+        if (!isTouchscreen()) camScale(2, 2)
+        else camScale(1, 1)
+    },
 };
 
 for (const key in scenes) {
