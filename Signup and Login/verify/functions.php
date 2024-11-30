@@ -126,7 +126,11 @@ function update($data){
 function database_run($query,$vars = array())
 {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	$string = "pgsql:host=localhost;port=5432;dbname=game;user=postgres;password=eeklalat05;";
+=======
+	$string = "pgsql:host=localhost;port=5432;dbname=Database_Pemain_PairPlay;user=postgres;password=1Wak_Izul99;";
+>>>>>>> Stashed changes
 =======
 	$string = "pgsql:host=localhost;port=5432;dbname=Database_Pemain_PairPlay;user=postgres;password=1Wak_Izul99;";
 >>>>>>> Stashed changes

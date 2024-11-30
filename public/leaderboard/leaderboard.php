@@ -1,5 +1,68 @@
-<?php 
-require "../../Signup and Login/verify/functions.php";
+<?php
+// $host = 'localhost'; 
+// $dbname = 'Database_Pemain_PairPlay'; 
+// $username = 'postgres';
+// $password = '1Wak_Izul99';
+
+// try {
+//     $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $username, $password);
+//     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// } catch (PDOException $e) {
+//     die("Could not connect to the database: " . $e->getMessage());
+// }
+
+//ini buat ngeupdate leaderboard (ga terlalu dibutuhkan cuma ada aja lah)
+// function updateLeaderboard($pdo, $id_pemain, $id_level, $death, $time_spent, $easter_egg = 0)
+// {
+//     $gameQuery = "INSERT INTO game (id_pemain, id_level, death, time_spent, easter_egg) 
+//                   VALUES (:id_pemain, :id_level, :death, :time_spent, :easter_egg)";
+//     $stmt = $pdo->prepare($gameQuery);
+//     $stmt->execute([ 
+//         ':id_pemain' => $id_pemain,
+//         ':id_level' => $id_level,
+//         ':death' => $death,
+//         ':time_spent' => $time_spent,
+//         ':easter_egg' => $easter_egg
+//     ]);
+
+//     refreshLeaderboard($pdo);
+// }
+
+// //tarok di punya bintang sekalian waktu insert data ke game table
+// function refreshLeaderboard($pdo)
+// {
+//     $query = "
+//         INSERT INTO leaderboard (id_pemain, id_level, least_death, least_time)
+//         SELECT id_pemain, id_level, MIN(death) AS least_death, MIN(time_spent) AS least_time
+//         FROM game
+//         GROUP BY id_pemain, id_level
+//         ON CONFLICT (id_pemain, id_level) 
+//         DO UPDATE SET 
+//             least_death = LEAST(EXCLUDED.least_death, leaderboard.least_death), 
+//             least_time = LEAST(EXCLUDED.least_time, leaderboard.least_time);
+//     ";
+    
+//     $stmt = $pdo->prepare($query);
+//     $stmt->execute();
+// }
+
+//buat tampilin leaderboardnya
+function displayLeaderboard($pdo, $level, $type)
+{
+    $column = ($type === 'time') ? 'least_time' : 'least_death';
+    $query = "SELECT p.username, l.$column
+              FROM leaderboard l
+              JOIN pemain p ON p.id = l.id_pemain
+              WHERE l.id_level = :level
+              ORDER BY l.$column ASC";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([':level' => $level]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+$level = isset($_GET['level']) ? $_GET['level'] : 1;  
+$type = isset($_GET['type']) ? $_GET['type'] : 'time';
+
 ?>
 
 <!DOCTYPE html>
@@ -13,69 +76,75 @@ require "../../Signup and Login/verify/functions.php";
 </head>
 <body>
     <div class="container mt-4">
-        <ul class="nav nav-pills mb-4 justify-content-center" id ="pills-tab" role="tablist">
+        <!-- Tabs for Time and Death -->
+        <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active btn btn-dark" id="pills-time-tab" data-bs-toggle="pill" data-bs-target="#pills-time" type="button" role="tab" aria-controls="pills-time" aria-selected="true">Time</button>
+                <button class="nav-link <?php echo $type === 'time' ? 'active' : ''; ?> btn btn-dark" id="pills-time-tab" data-bs-toggle="pill" data-bs-target="#pills-time" type="button" role="tab" aria-controls="pills-time" aria-selected="true">Time</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link btn btn-dark" id="pills-death-tab" data-bs-toggle="pill" data-bs-target="#pills-death" type="button" role="tab" aria-controls="pills-death" aria-selected="false">Death</button>
+                <button class="nav-link <?php echo $type === 'death' ? 'active' : ''; ?> btn btn-dark" id="pills-death-tab" data-bs-toggle="pill" data-bs-target="#pills-death" type="button" role="tab" aria-controls="pills-death" aria-selected="false">Death</button>
             </li>
         </ul>
+
         <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="pills-time" role="tabpanel" aria-labelledby="pills-time-tab">
+            <!-- Time Tab -->
+            <div class="tab-pane fade <?php echo $type === 'time' ? 'show active' : ''; ?>" id="pills-time" role="tabpanel" aria-labelledby="pills-time-tab">
                 <ul class="nav nav-pills mb-3 justify-content-center" id="time-level-tab" role="tablist">
+                    <?php for ($i = 1; $i <= 4; $i++): ?>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active btn btn-dark" id="level1-tab" data-bs-toggle="pill" data-bs-target="#level1" type="button" role="tab" aria-controls="level1" aria-selected="true">Level 1</button>
+                        <button class="nav-link btn btn-dark <?php echo $i === $level ? 'active' : ''; ?>" id="level<?php echo $i; ?>-tab" data-bs-toggle="pill" data-bs-target="#level<?php echo $i; ?>" type="button" role="tab" aria-controls="level<?php echo $i; ?>" aria-selected="<?php echo $i === $level ? 'true' : 'false'; ?>">Level <?php echo $i; ?></button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link btn btn-dark" id="level2-tab" data-bs-toggle="pill" data-bs-target="#level2" type="button" role="tab" aria-controls="level2" aria-selected="false">Level 2</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link btn btn-dark" id="level3-tab" data-bs-toggle="pill" data-bs-target="#level3" type="button" role="tab" aria-controls="level3" aria-selected="false">Level 3</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link btn btn-dark" id="level4-tab" data-bs-toggle="pill" data-bs-target="#level4" type="button" role="tab" aria-controls="level4" aria-selected="false">Level 4</button>
-                    </li>
+                    <?php endfor; ?>
                 </ul>
                 <div class="tab-content" id="time-level-tabContent">
-                    <?php for ($level = 1; $level <= 4; $level++): ?>
-                    <div class="tab-pane fade <?php echo $level === 1 ? 'show active' : ''; ?>" id="level<?php echo $level; ?>" role="tabpanel" aria-labelledby="level<?php echo $level; ?>-tab">
-                        <h5>Leaderboard for Level <?php echo $level; ?> (Sorted by Least Time)</h5>
+                    <?php for ($i = 1; $i <= 4; $i++): ?>
+                    <div class="tab-pane fade <?php echo $i === $level ? 'show active' : ''; ?>" id="level<?php echo $i; ?>" role="tabpanel" aria-labelledby="level<?php echo $i; ?>-tab">
+                        <h5>Leaderboard for Level <?php echo $i; ?> (Sorted by Least Time)</h5>
                         <?php
-                        $results = displayLeaderboard($level, 'time');
-                        foreach ($results as $row) {
-                            echo "Username: " . htmlspecialchars($row['username']) . " | Time: " . htmlspecialchars($row['least_time']) . "<br>";
+                        $results = displayLeaderboard($pdo, $i, 'time');
+                        if ($results) {
+                            foreach ($results as $row) {
+                                echo "Username: " . htmlspecialchars($row['username']) . " | Time: " . htmlspecialchars($row['least_time']) . "<br>";
+                            }
+                        } else {
+                            echo "No data available.";
                         }
                         ?>
                     </div>
                     <?php endfor; ?>
                 </div>
-                    </div>
-                    <div class="tab-pane fade " id="pills-death" role="tabpanel" aria-labelledby="pills-death-tab">
-                    <ul class="nav nav-pills mb-3 justify-content-center" id="death-level-tab" role="tablist">
-                        <?php for ($level = 1; $level <= 4; $level++): ?>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link btn btn-dark <?php echo $level === 1 ? 'active' : ''; ?>" id="death-level<?php echo $level; ?>-tab" data-bs-toggle="pill" data-bs-target="#death-level<?php echo $level; ?>" type="button" role="tab" aria-controls="death-level<?php echo $level; ?>" aria-selected="<?php echo $level === 1 ? 'true' : 'false'; ?>">Level <?php echo $level; ?></button>
-                        </li>
-                        <?php endfor; ?>
-                    </ul>
+            </div>
+
+            <!-- Death Tab -->
+            <div class="tab-pane fade <?php echo $type === 'death' ? 'show active' : ''; ?>" id="pills-death" role="tabpanel" aria-labelledby="pills-death-tab">
+                <ul class="nav nav-pills mb-3 justify-content-center" id="death-level-tab" role="tablist">
+                    <?php for ($i = 1; $i <= 4; $i++): ?>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link btn btn-dark <?php echo $i === $level ? 'active' : ''; ?>" id="death-level<?php echo $i; ?>-tab" data-bs-toggle="pill" data-bs-target="#death-level<?php echo $i; ?>" type="button" role="tab" aria-controls="death-level<?php echo $i; ?>" aria-selected="<?php echo $i === $level ? 'true' : 'false'; ?>">Level <?php echo $i; ?></button>
+                    </li>
+                    <?php endfor; ?>
+                </ul>
                 <div class="tab-content" id="death-level-tabContent">
-                    <?php for ($level = 1; $level <= 4; $level++): ?>
-                    <div class="tab-pane fade <?php echo $level === 1 ? 'show active' : ''; ?>" id="death-level<?php echo $level; ?>" role="tabpanel" aria-labelledby="death-level<?php echo $level; ?>-tab">
-                        <h5>Leaderboard for Level <?php echo $level; ?> (Sorted by Least Deaths)</h5>
+                    <?php for ($i = 1; $i <= 4; $i++): ?>
+                    <div class="tab-pane fade <?php echo $i === $level ? 'show active' : ''; ?>" id="death-level<?php echo $i; ?>" role="tabpanel" aria-labelledby="death-level<?php echo $i; ?>-tab">
+                        <h5>Leaderboard for Level <?php echo $i; ?> (Sorted by Least Deaths)</h5>
                         <?php
-                        $results = displayLeaderboard($level, 'death');
-                        foreach ($results as $row) {
-                            echo "Username: " . htmlspecialchars($row['username']) . " | Deaths: " . htmlspecialchars($row['least_death']) . "<br>";
+                        $results = displayLeaderboard($pdo, $i, 'death');
+                        if ($results) {
+                            foreach ($results as $row) {
+                                echo "Username: " . htmlspecialchars($row['username']) . " | Deaths: " . htmlspecialchars($row['least_death']) . "<br>";
+                            }
+                        } else {
+                            echo "No data available.";
                         }
                         ?>
-                </div>
-                        <?php endfor; ?>
+                    </div>
+                    <?php endfor; ?>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
