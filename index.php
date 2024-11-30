@@ -28,6 +28,7 @@
                 background-color: #728a9d; 
                 color: white; 
             }
+            
         </style>
     </head>
     <body>
@@ -52,7 +53,7 @@
                     <div class="logged-in-container"> 
                         <div class="guest-container d-flex flex-row">
                             <div>
-                                <i class="bi bi-people-fill text-light fs-4 m-3 pencarian"></i>
+                                <i class="bi bi-people-fill text-light fs-2 m-3 pencarian"></i>
                             </div>
                             <a href="public/profilePage/profile.php">
                                 <img src="<?php echo $_SESSION['USER']->photo;?>" alt="User Avatar" class="gambar">
@@ -64,14 +65,15 @@
                         <div class='me-2'> 
                             <a href="public/registration/logout.php" class="btn btn-logout">Logout</a> 
                         </div>
-                        <div class='me-2'> 
-                            <a href="public/registration/delete.php" class="btn btn-logout">Delete Account</a> 
+                        <div class='me-2'>
+                            <button id="delete" class="btn btn-logout">Delete Account</button> 
+                            <!-- <a href="" id="delete" class="btn btn-logout">Delete Account</a>  -->
                         </div>
                     </div>
                     <?php else: ?>
                         <div class="guest-container d-flex flex-row">
                             <div class="">
-                                <i class="bi bi-people-fill text-light fs-4 m-3 pencarian"></i>
+                                <i class="bi bi-people-fill text-light fs-2 m-3 pencarian"></i>
                     
                             </div>
                             <a href="public/registration/login.php">
@@ -116,6 +118,7 @@
             <?php endif; ?>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="public/registration/index.js"></script>
     </body>
 </html>

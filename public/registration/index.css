@@ -1,5 +1,6 @@
 body {
   background-image: url("../../assets/FrontPage/dungeon2.png");
+  background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -173,4 +174,7 @@ a {
   border-radius: 6px;
   transition: 0.3s ease;
   font-size: 1rem;
+}
+.swal2-popup{
+ 
 }
