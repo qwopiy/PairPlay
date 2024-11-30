@@ -169,7 +169,7 @@ constructor(
       // this.idle()
       this.isMovingRight = false
     })
-    onKeyDown(this.up, () => {
+    onKeyPress(this.up, () => {
       this.jump()
     })
 
@@ -177,20 +177,20 @@ constructor(
     if (this.isTouchEnabled()) {
       const leftButton = add([
         sprite("moveButton", { anim: "left" }),
-        pos(10, height() - 100),
+        pos(40, height() - 100),
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "leftButton"
       ]);
       const rightButton = add([
         sprite("moveButton", { anim: "right" }),
-        pos(140, height() - 100),
+        pos(200, height() - 100),
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "rightButton"
       ]);
       const jumpButton = add([
@@ -199,7 +199,7 @@ constructor(
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "jumpButton"
       ]);
     }
@@ -236,7 +236,7 @@ constructor(
     this.gameObj.angle = 0
     this.win = false
     this.isRespawning = true
-    setTimeout(() => this.isRespawning = false, 1000)
+    setTimeout(() => this.isRespawning = false, 100)
     this.speed = 0
   }
   

@@ -110,14 +110,16 @@ function update($data){
 	if($_FILES['image-edit']['error'] === 4){
 		$photo = $_SESSION['USER']->photo;
 	}else{
+		$photo = $_SESSION['USER']->photo;
+		unlink('../../'.$photo);
 		$photo = upload();
 	}
  
 	//check
 	if(count($errors) == 0){
 
-		$username = $data['username'];
-		$bio = $data['bio'];
+		$username = htmlspecialchars($data['username']);
+		$bio = htmlspecialchars($data['bio']);
 		$id = $_SESSION['USER']->id;
 
 		$query = "update pemain set username = '$username', bio = '$bio', photo ='$photo' where id ='$id'";
@@ -170,7 +172,7 @@ function upload(){
 
 function database_run($query,$vars = array())
 {
-	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=anantha06;";
+	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=LaboseVirus69;";
 	$con = new PDO($string);
 
 	if(!$con){
@@ -251,7 +253,7 @@ function achievement_count($id){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
-	if(sizeof($_SESSION['progress']) == 4){
+	if(sizeof($_SESSION['progress']) == 6){
 		$_SESSION['ACHIEVEMENT_COUNT'] ++;
 	}
 
@@ -264,7 +266,7 @@ function achievement_count($id){
 }
 
 function progress($id){
-	$query = "SELECT id_level, min(win_time) as win_time, min(death) as death FROM game WHERE id_pemain = '$id' GROUP BY id_level";
+	$query = "SELECT id_level, min(time_spent) as time_spent, sum(death) as death FROM game WHERE id_pemain = '$id' GROUP BY id_level";
 	$row = database_run($query);
 
 	if(is_array($row)){
@@ -274,72 +276,3 @@ function progress($id){
 	}
 	return;
 }
-
-function completeGame($id_pemain, $id_level, $death, $time_spent) {
-    global $conn;
-
-    $stmt = $conn->prepare("INSERT INTO game (id_pemain, id_level, death, time_spent) VALUES (:id_pemain, :id_level, :death, :time_spent)");
-    $stmt->execute([
-        ':id_pemain' => $id_pemain,
-        ':id_level' => $id_level,
-        ':death' => $death,
-        ':time_spent' => $time_spent
-    ]);
-
-    $stmt = $conn->prepare("SELECT * FROM leaderboard WHERE id_pemain = :id_pemain AND id_level = :id_level");
-    $stmt->execute([
-        ':id_pemain' => $id_pemain,
-        ':id_level' => $id_level
-    ]);
-    
-    $leaderboardEntry = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($leaderboardEntry) {
-        if ($death < $leaderboardEntry['least_death'] || ($leaderboardEntry['least_death'] == 0 && $death > 0)) {
-            $stmt = $conn->prepare("UPDATE leaderboard SET least_death = :least_death, least_time = :least_time WHERE id_pemain = :id_pemain AND id_level = :id_level");
-            $stmt->execute([
-                ':least_death' => $death,
-                ':least_time' => $time_spent,
-                ':id_pemain' => $id_pemain,
-                ':id_level' => $id_level
-            ]);
-        }
-    } else {
-        $stmt = $conn->prepare("INSERT INTO leaderboard (id_pemain, id_level, least_death, least_time) VALUES (:id_pemain, :id_level, :least_death, :least_time)");
-        $stmt->execute([
-            ':id_pemain' => $id_pemain,
-            ':id_level' => $id_level,
-            ':least_death' => $death,
-            ':least_time' => $time_spent
-        ]);
-    }
-}
-
-function displayLeaderboard($id_level, $orderBy) {
-    global $conn;
-
-    $orderColumn = $orderBy === 'death' ? 'least_death' : 'least_time';
-    $stmt = $conn->prepare("SELECT p.username, l.least_death, l.least_time 
-                             FROM leaderboard l 
-                             JOIN pemain p ON l.id_pemain = p.id 
-                             WHERE l.id_level = :id_level 
-                             ORDER BY l.$orderColumn ASC");
-    $stmt->execute([':id_level' => $id_level]);
-
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-function populateLeaderboardFromGame() {
-    global $conn;
-
-    $stmt = $conn->prepare("SELECT id_pemain, id_level, death, time_spent FROM game");
-    $stmt->execute();
-    $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    foreach ($games as $game) {
-        completeGame($game['id_pemain'], $game['id_level'], $game['death'], $game['time_spent']);
-    }
-}
-
-populateLeaderboardFromGame();
-

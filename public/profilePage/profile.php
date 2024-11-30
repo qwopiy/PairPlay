@@ -57,7 +57,7 @@
         </div>
         <div class="mb-1 ps-2 pe-2">
           <label for="bio-edit" class="form-label heading text-dark">Bio</label>
-          <input id="bio-edit" name="bio" type="text" class="form-control" placeholder="Bio" maxlength="200" aria-label="bio" aria-describedby="basic-addon1" />
+          <input id="bio-edit" name="bio" type="text" class="form-control" placeholder="Bio" maxlength="150" aria-label="bio" aria-describedby="basic-addon1" />
         </div>
 
         <div class="row justify-content-between ps-2 pe-2">
@@ -92,7 +92,7 @@
                 <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown3" src="../../assets/FrontPage/death100.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
               <?php endif; ?>
 
-              <?php if(sizeof($_SESSION['progress']) >= 4) : ?>
+              <?php if(sizeof($_SESSION['progress']) >= 6) : ?>
                 <div class="p-2 achievment-dropdown"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2" width="100"/></div>
               <?php else: ?>
                 <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
@@ -142,8 +142,8 @@
       <section class="jumbotron text-center">
         <img src="../../<?= $_SESSION['USER']->photo; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
         <h1 id="name-profile" class="display-4"><?= $_SESSION['USER']->username; ?></h1>
-        <div>
-          <p id="bio-profile" class="lead"><?= $_SESSION['USER']->bio;  ?></p>
+        <div class='m-auto mb-md-2 p-2 md overflow-auto' style="width: 80%; height: 190px;">
+          <p id="bio-profile" class="lead text-break" ><?= $_SESSION['USER']->bio;  ?></p>
         </div>
       </section>
 
@@ -154,11 +154,6 @@
             <p class="mb-1 fs-3">Total Death</p>
             <p class="fs-4"> <?= isset($_SESSION['DEATH']->death) ? $_SESSION['DEATH']->death : 0; ?> </p>
           </div>
-          <!-- <div class="col-md-4 text-center">
-            <img src="../../assets/Frontpage/achievement.png" alt="profil" class="" width="150" />
-            <p class="mb-1 fs-3">Achievement</p>
-            <p class="fs-4"> <?= $_SESSION['ACHIEVEMENT_COUNT']; ?> </p>
-          </div> -->
           <div class="col-md-4 text-center">
             <img src="../../assets/Frontpage/achievement.png" alt="profil" class="" width="150" />
             <p class="mb-1 fs-3">Achievement</p>
@@ -175,7 +170,7 @@
           <div class="row text-center">
             <?php for($i = 1; $i<=4; $i++): ?>
               <div class="col-md-3">
-                <img src="../../<?=$achievement[$i];?>" id="<?='achievment-profile'.$i?>" alt="profil" class="m-sm-2" width="200" />
+                <img src="../../<?=$achievement[$i];?>" id="achievment-profile<?=$i?>" alt="profil" class="m-sm-2" width="200" />
               </div>
             <?php endfor; ?>
           </div>
@@ -188,7 +183,7 @@
         </div>
         <div class="container">
           <div class="row text-center">
-            <?php for($i = 1; $i<=4; $i++): ?>
+            <?php for($i = 1; $i<=6; $i++): ?>
               <div class="col-md-3">
                 <?php if(sizeof($_SESSION['progress']) >= $i):?>
                   <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="border: 5px solid #00ff08" />
@@ -201,19 +196,19 @@
                     <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->death) ? $_SESSION['progress'][$i-1]->death : 0?></p>
                   </div>
                   <div>
-                    <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="50" />
+                    <img src="../../assets/Frontpage/stopwatch.png" alt="profil" class="" width="50" />
                     <?php
-                      if(isset($_SESSION['progress'][$i-1]->win_time)){
-                        $arr = $_SESSION['progress'][$i-1]->win_time;
+                      if(isset($_SESSION['progress'][$i-1]->time_spent)){
+                        $arr = $_SESSION['progress'][$i-1]->time_spent;
                         $arr = explode(':', $arr);
-                        if($arr[0]='00'){
+                        if($arr[0]=='00'){
                           $time = $arr[1]. ':'. $arr[2];
                         }else{
                           $time = implode(':', $arr);
                         }
                       }
                     ?>
-                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->win_time) ? $time : '00:00'?></p>
+                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->time_spent) ? $time : '00:00'?></p>
                   </div>
                 </div>
               </div>

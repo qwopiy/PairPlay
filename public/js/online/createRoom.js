@@ -14,6 +14,7 @@ document.getElementById('joinForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const roomCode = e.target.room.value;
     socket.emit('join room', roomCode);
+    window.location.href = `levelSelect.html?code=${roomCode}`; 
 });
 
 socket.on('room created', (roomCode) => {
