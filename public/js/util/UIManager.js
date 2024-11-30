@@ -51,8 +51,7 @@ class UI {
         ])
 
         add([
-          // sprite("5"),
-          rect(320, 320),
+          sprite("5"),
           fixed(),
           anchor("center"),
           area(),
@@ -62,8 +61,7 @@ class UI {
           "5"
         ])
         add([
-          // sprite("6"),
-          rect(320, 320),
+          sprite("6"),
           fixed(),
           anchor("center"),
           area(),
