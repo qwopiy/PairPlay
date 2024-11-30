@@ -143,11 +143,14 @@ export const load = {
                 finishOpen: 7,
             }
         })
+        loadSprite("win", "../../assets/FrontPage/end.png")
 
         loadSprite("1", "../../assets/FrontPage/Progress1.png")
         loadSprite("2", "../../assets/FrontPage/Progress2.png")
         loadSprite("3", "../../assets/FrontPage/Progress3.png")
         loadSprite("4", "../../assets/FrontPage/Progress4.png")
+        loadSprite("5", "../../assets/FrontPage/Progress5.png")
+        loadSprite("6", "../../assets/FrontPage/Progress6.png")
     },
 
     sounds: () => {
@@ -160,5 +163,6 @@ export const load = {
         loadSound("key", "../../assets/Sounds/key.wav")
         loadSound("portal", "../../assets/Sounds/portal.wav")
         loadSound("bounce", "../../assets/Sounds/bounce.wav")
+        loadSound("boom", "../../assets/Sounds/boom.mp3")
     }
 }

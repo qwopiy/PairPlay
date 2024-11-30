@@ -7,6 +7,8 @@ import { Player } from "../entity/player.js";
 import { Level1Config } from "../content/level1/config.js";
 
 const socket = io();
+const urlParams = new URLSearchParams(window.location.search);
+const roomCode = urlParams.get('code');
 let respawning = false;
 
 kaboom({
@@ -50,6 +52,7 @@ function buttonUnpressed(object, config, Button, Scale) {
 
 const scenes = {
     1: () => {
+        socket.emit('join room', roomCode)
         Level1Config.win1 = false
         Level1Config.win2 = false
         socket.emit('inLevel', true)
@@ -95,8 +98,8 @@ const scenes = {
             }
         })
         onClick("exit", () => {
-            socket.emit('exit')
-            go("levelSelect")
+            socket.emit('exit', roomCode)
+            window.location.href = `levelSelect.html?code=${roomCode}`; 
         })
         onClick("restart", () => {
             socket.emit('keyPress', 'r')
@@ -120,12 +123,12 @@ const scenes = {
         const frontEndPlayers = {}
         const ghost = {}
 
-        let playerSpawned = false
-        // onKeyPress("space", () => {
-        //     // create player
-        //     socket.emit('createPlayer')
-        //     playerSpawned = true    
-        // })
+        onKeyPress("space", () => {
+            socket.emit('testRoom', 'bintang', roomCode)
+        })
+        socket.on('testRoom', text => {
+            console.log(text)
+        })
 
         // socket.on('createPlayer', (backEndPlayers) => {
         //     for (const id in backEndPlayers) {
