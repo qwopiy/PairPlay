@@ -46,22 +46,28 @@
 //     $stmt->execute();
 // }
 
+require "../../Signup and Login/verify/functions.php";
+
 //buat tampilin leaderboardnya
-function displayLeaderboard($pdo, $level, $type)
+$level = isset($_GET['level']) ? $_GET['level'] : 1;  
+$type = isset($_GET['type']) ? $_GET['type'] : 'time';
+
+function displayLeaderboard($level, $type)
 {
     $column = ($type === 'time') ? 'least_time' : 'least_death';
     $query = "SELECT p.username, l.$column
               FROM leaderboard l
               JOIN pemain p ON p.id = l.id_pemain
-              WHERE l.id_level = :level
+              WHERE l.id_level = $level
               ORDER BY l.$column ASC";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([':level' => $level]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $row = database_run($query);
+    return $row;
+    
+    // $stmt = $pdo->prepare($query);
+    // $stmt->execute([':level' => $level]);
+    // return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$level = isset($_GET['level']) ? $_GET['level'] : 1;  
-$type = isset($_GET['type']) ? $_GET['type'] : 'time';
 
 ?>
 
@@ -98,19 +104,19 @@ $type = isset($_GET['type']) ? $_GET['type'] : 'time';
                 </ul>
                 <div class="tab-content" id="time-level-tabContent">
                     <?php for ($i = 1; $i <= 4; $i++): ?>
-                    <div class="tab-pane fade <?php echo $i === $level ? 'show active' : ''; ?>" id="level<?php echo $i; ?>" role="tabpanel" aria-labelledby="level<?php echo $i; ?>-tab">
-                        <h5>Leaderboard for Level <?php echo $i; ?> (Sorted by Least Time)</h5>
-                        <?php
-                        $results = displayLeaderboard($pdo, $i, 'time');
-                        if ($results) {
-                            foreach ($results as $row) {
-                                echo "Username: " . htmlspecialchars($row['username']) . " | Time: " . htmlspecialchars($row['least_time']) . "<br>";
+                        <div class="tab-pane fade <?php echo $i === $level ? 'show active' : ''; ?>" id="level<?php echo $i; ?>" role="tabpanel" aria-labelledby="level<?php echo $i; ?>-tab">
+                            <h5>Leaderboard for Level <?php echo $i; ?> (Sorted by Least Time)</h5>
+                            <?php
+                            $results = displayLeaderboard( $i, 'time');
+                            if ($results) {
+                                foreach ($results as $row) {
+                                    echo "Username: " . htmlspecialchars($row['username']) . " | Time: " . htmlspecialchars($row['least_time']) . "<br>";
+                                }
+                            } else {
+                                echo "No data available.";
                             }
-                        } else {
-                            echo "No data available.";
-                        }
-                        ?>
-                    </div>
+                            ?>
+                        </div>
                     <?php endfor; ?>
                 </div>
             </div>
@@ -129,7 +135,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : 'time';
                     <div class="tab-pane fade <?php echo $i === $level ? 'show active' : ''; ?>" id="death-level<?php echo $i; ?>" role="tabpanel" aria-labelledby="death-level<?php echo $i; ?>-tab">
                         <h5>Leaderboard for Level <?php echo $i; ?> (Sorted by Least Deaths)</h5>
                         <?php
-                        $results = displayLeaderboard($pdo, $i, 'death');
+                        $results = displayLeaderboard($i, 'death');
                         if ($results) {
                             foreach ($results as $row) {
                                 echo "Username: " . htmlspecialchars($row['username']) . " | Deaths: " . htmlspecialchars($row['least_death']) . "<br>";
