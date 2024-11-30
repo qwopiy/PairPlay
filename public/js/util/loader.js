@@ -149,6 +149,8 @@ export const load = {
         loadSprite("2", "../../assets/FrontPage/Progress2.png")
         loadSprite("3", "../../assets/FrontPage/Progress3.png")
         loadSprite("4", "../../assets/FrontPage/Progress4.png")
+        loadSprite("5", "../../assets/FrontPage/Progress5.png")
+        loadSprite("6", "../../assets/FrontPage/Progress6.png")
     },
 
     sounds: () => {
