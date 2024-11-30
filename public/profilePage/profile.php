@@ -170,7 +170,7 @@
           <div class="row text-center">
             <?php for($i = 1; $i<=4; $i++): ?>
               <div class="col-md-3">
-                <img src="../../<?=$achievement[$i];?>" id="<?='achievment-profile'.$i?>" alt="profil" class="m-sm-2" width="200" />
+                <img src="../../<?=$achievement[$i];?>" id="achievment-profile<?=$i?>" alt="profil" class="m-sm-2" width="200" />
               </div>
             <?php endfor; ?>
           </div>
@@ -196,12 +196,12 @@
                     <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->death) ? $_SESSION['progress'][$i-1]->death : 0?></p>
                   </div>
                   <div>
-                    <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="50" />
+                    <img src="../../assets/Frontpage/stopwatch.png" alt="profil" class="" width="50" />
                     <?php
                       if(isset($_SESSION['progress'][$i-1]->time_spent)){
                         $arr = $_SESSION['progress'][$i-1]->time_spent;
                         $arr = explode(':', $arr);
-                        if($arr[0]='00'){
+                        if($arr[0]=='00'){
                           $time = $arr[1]. ':'. $arr[2];
                         }else{
                           $time = implode(':', $arr);

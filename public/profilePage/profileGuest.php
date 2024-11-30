@@ -47,7 +47,7 @@
       <section class="jumbotron text-center">
         <img src="../../<?= $_SESSION['GUEST']->photo; ?>" id="img-profile" alt="profil" class="rounded-circle pt-2" width="250" height="250" />
         <h1 id="name-profile" class="display-4"><?= $_SESSION['GUEST']->username; ?></h1>
-        <div>
+        <div class='m-auto mb-md-2 p-2 md overflow-auto' style="width: 80%; height: 190px;">
           <p id="bio-profile" class="lead"><?= $_SESSION['GUEST']->bio;  ?></p>
         </div>
       </section>
@@ -102,18 +102,18 @@
                   </div>
                   <div>
                     <?php
-                      if(isset($_SESSION['progress'][$i-1]->win_time)){
-                        $arr = $_SESSION['progress'][$i-1]->win_time;
+                      if(isset($_SESSION['progress'][$i-1]->time_spent)){
+                        $arr = $_SESSION['progress'][$i-1]->time_spent;
                         $arr = explode(':', $arr);
-                        if($arr[0]='00'){
+                        if($arr[0]=='00'){
                           $time = $arr[1]. ':'. $arr[2];
                         }else{
                           $time = implode(':', $arr);
                         }
                       }
                     ?>
-                    <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="50" />
-                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->win_time) ? $time : '00:00'?></p>
+                    <img src="../../assets/Frontpage/stopwatch.png" alt="profil" class="" width="50" />
+                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->time_spent) ? $time : '00:00'?></p>
                   </div>
                 </div>
               </div>
