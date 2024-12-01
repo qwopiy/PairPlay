@@ -9,13 +9,118 @@ body {
 }
 
 #time-level-tabContent, #death-level-tabContent {
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 10px;
+    background-color: #503a65;
+    border-radius: 10px; 
+    opacity: 0.85; 
+    padding: 20px; 
+    margin-top: 20px; 
 }
 
 .tab-content {
     text-align: center;
 }
 .nav-pills .nav-link {
-    margin-right: 10px;
+    background-color: #503a65; 
+    color: #ffffff;           
+    border-radius: 5px;
+    margin: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: #6b5085; 
+    color: #ffffff;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #3e2850; 
+    color: #ffffff;
+}
+
+.leaderboard-container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 12px 18px; 
+    margin-bottom: 15px; 
+    border-radius: 8px; 
+    background-color: #574f7d; 
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.3s ease, transform 0.2s ease; 
+}
+
+.leaderboard-container:hover {
+    background-color: rgba(149, 173, 190, 1); 
+    transform: scale(1.02); 
+}
+
+.leaderboard-container .username {
+    font-weight: bold; 
+    font-size: 1rem; 
+    flex: 1; 
+    text-align: left; 
+    margin-right: 10px; 
+    color: #ffffff; 
+}
+
+.leaderboard-container .record {
+    font-size: 1rem; 
+    font-weight: bold; 
+    text-align: right; 
+    color: #ffffff; 
+}
+
+.leaderboard-container.fade {
+    animation: fadeEffect 1s ease-in-out;
+}
+
+@keyframes fadeEffect {
+    0% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0.85;
+    }
+}
+
+h5 {
+    color: #ffffff;
+}
+
+.username-link {
+    color: #e0f0ea; 
+    font-weight: bold; 
+    font-size: 16px; 
+    text-decoration: none; 
+}
+
+.username-link:hover {
+    color: #ffffff; 
+    text-decoration: underline; 
+}
+
+.record {
+    color: #ffffff; 
+    font-size: 16px; 
+    font-weight: bold; 
+}
+
+.result-content {
+    gap: 20px; 
+}
+
+.tab-content {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .leaderboard-container {
+        flex-direction: column; 
+        align-items: flex-start; 
+    }
+
+    .record {
+        margin-top: 10px; 
+    }
 }

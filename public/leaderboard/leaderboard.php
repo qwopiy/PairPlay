@@ -37,14 +37,25 @@
                             <h5>Leaderboard for Level <?php echo $i; ?> (Sorted by Least Time)</h5>
                             <?php
                             $results = displayLeaderboard( $i, 'time');
-                            if ($results) {
-                                foreach ($results as $row) {
-                                    echo "Username: " . htmlspecialchars($row->username) . " | Time: " . htmlspecialchars($row->least_time) . "<br>";
-                                }
-                            } else {
-                                echo "No data available.";
-                            }
                             ?>
+                            <?php if ($results) : ?>
+                                <div>
+                                    <?php foreach ($results as $row) : ?>
+                                        <div class="result-content d-flex flex-row justify-content-center align-items-center leaderboard-container">
+                                            <div class="username">
+                                                <a href="../profilePage/profileGuest.php?username=<?= $row->username ?>" class="username-link">
+                                                    <?= $row->username ?>
+                                                </a>
+                                            </div>
+                                            <div class="record ms-3">
+                                                <?= $type === 'time' ? $row->least_time : $row->least_death ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <?= "No data available."; ?>
+                             <?php endif;?>
                         </div>
                     <?php endfor; ?>
                 </div>
@@ -66,15 +77,26 @@
                         <h5>Leaderboard for Level <?php echo $i; ?> (Sorted by Least Deaths)</h5>
                         <?php
                         $results = displayLeaderboard($i, 'death');
-                        if ($results) {
-                            foreach ($results as $row) {
-                                echo "Username: " . htmlspecialchars($row->username) . " | Deaths: " . htmlspecialchars($row->least_death) . "<br>";
-                            }
-                        } else {
-                            echo "No data available.";
-                        }
                         ?>
-                    </div>
+                        <?php if ($results) : ?>
+                                <div>
+                                    <?php foreach ($results as $row) : ?>
+                                        <div class="result-content d-flex flex-row justify-content-center align-items-center leaderboard-container">
+                                            <div class="username">
+                                                <a href="../profilePage/profileGuest.php?username=<?= $row->username ?>" class="username-link">
+                                                    <?= $row->username ?>
+                                                </a>
+                                            </div>
+                                            <div class="record ms-3">
+                                                <?= $type === 'time' ? $row->least_death : $row->least_time ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    </div>
+                                <?php else: ?>
+                                    <?= "No data available."; ?>
+                            <?php endif;?>
+                        </div>
                     <?php endfor; ?>
                 </div>
             </div>
