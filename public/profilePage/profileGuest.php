@@ -39,7 +39,7 @@
     <div class="container all p-md-3">
       <div class="row justify-content-between pt-md-2">
         <div class="col-md-4">
-          <a class="Back" href="../../index.php">
+          <a class="Back" href="javascript:history.back()">
             <i class="bi bi-arrow-left fs-2 text-light ms-4"></i>
           </a>
         </div>
@@ -105,7 +105,9 @@
                       if(isset($_SESSION['progress'][$i-1]->time_spent)){
                         $arr = $_SESSION['progress'][$i-1]->time_spent;
                         $arr = explode(':', $arr);
-                        if($arr[0]=='00'){
+                        if($arr[0]=='00' && $arr[1]=='00'){
+                          $time = $arr[2];
+                        }else if($arr[0]=='00'){
                           $time = $arr[1]. ':'. $arr[2];
                         }else{
                           $time = implode(':', $arr);

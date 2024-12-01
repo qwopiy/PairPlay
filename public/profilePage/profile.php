@@ -201,7 +201,9 @@
                       if(isset($_SESSION['progress'][$i-1]->time_spent)){
                         $arr = $_SESSION['progress'][$i-1]->time_spent;
                         $arr = explode(':', $arr);
-                        if($arr[0]=='00'){
+                        if($arr[0]=='00' && $arr[1]=='00'){
+                          $time = $arr[2];
+                        }else if($arr[0]=='00'){
                           $time = $arr[1]. ':'. $arr[2];
                         }else{
                           $time = implode(':', $arr);
