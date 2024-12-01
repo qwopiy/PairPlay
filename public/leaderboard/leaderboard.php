@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="leaderboard.css">
 </head>
 <body>
+
+    <a href="index.php" class="btn btn-light position-fixed top-0 start-0 m-3">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+    
     <div class="container mt-4">
         <!-- Tabs for Time and Death -->
         <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
