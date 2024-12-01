@@ -11,7 +11,7 @@
 </head>
 <body>
 
-    <a href="index.php" class="btn btn-light position-fixed top-0 start-0 m-3">
+    <a href="../../index.php" class="btn btn-light position-fixed top-0 start-0 m-3">
         <i class="fas fa-arrow-left"></i> Back
     </a>
     

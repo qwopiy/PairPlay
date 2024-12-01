@@ -105,9 +105,6 @@
                 <!-- Content for guests (not logged in) -->
                 <div class="text-center">
                     <form action="" method="post">
-                        <div class="d-grid gap-2 col-9 mx-auto">
-                            <input type="text" name="username" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="Username" minlength="10" value="<?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?>">
-                        </div>
                         <div class="d-grid gap-2 col-5 mx-auto mt-2">
                             <a href="public/selection/selection.html" class="btn btn-login">Play</a>
                             <a href="public/leaderboard/leaderboard.php" class="btn btn-login">Leaderboard</a>

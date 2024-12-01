@@ -25,7 +25,6 @@ kaboom({
     canvas: document.getElementById("game"),
 });
 
-// nanti mikirin kirim data 2 player
 function sendClearData(data) {
     fetch("../../Signup and Login/verify/clearFunction.php" ,{
         "method" : "POST",

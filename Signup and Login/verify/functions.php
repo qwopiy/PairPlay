@@ -172,7 +172,7 @@ function upload(){
 
 function database_run($query,$vars = array())
 {
-	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=anantha06;";
+	$string = "pgsql:host=localhost;port=5432;dbname=pairplay;user=postgres;password=eeklalat05;";
 	$con = new PDO($string);
 
 	if(!$con){
