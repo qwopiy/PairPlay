@@ -36,7 +36,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST")
                         </a>
                         <div class="mb-3">
                                 <label for="Inputusername" class="form-label">Username</label>
-                                <input type="text" name="username" class="form-control" aria-label="Sizing input" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Your Username">
+                                <input type="text" name="username" class="form-control" placeholder="Enter Your Username" maxlength="20">
                         </div>
                         <div class="mb-3">
                                 <label for="InputEmail" class="form-label">Email address</label>
