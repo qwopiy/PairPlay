@@ -13,7 +13,9 @@
             $death = $data['death'];
             $time = $data['time'];
             $easter_egg = $data['easter_egg'];
+            $progress = $data['progress'];
             $check = database_run("INSERT INTO game(id_pemain, id_level, death, time_spent, easter_egg) VALUES ($id, $level, $death, ($time || ' seconds')::INTERVAL::TIME, $easter_egg);");
+            $progressUpdate = database_run("UPDATE pemain SET progress = $progress WHERE id = $id;");
             $liderbord = database_run("INSERT INTO leaderboard (id_pemain, id_level, least_death, least_time)
                                     SELECT id_pemain, id_level, MIN(death) AS least_death, MIN(time_spent) AS least_time
                                     FROM game

@@ -17,6 +17,17 @@ import { Level4Config } from "./contentSP/level4/config.js";
 import { Level5Config } from "./contentSP/level5/config.js";
 import { Level6Config } from "./contentSP/level6/config.js";
 
+window.onbeforeunload = function(){
+    if (activeLevel == 0) return null; 
+    let data = {
+        "level": activeLevel,
+        "death": death,
+        "easter_egg": 0
+    }
+    sendDeathData(data)
+    return null;
+  };
+
 kaboom({
     // height: 720,
     // width: 1280,
@@ -24,6 +35,8 @@ kaboom({
     maxFPS: 60,
     canvas: document.getElementById("game"),
 });
+
+console.log(progress)
 
 function sendClearData(data) {
     fetch("../../Signup and Login/verify/clearFunction.php" ,{
@@ -94,7 +107,7 @@ function teleport(object, portalIn, portalOut) {
 }
 
 let timeSinceDead = time()
-let progress = 5;
+// let progress = 5;
 let activeLevel = 0;
 let death = 0;
 
@@ -504,6 +517,7 @@ const scenes = {
                     "death": death,
                     "time": (time() - timeSinceDead).toFixed(2),
                     "easter_egg": 0,
+                    "progress": progress
                 }
                 sendClearData(data)
                 go("levelSelect")
@@ -743,6 +757,7 @@ const scenes = {
                     "death": death,
                     "time": (time() - timeSinceDead).toFixed(2),
                     "easter_egg": 0,
+                    "progress": progress
                 }
                 sendClearData(data)
                 go("levelSelect")
@@ -1043,6 +1058,7 @@ const scenes = {
                     "death": death,
                     "time": (time() - timeSinceDead).toFixed(2),
                     "easter_egg": 0,
+                    "progress": progress
                 }
                 sendClearData(data)
                 go("levelSelect")
@@ -1361,6 +1377,7 @@ const scenes = {
                     "death": death,
                     "time": (time() - timeSinceDead).toFixed(2),
                     "easter_egg": 0,
+                    "progress": progress
                 }
                 sendClearData(data)
                 go("levelSelect")
@@ -1575,7 +1592,7 @@ const scenes = {
             player1.Move(player1.speed)
             
             if (Level5Config.win1) {
-                if (progress < 1)
+                if (progress < 5)
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
@@ -1584,6 +1601,7 @@ const scenes = {
                     "death": death,
                     "time": (time() - timeSinceDead).toFixed(2),
                     "easter_egg": 0,
+                    "progress": progress
                 }
                 sendClearData(data)
                 go("levelSelect")
@@ -1927,6 +1945,7 @@ const scenes = {
                     "death": death,
                     "time": (time() - timeSinceDead).toFixed(2),
                     "easter_egg": 0,
+                    "progress": progress
                 }
                 sendClearData(data)
                 go("levelSelect")

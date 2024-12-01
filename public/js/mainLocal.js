@@ -94,7 +94,6 @@ function teleport(object, portalIn, portalOut) {
 }
 
 let timeSinceDead = time()
-let progress = 5;
 let activeLevel = 0;
 let death = 0;
 
@@ -510,6 +509,12 @@ const scenes = {
                 destroy(easterEgg[obj])
             }
             UIManager.easteregg()
+            let data = {
+                "level": 1,
+                "death": 0,
+                "easter_egg": 1
+            }
+            sendDeathData(data)
         })
 
         player2.gameObj.onCollide("easterEgg", () => {
@@ -517,6 +522,12 @@ const scenes = {
                 destroy(easterEgg[obj])
             }
             UIManager.easteregg()
+            let data = {
+                "level": 1,
+                "death": 0,
+                "easter_egg": 1
+            }
+            sendDeathData(data)
         })
 
         let key = true
@@ -570,6 +581,14 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 1,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                    "progress": progress
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
             // console.log(player1.death, player2.death)
@@ -870,6 +889,14 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 2,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                    "progress": progress
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
         })
@@ -1235,6 +1262,14 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 3,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                    "progress": progress
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
             // console.log(box2.vel)
@@ -1626,6 +1661,14 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 4,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                    "progress": progress
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
         })
@@ -1935,6 +1978,14 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 5,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                    "progress": progress
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
             // console.log(player1.death, player2.death)
@@ -2350,6 +2401,14 @@ const scenes = {
                     progress++
                 console.log((time() - timeSinceDead).toFixed(2))
                 console.log(death)
+                let data = {
+                    "level": 6,
+                    "death": death,
+                    "time": (time() - timeSinceDead).toFixed(2),
+                    "easter_egg": 0,
+                    "progress": progress
+                }
+                sendClearData(data)
                 go("levelSelect")
             }
         })
