@@ -26,13 +26,6 @@ let achievmentSave = [document.getElementById("achievment-edit1"), document.getE
 
 let imageSrc;
 
-// for(var i=0; i<4; i++){
-//   if(achievmentSave[i].src != "http://localhost/PairPlay/assets/FrontPage/transparent.png"){
-//     // achievmentSaveBoolean[i] = true; 
-//     console.log('a')
-//   }   
-// }
-
 minusBtn.addEventListener("click", () =>{
   for(var i=3; i>=0; i--){
     if(achievmentSave[i].src != "http://localhost/PairPlay/assets/FrontPage/transparent.png"){

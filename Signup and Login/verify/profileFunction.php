@@ -11,6 +11,7 @@
         }
         unset($value);
         $data = json_encode($data, true);
+
         $check = database_run("update pemain SET achievement = '$data' WHERE id = '$id'");
         echo $data;
     }

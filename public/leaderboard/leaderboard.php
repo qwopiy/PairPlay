@@ -53,6 +53,7 @@
             <!-- Death Tab -->
             <div class="tab-pane fade <?php echo $type === 'death' ? 'show active' : ''; ?>" id="pills-death" role="tabpanel" aria-labelledby="pills-death-tab">
                 <ul class="nav nav-pills mb-3 justify-content-center" id="death-level-tab" role="tablist">
+
                     <?php for ($i = 1; $i <= 6; $i++): ?>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link btn btn-dark <?php echo $i === $level ? 'active' : ''; ?>" id="death-level<?php echo $i; ?>-tab" data-bs-toggle="pill" data-bs-target="#death-level<?php echo $i; ?>" type="button" role="tab" aria-controls="death-level<?php echo $i; ?>" aria-selected="<?php echo $i === $level ? 'true' : 'false'; ?>">Level <?php echo $i; ?></button>
