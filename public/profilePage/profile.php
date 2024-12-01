@@ -75,34 +75,34 @@
             <div class="d-md-flex flex-row mb-sm-3">
 
               <?php if(isset($_SESSION['DEATH']->death) && $_SESSION['DEATH']->death >= 10) : ?>
-                <div class="p-2 achievment-dropdown"><img id="achievment-dropdown1" src="../../assets/FrontPage/Death10.png" alt="profil" class="m-sm-2" width="100"/></div>
+                <div class="p-2 achievment-dropdown"><img id="achievment-dropdown1" src="../../assets/FrontPage/Death10.png" alt="profil" class="m-sm-2 " width="100"/></div>
               <?php else: ?>
-                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown1" src="../../assets/FrontPage/Death10.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
+                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown1" src="../../assets/FrontPage/Death10.png" alt="profil" class="m-sm-2 " width="100" style="filter: grayscale(100%);"/></div>
               <?php endif; ?>
 
               <?php if(isset($_SESSION['DEATH']->death) && $_SESSION['DEATH']->death >= 50) : ?>
-                <div class="p-2 achievment-dropdown" aria-disabled="true"><img id="achievment-dropdown2" src="../../assets/FrontPage/death50.png" alt="profil" class="m-sm-2" width="100"/></div>
+                <div class="p-2 achievment-dropdown" aria-disabled="true"><img id="achievment-dropdown2" src="../../assets/FrontPage/death50.png" alt="profil" class="m-sm-2 " width="100"/></div>
               <?php else: ?>
-                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown2" src="../../assets/FrontPage/death50.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
+                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown2" src="../../assets/FrontPage/death50.png" alt="profil" class="m-sm-2 " width="100" style="filter: grayscale(100%);"/></div>
               <?php endif; ?>
 
               <?php if(isset($_SESSION['DEATH']->death) && $_SESSION['DEATH']->death >= 100) : ?>
-                <div class="p-2 achievment-dropdown" ><img id="achievment-dropdown3" src="../../assets/FrontPage/death100.png" alt="profil" class="m-sm-2" width="100"/></div>
+                <div class="p-2 achievment-dropdown" ><img id="achievment-dropdown3" src="../../assets/FrontPage/death100.png" alt="profil" class="m-sm-2 " width="100"/></div>
               <?php else: ?>
-                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown3" src="../../assets/FrontPage/death100.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
+                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown3" src="../../assets/FrontPage/death100.png" alt="profil" class=" " width="100" style="filter: grayscale(100%);"/></div>
               <?php endif; ?>
 
               <?php if(sizeof($_SESSION['progress']) >= 6) : ?>
-                <div class="p-2 achievment-dropdown"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2" width="100"/></div>
+                <div class="p-2 achievment-dropdown"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2 " width="100"/></div>
               <?php else: ?>
-                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
+                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown4" src="../../assets/FrontPage/end.png" alt="profil" class="m-sm-2 " width="100" style="filter: grayscale(100%);"/></div>
               <?php endif; ?>
             </div>
             <div class="d-md-flex flex-row mb-sm-3">
               <?php if(isset($_SESSION['EASTER_EGG'])) : ?>
-                <div class="p-2 achievment-dropdown"><img id="achievment-dropdown5" src="../../assets/FrontPage/easteregg.png" alt="profil" class="m-sm-2" width="100"/></div>
+                <div class="p-2 achievment-dropdown"><img id="achievment-dropdown5" src="../../assets/FrontPage/easteregg.png" alt="profil" class=" m-sm-2" width="100"/></div>
               <?php else: ?>
-                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown5" src="../../assets/FrontPage/easteregg.png" alt="profil" class="m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
+                <div class="p-2 achievment-dropdown dropdown-item disabled" aria-disabled="true"><img id="achievment-dropdown5" src="../../assets/FrontPage/easteregg.png" alt="profil" class=" m-sm-2" width="100" style="filter: grayscale(100%);"/></div>
               <?php endif; ?>
             </div>
           </div>
@@ -112,7 +112,7 @@
           <div class="row text-center">
             <?php for($i = 1; $i<=4; $i++): ?>
               <div class="col-md-3">
-                <img src="../../<?=$achievement[$i];?>" id="<?='achievment-edit'.$i?>" alt="profil" class="m-sm-2" width="100" />
+                <img src="../../<?=$achievement[$i];?>" id="<?='achievment-edit'.$i?>" alt="profil" class="m-sm-2 img-fluid" width="100" />
               </div>
             <?php endfor; ?>
           </div>
@@ -170,7 +170,7 @@
           <div class="row text-center">
             <?php for($i = 1; $i<=4; $i++): ?>
               <div class="col-md-3">
-                <img src="../../<?=$achievement[$i];?>" id="<?='achievment-profile'.$i?>" alt="profil" class="m-sm-2" width="200" />
+                <img src="../../<?=$achievement[$i];?>" id="achievment-profile<?=$i?>" alt="profil" class="m-sm-2 img-fluid" width="200" />
               </div>
             <?php endfor; ?>
           </div>
@@ -186,29 +186,31 @@
             <?php for($i = 1; $i<=6; $i++): ?>
               <div class="col-md-3">
                 <?php if(sizeof($_SESSION['progress']) >= $i):?>
-                  <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="border: 5px solid #00ff08" />
+                  <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded img-fluid" width="200" style="border: 5px solid #00ff08" />
                 <?php else: ?>
-                  <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
+                  <img id="<?= "progress" . $i ?>" src="<?= "../../assets/Frontpage/Progress".$i.".png"?>" alt="profil" class="m-sm-2 rounded img-fluid" width="200" style="filter: grayscale(100%); opacity: 60%; border: 0px solid #00ff08" />
                 <?php endif; ?>
                 <div class="d-flex flex-row mb-3 justify-content-evenly">
                   <div>
                     <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="50" />
-                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->death) ? $_SESSION['progress'][$i-1]->death : 0?></p>
+                    <p class="fs-4 me-2"><?= isset($_SESSION['progress'][$i-1]->death) ? $_SESSION['progress'][$i-1]->death : 0?></p>
                   </div>
                   <div>
-                    <img src="../../assets/Frontpage/Death.png" alt="profil" class="" width="50" />
+                    <img src="../../assets/Frontpage/stopwatch.png" alt="profil" class="" width="50" />
                     <?php
                       if(isset($_SESSION['progress'][$i-1]->time_spent)){
                         $arr = $_SESSION['progress'][$i-1]->time_spent;
                         $arr = explode(':', $arr);
-                        if($arr[0]='00'){
+                        if($arr[0]=='00' && $arr[1]=='00'){
+                          $time = $arr[2];
+                        }else if($arr[0]=='00'){
                           $time = $arr[1]. ':'. $arr[2];
                         }else{
                           $time = implode(':', $arr);
                         }
                       }
                     ?>
-                    <p class="fs-4"><?= isset($_SESSION['progress'][$i-1]->time_spent) ? $time : '00:00'?></p>
+                    <p class="fs-4 me-2"><?= isset($_SESSION['progress'][$i-1]->time_spent) ? $time : '00:00'?></p>
                   </div>
                 </div>
               </div>

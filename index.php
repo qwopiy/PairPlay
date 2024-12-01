@@ -31,8 +31,8 @@
         </style>
     </head>
     <body>
-        <div class="sidebar-content">
-            <div class="search-container">
+        <div class="sidebar-content p-2">
+            <div class="search-container ">
                 <form method="post">
                     <div class="input-group ">
                         <input id="search-form" type="text" name="keyword" placeholder="input username" class="search-form p-2 border-top-0 border-end-0 border-start-0 border-white text-light" required>
@@ -53,7 +53,6 @@
                         <div class="guest-container d-flex flex-row">
                             <div>
                                 <i class="bi bi-people-fill text-light fs-4 m-3 pencarian"></i>
-                                <!-- <i class="bi bi-search text-light fs-4 m-3 pencarian"></i> -->
                             </div>
                             <a href="public/profilePage/profile.php">
                                 <img src="<?php echo $_SESSION['USER']->photo;?>" alt="User Avatar" class="gambar">
@@ -61,14 +60,19 @@
                             </a>
                         </div>
                     </div>
-                    <div class="fixed-bottom mb-3 ms-3"> 
-                        <a href="public/registration/logout.php" class="btn btn-logout">Logout</a> 
+                    <div class="fixed-bottom mb-3 ms-3 d-flex flex-row">
+                        <div class='me-2'> 
+                            <a href="public/registration/logout.php" class="btn btn-logout">Logout</a> 
+                        </div>
+                        <div class='me-2'> 
+                            <a href="public/registration/delete.php" class="btn btn-logout">Delete Account</a> 
+                        </div>
                     </div>
                     <?php else: ?>
                         <div class="guest-container d-flex flex-row">
                             <div class="">
                                 <i class="bi bi-people-fill text-light fs-4 m-3 pencarian"></i>
-                                <!-- <i class="bi bi-search text-light fs-4 m-3 pencarian"></i> -->
+                    
                             </div>
                             <a href="public/registration/login.php">
                                 <img src="assets/FrontPage/guest image.svg" alt="User Avatar" class="gambar">
@@ -103,6 +107,7 @@
                         </div>
                         <div class="d-grid gap-2 col-5 mx-auto mt-2">
                             <a href="public/selection/selection.html" class="btn btn-login">Play</a>
+                            <a href="public/leaderboard/leaderboard.php" class="btn btn-login">leaderboard</a>
                             <a href="public/registration/login.php" class="btn btn-login">Login</a>
                             <p class="advice">Save your progress easily by logging in to your account!</p>
                         </div>
