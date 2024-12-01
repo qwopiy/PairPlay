@@ -12,8 +12,7 @@
         unset($value);
         $data = json_encode($data, true);
 
-        $death = $data['death'];
-        $check = database_run("update pemain SET progress = $death WHERE id = 5");
-        echo $data['death'];
+        $check = database_run("update pemain SET achievement = '$data' WHERE id = '$id'");
+        echo $data;
     }
 ?>
