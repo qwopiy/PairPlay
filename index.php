@@ -79,7 +79,7 @@
                             <a href="public/registration/login.php">
                                 <img src="assets/FrontPage/guest image.svg" alt="User Avatar" class="gambar">
                                 <button class="btn btn-guest">Guest</button>
-                            </a>
+                            </a> 
                         </div>
                         <?php endif; ?>
                     </div>
