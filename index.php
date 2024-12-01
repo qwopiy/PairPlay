@@ -97,6 +97,7 @@
 
                         <div class="d-grid gap-2 col-5 mx-auto mt-2">
                             <a href="public/selection/selection.html" class="btn btn-login">Play</a>
+                            <a href="public/leaderboard/leaderboard.php" class="btn btn-login">Leaderboard</a>
                         </div>
                     </form>
                 </div>
@@ -109,12 +110,11 @@
                         </div>
                         <div class="d-grid gap-2 col-5 mx-auto mt-2">
                             <a href="public/selection/selection.html" class="btn btn-login">Play</a>
-                            <a href="public/leaderboard/leaderboard.php" class="btn btn-login">leaderboard</a>
+                            <a href="public/leaderboard/leaderboard.php" class="btn btn-login">Leaderboard</a>
                             <a href="public/registration/login.php" class="btn btn-login">Login</a>
                             <p class="advice">Save your progress easily by logging in to your account!</p>
                         </div>
                     </form>
-                    <!-- <p>You are not logged in. Please <a href="registration/login.php">sign up</a> to play.</p> -->
                 </div>
             <?php endif; ?>
         </div>
