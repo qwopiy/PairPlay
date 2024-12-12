@@ -154,7 +154,7 @@ export const load = {
     },
 
     sounds: () => {
-        loadSound("music", "../../assets/Sounds/music.wav")
+        loadSound("music", "../../assets/Sounds/music.mp3")
         loadSound("jump", "../../assets/Sounds/lompat.wav")
         loadSound("walk", "../../assets/Sounds/jalan.wav")
         loadSound("dead", "../../assets/Sounds/mati.wav")
