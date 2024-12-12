@@ -118,7 +118,7 @@ const scenes = {
         death = 0
         activeLevel = 0
         const music = play("music", {
-            volume: 0.2,
+            volume: 1,
             loop: true,
         })
         onSceneLeave(() => {
@@ -180,7 +180,7 @@ const scenes = {
         level.drawMapLayout(level1Layout, level1Mappings, Level1Config.Scale)
         
         const music = play("music", {
-            volume: 0.2,
+            volume: 1,
             loop: true,
         })
         onSceneLeave(() => {
@@ -540,7 +540,7 @@ const scenes = {
         level.drawMapLayout(level2Layout, level2Mappings, Level2Config.Scale)
 
         const music = play("music", {
-            volume: 0.2,
+            volume: 1,
             loop: true,
         })
         onSceneLeave(() => {
@@ -779,7 +779,7 @@ const scenes = {
         level.drawMapLayout(level3Layout, level3Mappings, Level3Config.Scale)
 
         const music = play("music", {
-            volume: 0.2,
+            volume: 1,
             loop: true,
         })
         onSceneLeave(() => {
@@ -1082,7 +1082,7 @@ const scenes = {
         level.drawMapLayout(level4Layout, level4Mappings, Level4Config.Scale)
 
         const music = play("music", {
-            volume: 0.2,
+            volume: 1,
             loop: true,
         })
         onSceneLeave(() => {
@@ -1398,7 +1398,7 @@ const scenes = {
         level.drawMapLayout(level5Layout, level5Mappings, Level5Config.Scale)
         
         const music = play("music", {
-            volume: 0.2,
+            volume: 1,
             loop: true,
         })
         onSceneLeave(() => {
@@ -1624,7 +1624,7 @@ const scenes = {
         level.drawMapLayout(level6Layout, level6Mappings, Level6Config.Scale)
 
         const music = play("music", {
-            volume: 0.2,
+            volume: 1,
             loop: true,
         })
         onSceneLeave(() => {
