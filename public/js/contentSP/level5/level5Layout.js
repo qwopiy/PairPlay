@@ -15,7 +15,7 @@ export const level5Layout = [
         "           jkkkkkkkkkl           012        jkl   jkl   jkkkkkkkkklb                             F7",
         "      K    ppppppppppp           345        ppp   ppp   ppppppppppp7                      011111115",
         "      jlb  ppppppppppp           345        ppp   ppp   ppppppppppp7                   f  344444445",
-        "           ppppppppppp           345        ppp   ppp   ppppppppppp7                f     344444445",
-        "_          ppppppppppp           345        ppp   ppp   ppppppppppp7          01112       344444445",
+        "           ppppppppppp           345        ppp   ppp   ppppppppppp7         01112  f     344444445",
+        "_          ppppppppppp           345        ppp   ppp   ppppppppppp7                      344444445",
     ],
 ]
