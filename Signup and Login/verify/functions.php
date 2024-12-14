@@ -210,25 +210,6 @@ function check_login($redirect = true){
 	
 }
 
-function check_verified(){
-
-	$id = $_SESSION['USER']->id;
-	$query = "select * from pemain where id = '$id' limit 1";
-	$row = database_run($query);
-
-	if(is_array($row)){
-		$row = $row[0];
-
-		if($row->email == $row->email_verified){
-
-			return true;
-		}
-	}
- 
-	return false;
- 	
-}
-
 function death_count($id){
 	$query = "SELECT SUM(death) as death FROM game WHERE id_pemain = '$id'";
 	$row = database_run($query);
