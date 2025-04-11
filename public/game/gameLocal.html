@@ -1,11 +1,3 @@
-<?php
-    require '../../Signup and Login/verify/functions.php'; 
-    if(isset($_SESSION['USER'])) {
-        $progress = database_run("SELECT progress FROM pemain WHERE id = {$_SESSION['USER']->id};");
-    } else {
-        $progress = 0;
-    }
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,13 +18,7 @@
     <body>
         <canvas id="game"></canvas>
         <script>
-            let progress = <?php
-            if(isset($_SESSION['USER'])) {
-                $progress = database_run("SELECT progress FROM pemain WHERE id = {$_SESSION['USER']->id};");
-                echo $progress[0]->progress;
-            } else {
-                echo 0;
-            } ?>;
+            let progress = 5;
         </script>
         <script type="module" src="../js/mainLocal.js"></script>
     </body> 

@@ -1,7 +1,3 @@
-<?php
-    require '../../Signup and Login/verify/functions.php'; 
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <html>
@@ -21,13 +17,7 @@
     <body>
         <canvas id="game"></canvas>
         <script>
-            let progress = <?php
-            if(isset($_SESSION['USER'])) {
-                $progress = database_run("SELECT progress FROM pemain WHERE id = {$_SESSION['USER']->id};");
-                echo $progress[0]->progress;
-            } else {
-                echo 0;
-            } ?>;
+            let progress = 5;
         </script>
         <script type="module" src="../js/singlePlayer.js"></script>
     </body> 
