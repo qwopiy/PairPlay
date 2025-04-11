@@ -122,7 +122,7 @@ export function generateMappings(tileType) {
             "ice"
         ],
 
-        t: () => [
+        p: () => [
             sprite("ice", {anim: "fr"}),
             area(), 
             body({ isStatic: true }),

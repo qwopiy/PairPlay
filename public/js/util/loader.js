@@ -1,6 +1,6 @@
 export const load = {
     assets: () => {
-        loadSprite("player1", "assets/player1.png", {
+        loadSprite("player1", "../../assets/player1.png", {
             sliceX: 8,
             sliceY: 5,
             anims: {
@@ -24,7 +24,7 @@ export const load = {
                 idle: 24,
             }
         });
-        loadSprite("player2", "assets/player2.png", {
+        loadSprite("player2", "../../assets/player2.png", {
             sliceX: 8,
             sliceY: 5,
             anims: {
@@ -48,12 +48,31 @@ export const load = {
                 idle: 24,
             }
         });
-        loadSprite("ghost", "assets/ghost.png")
-
-        loadSprite("background", "assets/background.png");
-
-
-        loadSprite("ground-tileset", "assets/ground-tileset.png", {
+        loadSprite("moveButton", "../../assets/moveButton.png", {
+            sliceX: 3,
+            anims: {
+                left: 0,
+                right: 1,
+                jump: 2,
+            }
+        });
+        loadSprite("pauseButtons", "../../assets/pauseButtons.png", {
+            sliceX: 8,
+            anims: {
+                pause: 0,
+                exit: 1,
+                restart: 2,
+                resume: 3,
+                SFX: 4,
+                muteSFX: 5,
+                music: 6,
+                muteMusic: 7,
+            }
+        })
+        loadSprite("easterEgg", "../../assets/FrontPage/easteregg.png")
+        loadSprite("ghost", "../../assets/ghost.png")
+        loadSprite("background", "../../assets/background.png")
+        loadSprite("ground-tileset", "../../assets/ground-tileset.png", {
             sliceX: 3,
             sliceY: 3,
             anims: {
@@ -67,7 +86,7 @@ export const load = {
                 br: 8,
             }
         });
-        loadSprite("door", "assets/door.png", {
+        loadSprite("door", "../../assets/door.png", {
             sliceX: 5,
             anims: {
                 closed: 0,
@@ -78,8 +97,8 @@ export const load = {
                 },
             }
         });
-        loadSprite("doorBase", "assets/doorBase.png")
-        loadSprite("items", "assets/items.png", {
+        loadSprite("doorBase", "../../assets/doorBase.png")
+        loadSprite("items", "../../assets/items.png", {
             sliceX: 3,
             sliceY: 3,
             anims: {
@@ -93,8 +112,7 @@ export const load = {
                 button_on: 8,
             }
         });
-        loadSprite("music", "assets/music.png")
-        loadSprite("ice", "assets/ice.png",{
+        loadSprite("ice", "../../assets/ice.png",{
             sliceX: 3,
             sliceY: 3,
             anims: {
@@ -113,7 +131,7 @@ export const load = {
             }
         });
 
-        loadSprite("obj", "assets/spriteSheet1.png", {
+        loadSprite("obj", "../../assets/spriteSheet1.png", {
             sliceX: 3,
             sliceY: 3,
             anims: {
@@ -125,22 +143,26 @@ export const load = {
                 finishOpen: 7,
             }
         })
+        loadSprite("win", "../../assets/FrontPage/end.png")
 
-        loadSprite("1", "assets/FrontPage/Progress1.png")
-        loadSprite("2", "assets/FrontPage/Progress2.png")
-        loadSprite("3", "assets/FrontPage/Progress3.png")
-        loadSprite("4", "assets/FrontPage/Progress4.png")
+        loadSprite("1", "../../assets/FrontPage/Progress1.png")
+        loadSprite("2", "../../assets/FrontPage/Progress2.png")
+        loadSprite("3", "../../assets/FrontPage/Progress3.png")
+        loadSprite("4", "../../assets/FrontPage/Progress4.png")
+        loadSprite("5", "../../assets/FrontPage/Progress5.png")
+        loadSprite("6", "../../assets/FrontPage/Progress6.png")
     },
 
     sounds: () => {
-        loadSound("music", "assets/Sounds/music.wav")
-        loadSound("jump", "assets/Sounds/lompat.wav")
-        loadSound("walk", "assets/Sounds/jalan.wav")
-        loadSound("dead", "assets/Sounds/mati.wav")
-        loadSound("button", "assets/Sounds/tombol.wav")
-        loadSound("door", "assets/Sounds/pintu.wav")
-        loadSound("key", "assets/Sounds/key.wav")
-        loadSound("portal", "assets/Sounds/portal.wav")
-        loadSound("bounce", "assets/Sounds/bounce.wav")
+        loadSound("music", "../../assets/Sounds/music.mp3")
+        loadSound("jump", "../../assets/Sounds/lompat.wav")
+        loadSound("walk", "../../assets/Sounds/jalan.wav")
+        loadSound("dead", "../../assets/Sounds/mati.wav")
+        loadSound("button", "../../assets/Sounds/tombol.wav")
+        loadSound("door", "../../assets/Sounds/pintu.wav")
+        loadSound("key", "../../assets/Sounds/key.wav")
+        loadSound("portal", "../../assets/Sounds/portal.wav")
+        loadSound("bounce", "../../assets/Sounds/bounce.wav")
+        loadSound("boom", "../../assets/Sounds/boom.mp3")
     }
 }

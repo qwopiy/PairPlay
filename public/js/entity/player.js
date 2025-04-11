@@ -57,6 +57,7 @@ constructor(
   }
 
   Move(speed) {
+    if (this.gameObj.paused) return
     if (this.isMovingRight && !this.isRespawning) {
       if (this.gameObj.curAnim() !== "run" 
           && this.gameObj.isGrounded() 
@@ -107,7 +108,6 @@ constructor(
       this.idle()
     }
 
-    if (this.gameObj.paused) return
     if (!this.isRespawning && !this.win) this.gameObj.move(speed, 0)
   }
 
@@ -169,64 +169,65 @@ constructor(
       // this.idle()
       this.isMovingRight = false
     })
-    onKeyDown(this.up, () => {
+    onKeyPress(this.up, () => {
       this.jump()
     })
 
 
     if (this.isTouchEnabled()) {
       const leftButton = add([
-        sprite("leftButton"),
-        pos(10, height() - 100),
+        sprite("moveButton", { anim: "left" }),
+        pos(40, height() - 100),
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "leftButton"
       ]);
       const rightButton = add([
-        sprite("rightButton"),
-        pos(140, height() - 100),
+        sprite("moveButton", { anim: "right" }),
+        pos(200, height() - 100),
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "rightButton"
       ]);
       const jumpButton = add([
-        sprite("jumpButton"),
+        sprite("moveButton", { anim: "jump" }),
         pos(width() - 120, height() - 100),
         scale(2),
         opacity(0.5),
         fixed(),
-        area(),
+        area({shape: new Rect(vec2(0, 0), 64, 64)}),
         "jumpButton"
       ]);
     }
 }
 
-  touchControls() {
-    onTouchStart((position) => {
-      if (position.x < width() / 10) {
-        this.isMovingLeft = true
-      } else
-      if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
-        this.isMovingRight = true
-      } else{
-        this.jump()
-      }
-    })
+  // fix later
+  // touchControls() {
+  //   onTouchStart((position) => {
+  //     if (position.x < width() / 10) {
+  //       this.isMovingLeft = true
+  //     } else
+  //     if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+  //       this.isMovingRight = true
+  //     } else{
+  //       this.jump()
+  //     }
+  //   })
 
-    onTouchEnd((position) => {
-      if (position.x < width() / 10) {
-        this.isMovingLeft = false
-      }
-      if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
-        this.isMovingRight = false
-      }
-    })
+  //   onTouchEnd((position) => {
+  //     if (position.x < width() / 10) {
+  //       this.isMovingLeft = false
+  //     }
+  //     if (position.x > width() / 10 && position.x < (width() / 10) * 3) {
+  //       this.isMovingRight = false
+  //     }
+  //   })
 
-  }
+  // }
   
   respawnPlayers() {
     this.gameObj.use(body({ gravityScale: 0 }))
@@ -235,14 +236,12 @@ constructor(
     this.gameObj.angle = 0
     this.win = false
     this.isRespawning = true
-    setTimeout(() => this.isRespawning = false, 1000)
+    setTimeout(() => this.isRespawning = false, 100)
     this.speed = 0
   }
   
   update() {
     onUpdate(() => {
-      // if (this.isTouchEnabled())  this.touchControls()
-
       if (this.gameObj.isGrounded()) {
         this.hasJumpedOnce = false
         this.timeSinceLastGrounded = time()
