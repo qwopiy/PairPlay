@@ -1583,6 +1583,23 @@ const scenes = {
             Level5Config.levelZoom = 1.7
         }
         onUpdate(() => {
+            onTouchStart((position) => {
+                if (position.x < 110) {
+                    player1.isMovingLeft = true
+                } else
+                if (position.x > 110 && position.x < (110) * 3) {
+                    player1.isMovingRight = true
+                } else{
+                    player1.jump()
+                }
+            })
+
+            onTouchEnd((position) => {
+                if (position.x < (110) * 3) {
+                    player1.isMovingLeft = false
+                    player1.isMovingRight = false
+                }
+            })
             if (!paused)
                 timer.text = (time() - timeSinceDead).toFixed(2)
             if (player1.isRespawning) {
