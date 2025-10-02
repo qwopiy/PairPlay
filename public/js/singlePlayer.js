@@ -24,7 +24,6 @@ window.onbeforeunload = function(){
         "death": death,
         "easter_egg": 0
     }
-    sendDeathData(data)
     return null;
   };
 
@@ -37,35 +36,6 @@ kaboom({
 });
 
 console.log(progress)
-
-function sendClearData(data) {
-    fetch("../../Signup and Login/verify/clearFunction.php" ,{
-        "method" : "POST",
-        "headers" : {
-            "Content-type" : "application/json; charset=utf-8"
-        },
-        "body" : JSON.stringify(data)
-      }).then(function(response){
-        return response.json();
-      }).then(function(data){
-        console.log(data);
-      });
-}
-
-function sendDeathData(data) {
-    fetch("../../Signup and Login/verify/deathFunction.php" ,{
-        "method" : "POST",
-        "headers" : {
-            "Content-type" : "application/json; charset=utf-8"
-        },
-        "body" : JSON.stringify(data)
-      }).then(function(response){
-        return response.json();
-      }).then(function(data){
-        console.log(data);
-      });
-}
-
 
 function buttonPressed(object, config, Button, Scale) {
     object.onCollide("button_off", (button) => {
@@ -220,7 +190,6 @@ const scenes = {
                 "death": death,
                 "easter_egg": 0
             }
-            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -442,7 +411,6 @@ const scenes = {
                 "death": 0,
                 "easter_egg": 1
             }
-            sendDeathData(data)
         })
 
         let key = true
@@ -519,7 +487,6 @@ const scenes = {
                     "easter_egg": 0,
                     "progress": progress
                 }
-                sendClearData(data)
                 go("levelSelect")
             }
             // console.log(player1.death, player2.death)
@@ -580,7 +547,6 @@ const scenes = {
                 "death": death,
                 "easter_egg": 0
             }
-            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -759,7 +725,6 @@ const scenes = {
                     "easter_egg": 0,
                     "progress": progress
                 }
-                sendClearData(data)
                 go("levelSelect")
             }
         })
@@ -819,7 +784,6 @@ const scenes = {
                 "death": death,
                 "easter_egg": 0
             }
-            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -1060,7 +1024,6 @@ const scenes = {
                     "easter_egg": 0,
                     "progress": progress
                 }
-                sendClearData(data)
                 go("levelSelect")
             }
             // console.log(box2.vel)
@@ -1122,7 +1085,6 @@ const scenes = {
                 "death": death,
                 "easter_egg": 0
             }
-            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -1379,7 +1341,6 @@ const scenes = {
                     "easter_egg": 0,
                     "progress": progress
                 }
-                sendClearData(data)
                 go("levelSelect")
             }
         })
@@ -1438,7 +1399,6 @@ const scenes = {
                 "death": death,
                 "easter_egg": 0
             }
-            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -1620,7 +1580,6 @@ const scenes = {
                     "easter_egg": 0,
                     "progress": progress
                 }
-                sendClearData(data)
                 go("levelSelect")
             }
         })
@@ -1681,7 +1640,6 @@ const scenes = {
                 "death": death,
                 "easter_egg": 0
             }
-            sendDeathData(data)
             go("levelSelect")
         })
         onClick("restart", (restart) => {
@@ -1964,7 +1922,6 @@ const scenes = {
                     "easter_egg": 0,
                     "progress": progress
                 }
-                sendClearData(data)
                 go("levelSelect")
             }
         })

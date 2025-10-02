@@ -4,7 +4,7 @@ export const Level5Config = {
     Scale: 1,
     gravity: 700,
     playerSpeed: 100,
-    jumpForce: 160,
+    jumpForce: 200,
     playerStartPosX: 192,
     playerStartPosY: 132,
     levelZoom: 3, 
