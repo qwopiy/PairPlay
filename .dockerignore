@@ -1,0 +1,13 @@
+# Git and editor config
+.git
+.gitignore
+.vscode
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build caches (if you add tooling later)
+node_modules
+out
+dist
