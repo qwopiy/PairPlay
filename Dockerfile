@@ -1,5 +1,5 @@
 ## Static site served by Node.js + `serve` (ES modules friendly)
-FROM node:20-alpine
+FROM node:current-alpine
 
 WORKDIR /app
 
