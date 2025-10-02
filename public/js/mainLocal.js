@@ -1554,7 +1554,7 @@ const scenes = {
             play("dead")
             player1.gameObj.angle = -90
             player1.isRespawning = true
-            ghost.pos = player1.gameObj.pos
+            ghost1.pos = player1.gameObj.pos
             if (!player2.isRespawning) {
                 death++
                 setTimeout(() => {
@@ -1574,7 +1574,7 @@ const scenes = {
             play("dead")
             player2.gameObj.angle = -90
             player2.isRespawning = true
-            ghost.pos = player2.gameObj.pos
+            ghost2.pos = player2.gameObj.pos
             if (!player1.isRespawning) {
                 death++
                 setTimeout(() => {
@@ -1643,8 +1643,11 @@ const scenes = {
         onUpdate(() => {
             if (!paused)
                 timer.text = (time() - timeSinceDead).toFixed(2)
-            if (player1.isRespawning || player2.isRespawning) {
-                ghost.move(0, -80)
+            if (player1.isRespawning) {
+                ghost1.move(0, -80)
+            }
+            if (player2.isRespawning) {
+                ghost2.move(0, -80)
             }
 
             player1.Move(player1.speed)
@@ -1897,7 +1900,7 @@ const scenes = {
                 death++
                 setTimeout(() => {
                     if (activeLevel !== 5) return
-                    player1.isRespawning = false
+                    player2.isRespawning = false
                     player1.respawnPlayers()
                     player2.respawnPlayers()
                     Level5Config.win1 = false
